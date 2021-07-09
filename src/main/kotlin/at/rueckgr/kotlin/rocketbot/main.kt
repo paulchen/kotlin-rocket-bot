@@ -2,7 +2,6 @@ package at.rueckgr.kotlin.rocketbot
 
 import at.rueckgr.kotlin.rocketbot.webservice.*
 import com.google.gson.Gson
-import com.google.gson.JsonParser
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.websocket.*
@@ -11,6 +10,7 @@ import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.codec.digest.DigestUtils
+import java.util.*
 
 fun main() {
     // TODO store authentication token somewhere
@@ -27,8 +27,8 @@ fun main() {
             host = host,
             path = "/websocket"
         ) {
-            val messageOutputRoutine = launch { outputMessages() }
-            val userInputRoutine = launch { inputMessages(username, password) }
+            val messageOutputRoutine = launch { outputMessages(username, password) }
+            val userInputRoutine = launch { inputMessages() }
 
             userInputRoutine.join()
             messageOutputRoutine.join()
@@ -36,23 +36,8 @@ fun main() {
     }
 }
 
-suspend fun DefaultClientWebSocketSession.inputMessages(username: String, password: String) {
-    // TODO remove this
-    Thread.sleep(1000)
-
+suspend fun DefaultClientWebSocketSession.inputMessages() {
     sendMessage(ConnectMessage())
-
-    val digest = DigestUtils.sha256Hex(password)
-    sendMessage(
-        LoginMessage(
-            params = arrayOf(
-                WebserviceRequestParam(
-                    UserData(username),
-                    PasswordData(digest, "sha-256")
-                )
-            )
-        )
-    )
 }
 
 suspend fun DefaultClientWebSocketSession.sendMessage(message: Any) {
@@ -65,49 +50,98 @@ suspend fun DefaultClientWebSocketSession.sendMessage(message: Any) {
     send(Frame.Text(gson.toJson(message)))
 }
 
-suspend fun DefaultClientWebSocketSession.outputMessages() {
+suspend fun DefaultClientWebSocketSession.outputMessages(username: String, password: String) {
     try {
         for (message in incoming) {
             message as? Frame.Text ?: continue
             val text = message.readText()
             println("IN: " + text)
 
-            val jsonObject = JsonParser.parseString(text).asJsonObject
-            if(!jsonObject.has("msg")) {
+            @Suppress("UNCHECKED_CAST") val data = Gson().fromJson(text, Object::class.java) as Map<String, Any>
+            if("msg" !in data) {
                 continue
             }
-
-            val messageType = jsonObject.getAsJsonPrimitive("msg").asString
-
-            // TODO handle more messages
-            val response = when (messageType) {
-                "result" -> handleMessage(Gson().fromJson(text, ResultMessage::class.java))
-                "ping" -> handleMessage(Gson().fromJson(text, PingMessage::class.java))
+            val responses: Array<Any> = when (val messageType = data["msg"]) {
+                "connected" -> handleConnectedMessage(data, username, password)
+                "result" -> handleResultMessage(data)
+                "ping" -> handlePingMessage(data)
+                "changed" -> handleChangedMessage(username, data)
                 else -> {
                     println("Unknown message type \"$messageType\", ignoring message")
                     continue
                 }
             }
 
-            if (response is NilMessage) {
-                continue
+            responses.forEach {
+                sendMessage(it)
             }
-
-            sendMessage(response)
         }
     }
     catch (e: Exception) {
+        e.printStackTrace()
         println("Error while receiving: " + e.localizedMessage)
     }
 }
 
-fun handleMessage(message: ResultMessage): Any {
-    // TODO token validity not properly parsed
-    println(message.result.token)
-
-    return NilMessage()
+fun handleConnectedMessage(data: Map<String, Any>, username: String, password: String): Array<Any> {
+    val digest = DigestUtils.sha256Hex(password)
+    return arrayOf(LoginMessage(
+        id = "login-initial",
+        params = arrayOf(
+            WebserviceRequestParam(
+                UserData(username),
+                PasswordData(digest, "sha-256")
+            )
+        )
+    ))
 }
 
-fun handleMessage(message: PingMessage): Any {
-    return PongMessage()
+fun handleResultMessage(data: Map<String, Any>): Array<Any> {
+    return when (data["id"]) {
+        "login-initial" -> arrayOf(RoomsGetMessage(id = "get-rooms-initial"))
+        "get-rooms-initial" -> handleGetRoomsResult(data)
+        else -> emptyArray()
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+fun handleGetRoomsResult(data: Map<String, Any>): Array<Any> {
+    val rooms: List<Map<String, Any>> = data["result"] as List<Map<String, Any>>
+    return rooms.map {
+        val id = it["_id"]
+        StreamRoomMessagesSubscriptionMessage(id = "subscribe-$id", params = arrayOf(id, false))
+    }.toTypedArray()
+}
+
+fun handlePingMessage(data: Map<String, Any>): Array<Any> {
+    return arrayOf(PongMessage())
+}
+
+@Suppress("UNCHECKED_CAST")
+fun handleChangedMessage(ownUsername: String, data: Map<String, Any>): Array<Any> {
+    if (data["collection"] != "stream-room-messages") {
+        return emptyArray()
+    }
+
+    val fields = data["fields"] as Map<String, Any>
+    val args = fields["args"] as List<Map<String, Any>>
+
+    val responseMessages = args.map {
+        val roomId = it["rid"] as String
+        val message = it["msg"] as String
+
+        val userData = it["u"] as Map<String, String>
+        val username = userData["username"] ?: ""
+        handleUserMessage(ownUsername, roomId, username, message)
+    }
+
+    return responseMessages.flatten().toTypedArray()
+}
+
+fun handleUserMessage(ownUsername: String, roomId: String, username: String, message: String): List<Any> {
+    if (username == ownUsername) {
+        return emptyList()
+    }
+    val id = UUID.randomUUID().toString()
+    return listOf(SendMessageMessage(id = id, params = listOf(mapOf("_id" to id, "rid" to roomId, "msg" to message))))
 }
