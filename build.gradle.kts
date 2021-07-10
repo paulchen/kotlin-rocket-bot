@@ -9,6 +9,7 @@ val gsonVersion = "2.8.7"
 plugins {
     kotlin("jvm") version "1.5.10"
     application
+    id("com.palantir.docker") version "0.26.0"
 }
 
 group = "at.rueckgr.kotlin.rocketbot"
@@ -37,5 +38,16 @@ tasks.withType<KotlinCompile>() {
 }
 
 application {
-    mainClassName = "at.rueckgr.kotlin.rocketbot.Main"
+    mainClassName = "at.rueckgr.kotlin.rocketbot.MainKt"
+}
+
+distributions {
+    main {
+        version = ""
+    }
+}
+
+docker {
+    name = "${project.name}:latest"
+    files("build/distributions")
 }
