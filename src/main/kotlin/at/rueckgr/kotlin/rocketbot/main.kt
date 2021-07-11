@@ -100,7 +100,13 @@ fun handleConnectedMessage(data: Map<String, Any>, username: String, password: S
 
 fun handleResultMessage(data: Map<String, Any>): Array<Any> {
     return when (data["id"]) {
-        "login-initial" -> arrayOf(RoomsGetMessage(id = "get-rooms-initial"))
+        "login-initial" -> {
+            val userId = (data["result"] as Map<*, *>)["id"]
+            arrayOf(
+                RoomsGetMessage(id = "get-rooms-initial"),
+                SubscriptionMessage(id = "subscribe-stream-notify-user", name = "stream-notify-user", params = arrayOf("$userId/rooms-changed", false))
+            )
+        }
         "get-rooms-initial" -> handleGetRoomsResult(data)
         else -> emptyArray()
     }
@@ -111,7 +117,7 @@ fun handleGetRoomsResult(data: Map<String, Any>): Array<Any> {
     val rooms: List<Map<String, Any>> = data["result"] as List<Map<String, Any>>
     return rooms.map {
         val id = it["_id"]
-        StreamRoomMessagesSubscriptionMessage(id = "subscribe-$id", params = arrayOf(id, false))
+        SubscriptionMessage(id = "subscribe-$id", name = "stream-room-messages", params = arrayOf(id, false))
     }.toTypedArray()
 }
 
@@ -119,25 +125,50 @@ fun handlePingMessage(data: Map<String, Any>): Array<Any> {
     return arrayOf(PongMessage())
 }
 
-@Suppress("UNCHECKED_CAST")
-fun handleChangedMessage(ownUsername: String, data: Map<String, Any>): Array<Any> {
-    if (data["collection"] != "stream-room-messages") {
-        return emptyArray()
-    }
 
+fun handleChangedMessage(ownUsername: String, data: Map<String, Any>): Array<Any> {
+    return when (data["collection"]) {
+        "stream-room-messages" -> handleStreamRoomMessages(ownUsername, data)
+        "stream-notify-user" -> handleStreamNotifyUser(data)
+        else -> return emptyArray()
+    }.flatten().toTypedArray()
+}
+
+@Suppress("UNCHECKED_CAST")
+fun handleStreamRoomMessages(ownUsername: String, data: Map<String, Any>): List<List<Any>> {
     val fields = data["fields"] as Map<String, Any>
     val args = fields["args"] as List<Map<String, Any>>
 
-    val responseMessages = args.map {
-        val roomId = it["rid"] as String
+    return args.map {
         val message = it["msg"] as String
+        val roomId = it["rid"] as String
 
-        val userData = it["u"] as Map<String, String>
-        val username = userData["username"] ?: ""
-        handleUserMessage(ownUsername, roomId, username, message.trim())
+        if ("t" in it && it["t"] == "ru" && message == ownUsername) {
+            listOf(UnsubscribeMessage(id = "subscribe-$roomId"))
+        }
+        else {
+            val userData = it["u"] as Map<String, String>
+            val username = userData["username"] ?: ""
+            handleUserMessage(ownUsername, roomId, username, message.trim())
+        }
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+fun handleStreamNotifyUser(data: Map<String, Any>): List<List<Any>> {
+    val fields = data["fields"] as Map<String, Any>
+    val args = fields["args"] as List<Any>
+
+    if (args[0] != "inserted") {
+        return emptyList()
     }
 
-    return responseMessages.flatten().toTypedArray()
+    return args.subList(1, args.size).map {
+        val details = it as Map<String, String>
+        val roomId = details["_id"]
+
+        listOf(SubscriptionMessage(id = "subscribe-$roomId", name = "stream-room-messages", params = arrayOf(roomId, false)))
+    }
 }
 
 fun handleUserMessage(ownUsername: String, roomId: String, username: String, message: String): List<SendMessageMessage> {
