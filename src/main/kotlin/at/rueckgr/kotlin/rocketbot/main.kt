@@ -104,7 +104,7 @@ fun handleResultMessage(data: Map<String, Any>): Array<Any> {
             val userId = (data["result"] as Map<*, *>)["id"]
             arrayOf(
                 RoomsGetMessage(id = "get-rooms-initial"),
-                SubscriptionMessage(id = "subscribe-stream-notify-user", name = "stream-notify-user", params = arrayOf("$userId/rooms-changed", false))
+                SubscribeMessage(id = "subscribe-stream-notify-user", name = "stream-notify-user", params = arrayOf("$userId/rooms-changed", false))
             )
         }
         "get-rooms-initial" -> handleGetRoomsResult(data)
@@ -117,7 +117,7 @@ fun handleGetRoomsResult(data: Map<String, Any>): Array<Any> {
     val rooms: List<Map<String, Any>> = data["result"] as List<Map<String, Any>>
     return rooms.map {
         val id = it["_id"]
-        SubscriptionMessage(id = "subscribe-$id", name = "stream-room-messages", params = arrayOf(id, false))
+        SubscribeMessage(id = "subscribe-$id", name = "stream-room-messages", params = arrayOf(id, false))
     }.toTypedArray()
 }
 
@@ -167,7 +167,7 @@ fun handleStreamNotifyUser(data: Map<String, Any>): List<List<Any>> {
         val details = it as Map<String, String>
         val roomId = details["_id"]
 
-        listOf(SubscriptionMessage(id = "subscribe-$roomId", name = "stream-room-messages", params = arrayOf(roomId, false)))
+        listOf(SubscribeMessage(id = "subscribe-$roomId", name = "stream-room-messages", params = arrayOf(roomId, false)))
     }
 }
 
