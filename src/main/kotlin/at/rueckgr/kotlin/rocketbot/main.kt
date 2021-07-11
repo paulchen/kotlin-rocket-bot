@@ -1,5 +1,6 @@
 package at.rueckgr.kotlin.rocketbot
 
+import at.rueckgr.kotlin.rocketbot.plugins.AbstractPlugin
 import at.rueckgr.kotlin.rocketbot.webservice.*
 import com.google.gson.Gson
 import io.ktor.client.*
@@ -10,6 +11,7 @@ import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.codec.digest.DigestUtils
+import org.reflections.Reflections
 import java.util.*
 
 fun main() {
@@ -132,16 +134,35 @@ fun handleChangedMessage(ownUsername: String, data: Map<String, Any>): Array<Any
 
         val userData = it["u"] as Map<String, String>
         val username = userData["username"] ?: ""
-        handleUserMessage(ownUsername, roomId, username, message)
+        handleUserMessage(ownUsername, roomId, username, message.trim())
     }
 
     return responseMessages.flatten().toTypedArray()
 }
 
-fun handleUserMessage(ownUsername: String, roomId: String, username: String, message: String): List<Any> {
+fun handleUserMessage(ownUsername: String, roomId: String, username: String, message: String): List<SendMessageMessage> {
     if (username == ownUsername) {
         return emptyList()
     }
-    val id = UUID.randomUUID().toString()
-    return listOf(SendMessageMessage(id = id, params = listOf(mapOf("_id" to id, "rid" to roomId, "msg" to message))))
+    if (!message.startsWith("!")) {
+        return emptyList()
+    }
+
+    val command = message.split(" ")[0].substring(1)
+    val flatMap = Reflections(AbstractPlugin::class.java.packageName)
+        .getSubTypesOf(AbstractPlugin::class.java)
+        .flatMap {
+            val plugin = it.getDeclaredConstructor().newInstance()
+            if (plugin.getCommands().contains(command)) {
+                plugin.handle(message)
+            }
+            else {
+                emptyList()
+            }
+        }
+    return flatMap
+        .map {
+            val id = UUID.randomUUID().toString()
+            SendMessageMessage(id = id, params = listOf(mapOf("_id" to id, "rid" to roomId, "msg" to it)))
+        }
 }

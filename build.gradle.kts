@@ -4,7 +4,8 @@ val ktorVersion = "1.6.1"
 val coroutinesVersion = "1.3.8"
 var commonsCodecVersion = "1.15"
 val gsonVersion = "2.8.7"
-
+val reflectionsVersion = "0.9.12"
+val prettytimeVersion = "5.0.1.Final"
 
 plugins {
     kotlin("jvm") version "1.5.10"
@@ -26,6 +27,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("commons-codec:commons-codec:${commonsCodecVersion}")
     implementation("com.google.code.gson:gson:$gsonVersion")
+    implementation("org.reflections:reflections:$reflectionsVersion")
+    implementation("org.ocpsoft.prettytime:prettytime:$prettytimeVersion")
     testImplementation(kotlin("test"))
 }
 
