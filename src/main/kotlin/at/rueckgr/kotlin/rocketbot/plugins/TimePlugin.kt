@@ -39,7 +39,6 @@ class TimePlugin : AbstractPlugin() {
         try {
             for (format in Format.values()) {
                 if (format.regex.matches(dateString)) {
-                    // TODO returning completely wrong stuff
                     val date = format.function.invoke(this,  format.pattern, dateString)
                     val prettyTime = createPrettyTimeInstance()
                     val durations = prettyTime.calculatePreciseDuration(date)
@@ -58,7 +57,7 @@ class TimePlugin : AbstractPlugin() {
         val prettyTime = PrettyTime(Locale.ENGLISH)
         prettyTime.clearUnits()
         prettyTime.registerUnit(Year(), ResourcesTimeFormat(Year()))
-        prettyTime.registerUnit(Month(), ResourcesTimeFormat(Month()))
+        // Month() omitted as the length of a month is not a multiple of the length of a day (wtf?)
         prettyTime.registerUnit(Day(), ResourcesTimeFormat(Day()))
         prettyTime.registerUnit(Hour(), ResourcesTimeFormat(Hour()))
         prettyTime.registerUnit(Minute(), ResourcesTimeFormat(Minute()))
