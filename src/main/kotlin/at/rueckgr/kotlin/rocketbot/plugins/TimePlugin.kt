@@ -16,6 +16,7 @@ class TimePlugin : AbstractPlugin() {
         val pattern: String,
         val function: (TimePlugin, String, String) -> LocalDateTime
     ) {
+        // TODO implement date without year
         DATE_EN("""^[0-9]{4}-[0-9]{2}-[0-9]{2}$""".toRegex(), "yyyy-MM-dd", TimePlugin::parseDay),
         DATE_DE("""^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4}$""".toRegex(), "d.M.yyyy", TimePlugin::parseDay),
 
@@ -38,6 +39,7 @@ class TimePlugin : AbstractPlugin() {
         try {
             for (format in Format.values()) {
                 if (format.regex.matches(dateString)) {
+                    // TODO returning completely wrong stuff
                     val date = format.function.invoke(this,  format.pattern, dateString)
                     val prettyTime = createPrettyTimeInstance()
                     val durations = prettyTime.calculatePreciseDuration(date)
