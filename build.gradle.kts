@@ -54,3 +54,7 @@ docker {
     name = "${project.name}:latest"
     files("build/distributions")
 }
+
+tasks.docker {
+    dependsOn(tasks.distTar)
+}
