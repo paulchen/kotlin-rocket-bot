@@ -19,6 +19,7 @@ fun main() {
     val host = System.getenv("ROCKETCHAT_HOST") ?: return
     val username = System.getenv("ROCKETCHAT_USERNAME") ?: return
     val password = System.getenv("ROCKETCHAT_PASSWORD") ?: return
+    val ignoredChannels = System.getenv("IGNORED_CHANNELS")?.split(",") ?: emptyList()
 
     val client = HttpClient(CIO) {
         install(WebSockets)
@@ -29,7 +30,7 @@ fun main() {
             host = host,
             path = "/websocket"
         ) {
-            val messageOutputRoutine = launch { outputMessages(username, password) }
+            val messageOutputRoutine = launch { outputMessages(ignoredChannels, username, password) }
             val userInputRoutine = launch { inputMessages() }
 
             userInputRoutine.join()
@@ -52,7 +53,7 @@ suspend fun DefaultClientWebSocketSession.sendMessage(message: Any) {
     send(Frame.Text(gson.toJson(message)))
 }
 
-suspend fun DefaultClientWebSocketSession.outputMessages(username: String, password: String) {
+suspend fun DefaultClientWebSocketSession.outputMessages(ignoredChannels: List<String>, username: String, password: String) {
     try {
         for (message in incoming) {
             message as? Frame.Text ?: continue
@@ -65,9 +66,9 @@ suspend fun DefaultClientWebSocketSession.outputMessages(username: String, passw
             }
             val responses: Array<Any> = when (val messageType = data["msg"]) {
                 "connected" -> handleConnectedMessage(data, username, password)
-                "result" -> handleResultMessage(data)
+                "result" -> handleResultMessage(ignoredChannels, data)
                 "ping" -> handlePingMessage(data)
-                "changed" -> handleChangedMessage(username, data)
+                "changed" -> handleChangedMessage(ignoredChannels, username, data)
                 else -> {
                     println("Unknown message type \"$messageType\", ignoring message")
                     continue
@@ -98,7 +99,7 @@ fun handleConnectedMessage(data: Map<String, Any>, username: String, password: S
     ))
 }
 
-fun handleResultMessage(data: Map<String, Any>): Array<Any> {
+fun handleResultMessage(ignoredChannels: List<String>, data: Map<String, Any>): Array<Any> {
     return when (data["id"]) {
         "login-initial" -> {
             val userId = (data["result"] as Map<*, *>)["id"]
@@ -107,15 +108,17 @@ fun handleResultMessage(data: Map<String, Any>): Array<Any> {
                 SubscribeMessage(id = "subscribe-stream-notify-user", name = "stream-notify-user", params = arrayOf("$userId/rooms-changed", false))
             )
         }
-        "get-rooms-initial" -> handleGetRoomsResult(data)
+        "get-rooms-initial" -> handleGetRoomsResult(ignoredChannels, data)
         else -> emptyArray()
     }
 }
 
 @Suppress("UNCHECKED_CAST")
-fun handleGetRoomsResult(data: Map<String, Any>): Array<Any> {
+fun handleGetRoomsResult(ignoredChannels: List<String>, data: Map<String, Any>): Array<Any> {
     val rooms: List<Map<String, Any>> = data["result"] as List<Map<String, Any>>
-    return rooms.map {
+    return rooms.filter {
+        !ignoredChannels.contains(it["fname"])
+    }.map {
         val id = it["_id"]
         SubscribeMessage(id = "subscribe-$id", name = "stream-room-messages", params = arrayOf(id, false))
     }.toTypedArray()
@@ -126,10 +129,10 @@ fun handlePingMessage(data: Map<String, Any>): Array<Any> {
 }
 
 
-fun handleChangedMessage(ownUsername: String, data: Map<String, Any>): Array<Any> {
+fun handleChangedMessage(ignoredChannels: List<String>, ownUsername: String, data: Map<String, Any>): Array<Any> {
     return when (data["collection"]) {
         "stream-room-messages" -> handleStreamRoomMessages(ownUsername, data)
-        "stream-notify-user" -> handleStreamNotifyUser(data)
+        "stream-notify-user" -> handleStreamNotifyUser(ignoredChannels, data)
         else -> return emptyArray()
     }.flatten().toTypedArray()
 }
@@ -155,7 +158,7 @@ fun handleStreamRoomMessages(ownUsername: String, data: Map<String, Any>): List<
 }
 
 @Suppress("UNCHECKED_CAST")
-fun handleStreamNotifyUser(data: Map<String, Any>): List<List<Any>> {
+fun handleStreamNotifyUser(ignoredChannels: List<String>, data: Map<String, Any>): List<List<Any>> {
     val fields = data["fields"] as Map<String, Any>
     val args = fields["args"] as List<Any>
 
@@ -167,7 +170,18 @@ fun handleStreamNotifyUser(data: Map<String, Any>): List<List<Any>> {
         val details = it as Map<String, String>
         val roomId = details["_id"]
 
-        listOf(SubscribeMessage(id = "subscribe-$roomId", name = "stream-room-messages", params = arrayOf(roomId, false)))
+        if (ignoredChannels.contains(details["fname"])) {
+            emptyList()
+        }
+        else {
+            listOf(
+                SubscribeMessage(
+                    id = "subscribe-$roomId",
+                    name = "stream-room-messages",
+                    params = arrayOf(roomId, false)
+                )
+            )
+        }
     }
 }
 
