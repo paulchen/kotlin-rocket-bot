@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 
 class DateTimeDifferenceCalculator {
     enum class TimeUnit(val plusFunction: (LocalDateTime, Long) -> LocalDateTime, val singular: String, val plural: String) {
-        YEAR(LocalDateTime::plusDays, "year", "years"),
+        YEAR(LocalDateTime::plusYears, "year", "years"),
         MONTH(LocalDateTime::plusMonths, "month", "months"),
         DAY(LocalDateTime::plusDays, "day", "days"),
         HOUR(LocalDateTime::plusHours, "hour", "hours"),
@@ -13,28 +13,37 @@ class DateTimeDifferenceCalculator {
     }
 
     fun calculateTimeDifference(from: LocalDateTime, to: LocalDateTime): Map<TimeUnit, Int> {
-        if(from.isAfter(to)) {
-            // TODO
-            return emptyMap()
+        val (inverse, startDate, endDate) = when (from.isAfter(to)) {
+            false -> Triple(false, from, to)
+            true -> Triple(true, to, from)
         }
 
         val result = TimeUnit.values().associate { it to 0 }.toMutableMap()
-        var localDateTime = from
+        var localDateTime = startDate
         TimeUnit.values().forEach {
             while(true) {
                 val newDate = it.plusFunction.invoke(localDateTime, 1)
-                if (newDate.isAfter(to)) {
+                if (newDate.isAfter(endDate)) {
                     break
                 }
                 result[it] = result[it]!!.plus(1)
                 localDateTime = newDate
             }
         }
-        return result
+
+        return when (inverse) {
+            false -> result
+            true -> result.mapValues { (_, v) -> -v }
+        }
     }
 
-    fun createPrettyTimeDifference(calculatedDifference: Map<TimeUnit, Int>): String {
-        return calculatedDifference
+    fun formatTimeDifference(calculatedDifference: Map<TimeUnit, Int>): String {
+        val (period, suffix) = when(calculatedDifference.any { (_, v) -> v < 0 }) {
+            true -> Pair(calculatedDifference.mapValues { (_, v) -> -v }, "ago")
+            false -> Pair(calculatedDifference, "from now")
+        }
+
+        val prettyTimeDifference = period
             .filter { it.value > 0 }
             .map {
                 val count = it.value
@@ -45,5 +54,7 @@ class DateTimeDifferenceCalculator {
                 "$count $label"
             }
             .joinToString(", ")
+
+        return "$prettyTimeDifference $suffix"
     }
 }

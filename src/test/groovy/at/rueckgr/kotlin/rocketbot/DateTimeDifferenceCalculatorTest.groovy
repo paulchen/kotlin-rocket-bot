@@ -7,24 +7,28 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 class DateTimeDifferenceCalculatorTest extends Specification {
-    def "CalculateTimeDifference"() {
+    def "DateTimeDifferenceCalculator"(year1, month1, day1, hour1, minute1, second1, year2, month2, day2, hour2, minute2, second2, expectedResult) {
         given:
-        DateTimeDifferenceCalculator d = new DateTimeDifferenceCalculator()
+            DateTimeDifferenceCalculator d = new DateTimeDifferenceCalculator()
 
-            from = LocalDateTime.of(LocalDate.of(2021, 7, 12), LocalTime.of(17, 22, 36))
-            to = LocalDateTime.of(LocalDate.of(2022, 9, 16), LocalTime.of(19, 23, 42))
+            def from = LocalDateTime.of(LocalDate.of(year1, month1, day1), LocalTime.of(hour1, minute1, second1))
+            def to = LocalDateTime.of(LocalDate.of(year2, month2, day2), LocalTime.of(hour2, minute2, second2))
 
         when:
-            result = d.calculateTimeDifference(from, to)
+            def timeDifference = d.calculateTimeDifference(from, to)
+            def result = d.formatTimeDifference(timeDifference)
 
         then:
-            result == [
-                    (DateTimeDifferenceCalculator.TimeUnit.YEAR): 1,
-                    (DateTimeDifferenceCalculator.TimeUnit.MONTH): 2,
-                    (DateTimeDifferenceCalculator.TimeUnit.DAY): 4,
-                    (DateTimeDifferenceCalculator.TimeUnit.HOUR): 2,
-                    (DateTimeDifferenceCalculator.TimeUnit.MINUTE): 1,
-                    (DateTimeDifferenceCalculator.TimeUnit.SECOND): 6,
-            ]
+            result == expectedResult
+
+        where:
+            year1 | month1 | day1 | hour1 | minute1 | second1 | year2 | month2 | day2 | hour2 | minute2 | second2 | expectedResult
+            2021  | 7      | 12   | 20    | 56      | 16      | 2021  | 7      | 12   | 20    | 56      | 17      | "1 second from now"
+            2021  | 7      | 12   | 20    | 56      | 16      | 2021  | 7      | 12   | 20    | 56      | 15      | "1 second ago"
+            2021  | 7      | 12   | 20    | 56      | 16      | 2021  | 7      | 12   | 20    | 56      | 18      | "2 seconds from now"
+            2021  | 7      | 12   | 20    | 56      | 16      | 2021  | 7      | 12   | 20    | 57      | 18      | "1 minute, 2 seconds from now"
+            2021  | 7      | 12   | 20    | 56      | 16      | 2022  | 9      | 14   | 22    | 59      | 35      | "1 year, 2 months, 2 days, 2 hours, 3 minutes, 19 seconds from now"
+            2022  | 9      | 14   | 22    | 59      | 35      | 2021  | 7      | 12   | 20    | 56      | 16      | "1 year, 2 months, 2 days, 2 hours, 3 minutes, 19 seconds ago"
+            2021  | 7      | 12   | 20    | 56      | 16      | 2024  | 5      | 8    | 16    | 37      | 4       | "2 years, 9 months, 25 days, 19 hours, 40 minutes, 48 seconds from now"
     }
 }

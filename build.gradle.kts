@@ -32,9 +32,9 @@ dependencies {
     implementation("org.ocpsoft.prettytime:prettytime:$prettytimeVersion")
 
     testImplementation(kotlin("test"))
-    testImplementation("junit:junit:4.12")
-    testImplementation("org.codehaus.groovy:groovy-all:2.4.11")
-    testImplementation("org.spockframework:spock-core:1.1-groovy-2.4")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.codehaus.groovy:groovy-all:3.0.8")
+    testImplementation("org.spockframework:spock-core:2.0-groovy-3.0")
 }
 
 tasks.test {
