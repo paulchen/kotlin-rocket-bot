@@ -12,13 +12,13 @@ class DateTimeDifferenceCalculator {
         SECOND(LocalDateTime::plusSeconds, "second", "seconds")
     }
 
-    fun calculateTimeDifference(from: LocalDateTime, to: LocalDateTime): Map<TimeUnit, Int> {
-        val (inverse, startDate, endDate) = when (from.isAfter(to)) {
-            false -> Triple(false, from, to)
-            true -> Triple(true, to, from)
+    fun formatTimeDifference(from: LocalDateTime, to: LocalDateTime): String {
+        val (startDate, endDate, suffix) = when (from.isAfter(to)) {
+            false -> Triple(from, to, "from now")
+            true -> Triple(to, from, "ago")
         }
 
-        val result = TimeUnit.values().associate { it to 0 }.toMutableMap()
+        val period = TimeUnit.values().associate { it to 0 }.toMutableMap()
         var localDateTime = startDate
         TimeUnit.values().forEach {
             while(true) {
@@ -26,21 +26,9 @@ class DateTimeDifferenceCalculator {
                 if (newDate.isAfter(endDate)) {
                     break
                 }
-                result[it] = result[it]!!.plus(1)
+                period[it] = period[it]!!.plus(1)
                 localDateTime = newDate
             }
-        }
-
-        return when (inverse) {
-            false -> result
-            true -> result.mapValues { (_, v) -> -v }
-        }
-    }
-
-    fun formatTimeDifference(calculatedDifference: Map<TimeUnit, Int>): String {
-        val (period, suffix) = when(calculatedDifference.any { (_, v) -> v < 0 }) {
-            true -> Pair(calculatedDifference.mapValues { (_, v) -> -v }, "ago")
-            false -> Pair(calculatedDifference, "from now")
         }
 
         val prettyTimeDifference = period

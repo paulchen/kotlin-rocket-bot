@@ -15,8 +15,7 @@ class DateTimeDifferenceCalculatorTest extends Specification {
             def to = LocalDateTime.of(LocalDate.of(year2, month2, day2), LocalTime.of(hour2, minute2, second2))
 
         when:
-            def timeDifference = d.calculateTimeDifference(from, to)
-            def result = d.formatTimeDifference(timeDifference)
+            def result = d.formatTimeDifference(from, to)
 
         then:
             result == expectedResult

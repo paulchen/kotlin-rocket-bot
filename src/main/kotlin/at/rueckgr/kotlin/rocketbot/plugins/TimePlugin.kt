@@ -38,9 +38,7 @@ class TimePlugin : AbstractPlugin() {
             for (format in Format.values()) {
                 if (format.regex.matches(dateString)) {
                     val date = format.function.invoke(this, format.pattern, dateString)
-                    val d = DateTimeDifferenceCalculator()
-                    val timeDifference = d.calculateTimeDifference(LocalDateTime.now(), date)
-                    return listOf(d.formatTimeDifference(timeDifference))
+                    return listOf(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date))
                 }
             }
         } catch (e: Exception) {
