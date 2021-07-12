@@ -11,6 +11,7 @@ plugins {
     kotlin("jvm") version "1.5.10"
     application
     id("com.palantir.docker") version "0.26.0"
+    groovy
 }
 
 group = "at.rueckgr.kotlin.rocketbot"
@@ -29,11 +30,15 @@ dependencies {
     implementation("com.google.code.gson:gson:$gsonVersion")
     implementation("org.reflections:reflections:$reflectionsVersion")
     implementation("org.ocpsoft.prettytime:prettytime:$prettytimeVersion")
+
     testImplementation(kotlin("test"))
+    testImplementation("junit:junit:4.12")
+    testImplementation("org.codehaus.groovy:groovy-all:2.4.11")
+    testImplementation("org.spockframework:spock-core:1.1-groovy-2.4")
 }
 
 tasks.test {
-    useTestNG()
+    useJUnitPlatform()
 }
 
 tasks.withType<KotlinCompile>() {
