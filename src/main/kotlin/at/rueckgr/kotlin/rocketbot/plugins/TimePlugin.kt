@@ -1,14 +1,11 @@
 package at.rueckgr.kotlin.rocketbot.plugins
 
-import org.ocpsoft.prettytime.PrettyTime
-import org.ocpsoft.prettytime.impl.ResourcesTimeFormat
-import org.ocpsoft.prettytime.units.*
+import at.rueckgr.kotlin.rocketbot.DateTimeDifferenceCalculator
 import java.lang.Exception
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 class TimePlugin : AbstractPlugin() {
     enum class Format(
@@ -39,10 +36,10 @@ class TimePlugin : AbstractPlugin() {
         try {
             for (format in Format.values()) {
                 if (format.regex.matches(dateString)) {
-                    val date = format.function.invoke(this,  format.pattern, dateString)
-                    val prettyTime = createPrettyTimeInstance()
-                    val durations = prettyTime.calculatePreciseDuration(date)
-                    return listOf(prettyTime.format(durations))
+                    val date = format.function.invoke(this, format.pattern, dateString)
+                    val d = DateTimeDifferenceCalculator()
+                    val timeDifference = d.calculateTimeDifference(LocalDateTime.now(), date)
+                    return listOf(d.formatTimeDifference(timeDifference))
                 }
             }
         } catch (e: Exception) {
@@ -51,18 +48,6 @@ class TimePlugin : AbstractPlugin() {
         }
 
         return emptyList()
-    }
-
-    private fun createPrettyTimeInstance(): PrettyTime {
-        val prettyTime = PrettyTime(Locale.ENGLISH)
-        prettyTime.clearUnits()
-        prettyTime.registerUnit(Year(), ResourcesTimeFormat(Year()))
-        // Month() omitted as the length of a month is not a multiple of the length of a day (wtf?)
-        prettyTime.registerUnit(Day(), ResourcesTimeFormat(Day()))
-        prettyTime.registerUnit(Hour(), ResourcesTimeFormat(Hour()))
-        prettyTime.registerUnit(Minute(), ResourcesTimeFormat(Minute()))
-        prettyTime.registerUnit(Second(), ResourcesTimeFormat(Second()))
-        return prettyTime
     }
 
     private fun parseDay(pattern: String, dateString: String): LocalDateTime {
