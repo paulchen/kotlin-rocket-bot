@@ -5,12 +5,12 @@ val coroutinesVersion = "1.3.8"
 var commonsCodecVersion = "1.15"
 val gsonVersion = "2.8.7"
 val reflectionsVersion = "0.9.12"
-val prettytimeVersion = "5.0.1.Final"
 
 plugins {
     kotlin("jvm") version "1.5.10"
     application
     id("com.palantir.docker") version "0.26.0"
+    groovy
 }
 
 group = "at.rueckgr.kotlin.rocketbot"
@@ -28,12 +28,15 @@ dependencies {
     implementation("commons-codec:commons-codec:${commonsCodecVersion}")
     implementation("com.google.code.gson:gson:$gsonVersion")
     implementation("org.reflections:reflections:$reflectionsVersion")
-    implementation("org.ocpsoft.prettytime:prettytime:$prettytimeVersion")
+
     testImplementation(kotlin("test"))
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.codehaus.groovy:groovy-all:3.0.8")
+    testImplementation("org.spockframework:spock-core:2.0-groovy-3.0")
 }
 
 tasks.test {
-    useTestNG()
+    useJUnitPlatform()
 }
 
 tasks.withType<KotlinCompile>() {
