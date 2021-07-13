@@ -1,1 +1,6 @@
 language: java
+
+script: ./gradlew docker
+
+services:
+  - docker
