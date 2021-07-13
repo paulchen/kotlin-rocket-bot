@@ -1,6 +1,10 @@
 # kotlin-rocket-bot
 
-[Rocket.Chat](https://rocket.chat/) bot implemented in Kotlin.
+[Rocket.Chat](https://rocket.chat/) bot implemented in Kotlin. Utilizes Rocket.Chat's websocket-based [Realtime API](https://developer.rocket.chat/api/realtime-api).
+
+[![Build Status](https://travis-ci.com/paulchen/kotlin-rocket-bot.svg?branch=master)](https://travis-ci.com/paulchen/kotlin-rocket-bot)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=paulchen_kotlin-rocket-bot&metric=alert_status)](https://sonarcloud.io/dashboard?id=paulchen_kotlin-rocket-bot)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 Build local Docker image (`kotlin-rocket-bot:latest`) with:
 
@@ -40,5 +44,5 @@ ExecStop=-/usr/bin/docker stop kotlin-rocket-bot
 ExecStop=-/usr/bin/docker rm kotlin-rocket-bot
 
 [Install]
-WantedBy=multi-user.target```
-
+WantedBy=multi-user.target
+```
