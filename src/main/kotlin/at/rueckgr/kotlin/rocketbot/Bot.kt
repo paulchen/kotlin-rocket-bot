@@ -69,9 +69,14 @@ class Bot(private val configuration: BotConfiguration) : Logging {
                     continue
                 }
 
-                handlers[messageType]
-                    ?.handleMessage(configuration, data)
-                    ?.forEach { sendMessage(it) }
+                try {
+                    handlers[messageType]
+                        ?.handleMessage(configuration, data)
+                        ?.forEach { sendMessage(it) }
+                }
+                catch (e: Exception) {
+                    logger().error(e)
+                }
             }
         }
         catch (e: Exception) {
