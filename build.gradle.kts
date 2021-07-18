@@ -12,6 +12,7 @@ plugins {
     application
     id("com.palantir.docker") version "0.26.0"
     groovy
+    id("com.palantir.git-version") version "0.12.3"
 }
 
 group = "at.rueckgr.kotlin.rocketbot"
@@ -21,6 +22,13 @@ repositories {
     mavenCentral()
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs("src/main/resources", "build/generated/resources")
+        }
+    }
+}
 
 dependencies {
     implementation("io.ktor:ktor-client-websockets:$ktorVersion")
@@ -60,6 +68,21 @@ distributions {
 docker {
     name = "${project.name}:latest"
     files("build/distributions")
+}
+
+tasks.create("createVersionFile") {
+    apply(plugin = "com.palantir.git-version")
+
+    doLast {
+        val gitVersion: groovy.lang.Closure<String> by project.extra
+        val targetDirectory = File("build/generated/resources")
+        targetDirectory.mkdirs()
+        File(targetDirectory, "git-revision").appendText(gitVersion())
+    }
+}
+
+tasks.build {
+    dependsOn("createVersionFile")
 }
 
 tasks.docker {
