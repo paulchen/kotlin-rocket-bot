@@ -9,4 +9,7 @@ class VersionPlugin : AbstractPlugin() {
     override fun getCommands(): List<String> = listOf("version")
 
     override fun handle(message: String): List<String> = listOf("kotlin-rocket-bot revision `$revision`")
+
+    override fun getHelp(command: String): List<String> =
+        listOf("`!version` outputs the Git revision of kotlin-rocket-bot currently running")
 }

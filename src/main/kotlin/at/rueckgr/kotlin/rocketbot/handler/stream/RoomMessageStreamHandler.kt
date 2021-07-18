@@ -7,7 +7,7 @@ import at.rueckgr.kotlin.rocketbot.webservice.UnsubscribeMessage
 import java.util.*
 
 class RoomMessageStreamHandler : AbstractStreamHandler() {
-    private val pluginProvider = PluginProvider()
+    private val pluginProvider = PluginProvider.instance
 
     override fun getHandledStream() = "stream-room-messages"
 

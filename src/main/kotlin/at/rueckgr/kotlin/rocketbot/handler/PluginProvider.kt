@@ -6,6 +6,10 @@ import org.reflections.Reflections
 class PluginProvider {
     private val plugins = HashMap<String, MutableList<AbstractPlugin>>()
 
+    companion object {
+        val instance = PluginProvider()
+    }
+
     init {
         val pluginInstances = Reflections(AbstractPlugin::class.java.packageName)
             .getSubTypesOf(AbstractPlugin::class.java)
@@ -23,4 +27,6 @@ class PluginProvider {
 
 
     fun getByCommand(command: String): List<AbstractPlugin> = plugins[command].orEmpty()
+
+    fun getCommands() = plugins.keys
 }
