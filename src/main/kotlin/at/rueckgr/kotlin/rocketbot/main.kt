@@ -2,14 +2,6 @@ package at.rueckgr.kotlin.rocketbot
 
 import at.rueckgr.kotlin.rocketbot.plugins.AbstractPlugin
 import at.rueckgr.kotlin.rocketbot.webservice.*
-import com.google.gson.Gson
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.features.websocket.*
-import io.ktor.http.*
-import io.ktor.http.cio.websocket.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.apache.commons.codec.digest.DigestUtils
 import org.reflections.Reflections
 import java.util.*
@@ -21,69 +13,8 @@ fun main() {
     val password = System.getenv("ROCKETCHAT_PASSWORD") ?: return
     val ignoredChannels = System.getenv("IGNORED_CHANNELS")?.split(",") ?: emptyList()
 
-    val client = HttpClient(CIO) {
-        install(WebSockets)
-    }
-    runBlocking {
-        client.wss(
-            method = HttpMethod.Get,
-            host = host,
-            path = "/websocket"
-        ) {
-            val messageOutputRoutine = launch { outputMessages(ignoredChannels, username, password) }
-            val userInputRoutine = launch { inputMessages() }
+    Bot().launch(host, username, password, ignoredChannels)
 
-            userInputRoutine.join()
-            messageOutputRoutine.join()
-        }
-    }
-}
-
-suspend fun DefaultClientWebSocketSession.inputMessages() {
-    sendMessage(ConnectMessage())
-}
-
-suspend fun DefaultClientWebSocketSession.sendMessage(message: Any) {
-    val gson = Gson()
-
-    // TODO implement token refresh
-
-    // TODO use logging framework
-    println("OUT: " + gson.toJson(message))
-    send(Frame.Text(gson.toJson(message)))
-}
-
-suspend fun DefaultClientWebSocketSession.outputMessages(ignoredChannels: List<String>, username: String, password: String) {
-    try {
-        for (message in incoming) {
-            message as? Frame.Text ?: continue
-            val text = message.readText()
-            println("IN: " + text)
-
-            @Suppress("UNCHECKED_CAST") val data = Gson().fromJson(text, Object::class.java) as Map<String, Any>
-            if("msg" !in data) {
-                continue
-            }
-            val responses: Array<Any> = when (val messageType = data["msg"]) {
-                "connected" -> handleConnectedMessage(data, username, password)
-                "result" -> handleResultMessage(ignoredChannels, data)
-                "ping" -> handlePingMessage(data)
-                "changed" -> handleChangedMessage(ignoredChannels, username, data)
-                else -> {
-                    println("Unknown message type \"$messageType\", ignoring message")
-                    continue
-                }
-            }
-
-            responses.forEach {
-                sendMessage(it)
-            }
-        }
-    }
-    catch (e: Exception) {
-        e.printStackTrace()
-        println("Error while receiving: " + e.localizedMessage)
-    }
 }
 
 fun handleConnectedMessage(data: Map<String, Any>, username: String, password: String): Array<Any> {
