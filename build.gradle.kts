@@ -73,8 +73,10 @@ docker {
 tasks.create("createVersionFile") {
     doLast {
         val gitVersion: groovy.lang.Closure<String> by project.extra
-        project.mkdir("build/generated/resources")
-        File("build/generated/resources/git-revision").appendText(gitVersion())
+        val file = File("build/generated/resources/git-revision")
+        project.mkdir(file.parentFile.path)
+        file.delete()
+        file.appendText(gitVersion())
     }
 }
 
