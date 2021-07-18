@@ -5,6 +5,7 @@ val coroutinesVersion = "1.3.8"
 var commonsCodecVersion = "1.15"
 val gsonVersion = "2.8.7"
 val reflectionsVersion = "0.9.12"
+val log4jVersion = "2.14.1"
 
 plugins {
     kotlin("jvm") version "1.5.10"
@@ -28,6 +29,9 @@ dependencies {
     implementation("commons-codec:commons-codec:${commonsCodecVersion}")
     implementation("com.google.code.gson:gson:$gsonVersion")
     implementation("org.reflections:reflections:$reflectionsVersion")
+    implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
+    implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.10")
 
     testImplementation(kotlin("test"))
     testImplementation("junit:junit:4.13.2")

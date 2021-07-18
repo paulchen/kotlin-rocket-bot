@@ -1,13 +1,15 @@
 package at.rueckgr.kotlin.rocketbot.plugins
 
 import at.rueckgr.kotlin.rocketbot.DateTimeDifferenceCalculator
+import at.rueckgr.kotlin.rocketbot.util.Logging
+import at.rueckgr.kotlin.rocketbot.util.logger
 import java.lang.Exception
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-class TimePlugin : AbstractPlugin() {
+class TimePlugin : AbstractPlugin(), Logging {
     enum class Format(
         val regex: Regex,
         val pattern: String,
@@ -42,8 +44,7 @@ class TimePlugin : AbstractPlugin() {
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
-            // TODO log
+            logger().error(e.message, e)
         }
 
         return emptyList()
