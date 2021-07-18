@@ -1,13 +1,14 @@
 package at.rueckgr.kotlin.rocketbot.handler.stream
 
 import at.rueckgr.kotlin.rocketbot.BotConfiguration
-import at.rueckgr.kotlin.rocketbot.plugins.AbstractPlugin
+import at.rueckgr.kotlin.rocketbot.handler.PluginProvider
 import at.rueckgr.kotlin.rocketbot.webservice.SendMessageMessage
 import at.rueckgr.kotlin.rocketbot.webservice.UnsubscribeMessage
-import org.reflections.Reflections
 import java.util.*
 
 class RoomMessageStreamHandler : AbstractStreamHandler() {
+    private val pluginProvider = PluginProvider()
+
     override fun getHandledStream() = "stream-room-messages"
 
     @Suppress("UNCHECKED_CAST")
@@ -39,18 +40,9 @@ class RoomMessageStreamHandler : AbstractStreamHandler() {
         }
 
         val command = message.split(" ")[0].substring(1)
-        val flatMap = Reflections(AbstractPlugin::class.java.packageName)
-            .getSubTypesOf(AbstractPlugin::class.java)
-            .flatMap {
-                val plugin = it.getDeclaredConstructor().newInstance()
-                if (plugin.getCommands().contains(command)) {
-                    plugin.handle(message)
-                }
-                else {
-                    emptyList()
-                }
-            }
-        return flatMap
+        return pluginProvider
+            .getByCommand(command)
+            .flatMap { it.handle(message) }
             .map {
                 val id = UUID.randomUUID().toString()
                 SendMessageMessage(id = id, params = listOf(mapOf("_id" to id, "rid" to roomId, "msg" to it)))
