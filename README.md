@@ -22,7 +22,7 @@ A systemd unit file for launching the bot could look like this:
 
 ```[Unit]
 Description=kotlin-rocket-bot
-After=network.servoce
+After=network.service
 
 [Service]
 EnvironmentFile=/etc/environment
