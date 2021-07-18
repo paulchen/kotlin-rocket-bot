@@ -1,5 +1,7 @@
 package at.rueckgr.kotlin.rocketbot
 
+import at.rueckgr.kotlin.rocketbot.handler.message.AbstractMessageHandler
+import at.rueckgr.kotlin.rocketbot.plugins.AbstractPlugin
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
 import at.rueckgr.kotlin.rocketbot.webservice.ConnectMessage
@@ -11,6 +13,7 @@ import io.ktor.http.*
 import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.reflections.Reflections
 
 
 class Bot(private val configuration: BotConfiguration) : Logging {
@@ -44,6 +47,11 @@ class Bot(private val configuration: BotConfiguration) : Logging {
     }
 
     private suspend fun DefaultClientWebSocketSession.receiveMessages() {
+        val handlers = Reflections(AbstractMessageHandler::class.java.packageName)
+            .getSubTypesOf(AbstractMessageHandler::class.java)
+            .map { it.getDeclaredConstructor().newInstance() }
+            .associateBy { it.getHandledMessage() }
+
         try {
             for (message in incoming) {
                 message as? Frame.Text ?: continue
@@ -54,20 +62,16 @@ class Bot(private val configuration: BotConfiguration) : Logging {
                 if("msg" !in data) {
                     continue
                 }
-                val responses: Array<Any> = when (val messageType = data["msg"]) {
-                    "connected" -> handleConnectedMessage(configuration, data)
-                    "result" -> handleResultMessage(configuration, data)
-                    "ping" -> handlePingMessage(configuration, data)
-                    "changed" -> handleChangedMessage(configuration, data)
-                    else -> {
-                        logger().info("Unknown message type \"{}\", ignoring message", messageType)
-                        continue
-                    }
+
+                val messageType = data["msg"]
+                if(messageType !in handlers) {
+                    logger().info("Unknown message type \"{}\", ignoring message", messageType)
+                    continue
                 }
 
-                responses.forEach {
-                    sendMessage(it)
-                }
+                handlers[messageType]
+                    ?.handleMessage(configuration, data)
+                    ?.forEach { sendMessage(it) }
             }
         }
         catch (e: Exception) {
