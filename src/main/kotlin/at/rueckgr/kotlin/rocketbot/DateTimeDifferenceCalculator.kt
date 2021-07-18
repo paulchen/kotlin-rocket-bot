@@ -1,5 +1,6 @@
 package at.rueckgr.kotlin.rocketbot
 
+import org.apache.commons.lang3.StringUtils
 import java.time.LocalDateTime
 
 class DateTimeDifferenceCalculator {
@@ -46,6 +47,19 @@ class DateTimeDifferenceCalculator {
             }
             .joinToString(", ")
 
-        return "$prettyTimeDifference $suffix"
+        val evenMorePrettyDifference = when (StringUtils.countMatches(prettyTimeDifference, ",")) {
+            0 -> prettyTimeDifference
+            1 -> prettyTimeDifference.replace(",", " and")
+            else -> replaceLast(prettyTimeDifference, ", ", ", and ")
+        }
+
+        return "$evenMorePrettyDifference $suffix"
+    }
+
+    private fun replaceLast(text: String, toReplace: String, replaceWith: String): String {
+        return when (val pos = text.lastIndexOf(toReplace)) {
+            -1 -> text
+            else -> text.substring(0, pos) + replaceWith + text.substring(pos + toReplace.length)
+        }
     }
 }

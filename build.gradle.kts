@@ -40,6 +40,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.10")
+    implementation("org.apache.commons:commons-lang3:3.12.0")
 
     testImplementation(kotlin("test"))
     testImplementation("junit:junit:4.13.2")
