@@ -12,15 +12,18 @@ class DateTimeDifferenceCalculator {
         SECOND(LocalDateTime::plusSeconds, "second", "seconds")
     }
 
-    fun formatTimeDifference(from: LocalDateTime, to: LocalDateTime): String {
+    fun formatTimeDifference(from: LocalDateTime, to: LocalDateTime, ignoredTimeUnits: List<TimeUnit> = emptyList()): String {
         val (startDate, endDate, suffix) = when (from.isAfter(to)) {
             false -> Triple(from, to, "from now")
             true -> Triple(to, from, "ago")
         }
 
-        val period = TimeUnit.values().associate { it to 0 }.toMutableMap()
+        val filteredTimeUnits = TimeUnit.values().filter { !ignoredTimeUnits.contains(it) }
+        val period = filteredTimeUnits
+            .associateWith { 0 }
+            .toMutableMap()
         var localDateTime = startDate
-        TimeUnit.values().forEach {
+        filteredTimeUnits.forEach {
             while(true) {
                 val newDate = it.plusFunction.invoke(localDateTime, 1)
                 if (newDate.isAfter(endDate)) {
