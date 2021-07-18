@@ -17,20 +17,20 @@ fun main() {
 
 }
 
-fun handleConnectedMessage(data: Map<String, Any>, username: String, password: String): Array<Any> {
-    val digest = DigestUtils.sha256Hex(password)
+fun handleConnectedMessage(configuration: BotConfiguration, data: Map<String, Any>): Array<Any> {
+    val digest = DigestUtils.sha256Hex(configuration.password)
     return arrayOf(LoginMessage(
         id = "login-initial",
         params = arrayOf(
             WebserviceRequestParam(
-                UserData(username),
+                UserData(configuration.username),
                 PasswordData(digest, "sha-256")
             )
         )
     ))
 }
 
-fun handleResultMessage(ignoredChannels: List<String>, data: Map<String, Any>): Array<Any> {
+fun handleResultMessage(configuration: BotConfiguration, data: Map<String, Any>): Array<Any> {
     return when (data["id"]) {
         "login-initial" -> {
             val userId = (data["result"] as Map<*, *>)["id"]
@@ -39,7 +39,7 @@ fun handleResultMessage(ignoredChannels: List<String>, data: Map<String, Any>): 
                 SubscribeMessage(id = "subscribe-stream-notify-user", name = "stream-notify-user", params = arrayOf("$userId/rooms-changed", false))
             )
         }
-        "get-rooms-initial" -> handleGetRoomsResult(ignoredChannels, data)
+        "get-rooms-initial" -> handleGetRoomsResult(configuration.ignoredChannels, data)
         else -> emptyArray()
     }
 }
@@ -55,21 +55,21 @@ fun handleGetRoomsResult(ignoredChannels: List<String>, data: Map<String, Any>):
     }.toTypedArray()
 }
 
-fun handlePingMessage(data: Map<String, Any>): Array<Any> {
+fun handlePingMessage(configuration: BotConfiguration, data: Map<String, Any>): Array<Any> {
     return arrayOf(PongMessage())
 }
 
 
-fun handleChangedMessage(ignoredChannels: List<String>, ownUsername: String, data: Map<String, Any>): Array<Any> {
+fun handleChangedMessage(configuration: BotConfiguration, data: Map<String, Any>): Array<Any> {
     return when (data["collection"]) {
-        "stream-room-messages" -> handleStreamRoomMessages(ownUsername, data)
-        "stream-notify-user" -> handleStreamNotifyUser(ignoredChannels, data)
+        "stream-room-messages" -> handleStreamRoomMessages(configuration, data)
+        "stream-notify-user" -> handleStreamNotifyUser(configuration, data)
         else -> return emptyArray()
     }.flatten().toTypedArray()
 }
 
 @Suppress("UNCHECKED_CAST")
-fun handleStreamRoomMessages(ownUsername: String, data: Map<String, Any>): List<List<Any>> {
+fun handleStreamRoomMessages(configuration: BotConfiguration, data: Map<String, Any>): List<List<Any>> {
     val fields = data["fields"] as Map<String, Any>
     val args = fields["args"] as List<Map<String, Any>>
 
@@ -77,19 +77,19 @@ fun handleStreamRoomMessages(ownUsername: String, data: Map<String, Any>): List<
         val message = it["msg"] as String
         val roomId = it["rid"] as String
 
-        if ("t" in it && it["t"] == "ru" && message == ownUsername) {
+        if ("t" in it && it["t"] == "ru" && message == configuration.username) {
             listOf(UnsubscribeMessage(id = "subscribe-$roomId"))
         }
         else {
             val userData = it["u"] as Map<String, String>
             val username = userData["username"] ?: ""
-            handleUserMessage(ownUsername, roomId, username, message.trim())
+            handleUserMessage(configuration.username, roomId, username, message.trim())
         }
     }
 }
 
 @Suppress("UNCHECKED_CAST")
-fun handleStreamNotifyUser(ignoredChannels: List<String>, data: Map<String, Any>): List<List<Any>> {
+fun handleStreamNotifyUser(configuration: BotConfiguration, data: Map<String, Any>): List<List<Any>> {
     val fields = data["fields"] as Map<String, Any>
     val args = fields["args"] as List<Any>
 
@@ -101,7 +101,7 @@ fun handleStreamNotifyUser(ignoredChannels: List<String>, data: Map<String, Any>
         val details = it as Map<String, String>
         val roomId = details["_id"]
 
-        if (ignoredChannels.contains(details["fname"])) {
+        if (configuration.ignoredChannels.contains(details["fname"])) {
             emptyList()
         }
         else {

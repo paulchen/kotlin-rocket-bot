@@ -55,10 +55,10 @@ class Bot(private val configuration: BotConfiguration) : Logging {
                     continue
                 }
                 val responses: Array<Any> = when (val messageType = data["msg"]) {
-                    "connected" -> handleConnectedMessage(data, configuration.username, configuration.password)
-                    "result" -> handleResultMessage(configuration.ignoredChannels, data)
-                    "ping" -> handlePingMessage(data)
-                    "changed" -> handleChangedMessage(configuration.ignoredChannels, configuration.username, data)
+                    "connected" -> handleConnectedMessage(configuration, data)
+                    "result" -> handleResultMessage(configuration, data)
+                    "ping" -> handlePingMessage(configuration, data)
+                    "changed" -> handleChangedMessage(configuration, data)
                     else -> {
                         logger().info("Unknown message type \"{}\", ignoring message", messageType)
                         continue
