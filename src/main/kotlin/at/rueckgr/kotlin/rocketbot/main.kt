@@ -13,7 +13,7 @@ fun main() {
     val password = System.getenv("ROCKETCHAT_PASSWORD") ?: return
     val ignoredChannels = System.getenv("IGNORED_CHANNELS")?.split(",") ?: emptyList()
 
-    Bot().launch(host, username, password, ignoredChannels)
+    Bot(BotConfiguration(host, username, password, ignoredChannels)).launch()
 
 }
 

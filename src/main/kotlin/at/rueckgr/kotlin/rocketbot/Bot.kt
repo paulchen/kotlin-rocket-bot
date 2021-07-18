@@ -13,9 +13,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 
-class Bot : Logging {
-    fun launch(host: String, username: String, password: String, ignoredChannels: List<String>) {
-        logger().info("Configuration: host={}, username={}, ignoredChannels={}", host, username, ignoredChannels)
+class Bot(private val configuration: BotConfiguration) : Logging {
+    fun launch() {
+        logger().info("Configuration: host={}, username={}, ignoredChannels={}",
+            configuration.host, configuration.username, configuration.ignoredChannels)
 
         val client = HttpClient(CIO) {
             install(WebSockets)
@@ -23,10 +24,10 @@ class Bot : Logging {
         runBlocking {
             client.wss(
                 method = HttpMethod.Get,
-                host = host,
+                host = configuration.host,
                 path = "/websocket"
             ) {
-                val messageOutputRoutine = launch { receiveMessages(ignoredChannels, username, password) }
+                val messageOutputRoutine = launch { receiveMessages() }
                 val userInputRoutine = launch { sendMessage(ConnectMessage()) }
 
                 userInputRoutine.join()
@@ -42,7 +43,7 @@ class Bot : Logging {
         send(Frame.Text(jsonMessage))
     }
 
-    private suspend fun DefaultClientWebSocketSession.receiveMessages(ignoredChannels: List<String>, username: String, password: String) {
+    private suspend fun DefaultClientWebSocketSession.receiveMessages() {
         try {
             for (message in incoming) {
                 message as? Frame.Text ?: continue
@@ -54,10 +55,10 @@ class Bot : Logging {
                     continue
                 }
                 val responses: Array<Any> = when (val messageType = data["msg"]) {
-                    "connected" -> handleConnectedMessage(data, username, password)
-                    "result" -> handleResultMessage(ignoredChannels, data)
+                    "connected" -> handleConnectedMessage(data, configuration.username, configuration.password)
+                    "result" -> handleResultMessage(configuration.ignoredChannels, data)
                     "ping" -> handlePingMessage(data)
-                    "changed" -> handleChangedMessage(ignoredChannels, username, data)
+                    "changed" -> handleChangedMessage(configuration.ignoredChannels, configuration.username, data)
                     else -> {
                         logger().info("Unknown message type \"{}\", ignoring message", messageType)
                         continue
