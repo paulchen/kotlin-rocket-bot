@@ -71,8 +71,6 @@ docker {
 }
 
 tasks.create("createVersionFile") {
-    apply(plugin = "com.palantir.git-version")
-
     doLast {
         val gitVersion: groovy.lang.Closure<String> by project.extra
         val targetDirectory = File("build/generated/resources")
