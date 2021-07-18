@@ -45,7 +45,8 @@ class RoomMessageStreamHandler : AbstractStreamHandler() {
             .flatMap { it.handle(message) }
             .map {
                 val id = UUID.randomUUID().toString()
-                SendMessageMessage(id = id, params = listOf(mapOf("_id" to id, "rid" to roomId, "msg" to it)))
+                val botTag = mapOf("i" to "paulchen/kotlin-rocketBot")
+                SendMessageMessage(id = id, params = listOf(mapOf("_id" to id, "rid" to roomId, "msg" to it, "bot" to botTag)))
             }
     }
 }
