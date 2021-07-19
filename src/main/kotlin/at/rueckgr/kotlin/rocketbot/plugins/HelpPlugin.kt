@@ -33,5 +33,5 @@ class HelpPlugin : AbstractPlugin() {
             .getByCommand(command)
             .flatMap { it.getHelp(command) }
             .joinToString("\n")
-    )
+        ).filter { it.isNotBlank() }
 }
