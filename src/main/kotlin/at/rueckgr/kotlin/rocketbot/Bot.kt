@@ -1,7 +1,6 @@
 package at.rueckgr.kotlin.rocketbot
 
 import at.rueckgr.kotlin.rocketbot.handler.message.AbstractMessageHandler
-import at.rueckgr.kotlin.rocketbot.plugins.AbstractPlugin
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
 import at.rueckgr.kotlin.rocketbot.webservice.ConnectMessage
@@ -75,7 +74,7 @@ class Bot(private val configuration: BotConfiguration) : Logging {
                         ?.forEach { sendMessage(it) }
                 }
                 catch (e: Exception) {
-                    logger().error(e)
+                    logger().error(e.message, e)
                 }
             }
         }
