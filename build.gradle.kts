@@ -91,8 +91,5 @@ tasks.processResources {
 }
 
 tasks.dockerPrepare {
-    dependsOn(tasks.distTar)
-}
-tasks.docker {
-    dependsOn(tasks.distTar)
+    dependsOn(tasks.build)
 }
