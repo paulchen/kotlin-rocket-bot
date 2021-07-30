@@ -62,7 +62,7 @@ tasks.withType<KotlinCompile>() {
 }
 
 application {
-    mainClassName = "at.rueckgr.kotlin.rocketbot.MainKt"
+    mainClass.set("at.rueckgr.kotlin.rocketbot.MainKt")
 }
 
 distributions {
