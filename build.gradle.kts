@@ -33,6 +33,8 @@ sourceSets {
 dependencies {
     implementation("io.ktor:ktor-client-websockets:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation("io.ktor:ktor-server-netty:$ktorVersion")
+    implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("commons-codec:commons-codec:${commonsCodecVersion}")
     implementation("com.google.code.gson:gson:$gsonVersion")
@@ -41,6 +43,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.10")
     implementation("org.apache.commons:commons-lang3:3.12.0")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.4")
 
     testImplementation(kotlin("test"))
     testImplementation("junit:junit:4.13.2")

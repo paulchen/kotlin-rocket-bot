@@ -8,33 +8,42 @@ import com.google.gson.Gson
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.websocket.*
+import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.http.cio.websocket.*
+import io.ktor.routing.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.reflections.Reflections
 
 
 class Bot(private val configuration: BotConfiguration) : Logging {
-    fun launch() {
-        logger().info("Configuration: host={}, username={}, ignoredChannels={}",
-            configuration.host, configuration.username, configuration.ignoredChannels)
+    fun start() {
+        logger().info(
+            "Configuration: host={}, username={}, ignoredChannels={}",
+            configuration.host, configuration.username, configuration.ignoredChannels
+        )
 
+        Webservice().start()
+        runBlocking { runWebsocketClient() }
+    }
+
+    private suspend fun runWebsocketClient() {
         val client = HttpClient(CIO) {
             install(WebSockets)
         }
-        runBlocking {
-            client.wss(
-                method = HttpMethod.Get,
-                host = configuration.host,
-                path = "/websocket"
-            ) {
-                val messageOutputRoutine = launch { receiveMessages() }
-                val userInputRoutine = launch { sendMessage(ConnectMessage()) }
+        client.wss(
+            method = HttpMethod.Get,
+            host = configuration.host,
+            path = "/websocket"
+        ) {
+            val messageOutputRoutine = launch { receiveMessages() }
+            val userInputRoutine = launch { sendMessage(ConnectMessage()) }
 
-                userInputRoutine.join()
-                messageOutputRoutine.join()
-            }
+            userInputRoutine.join()
+            messageOutputRoutine.join()
         }
     }
     private suspend fun DefaultClientWebSocketSession.sendMessage(message: Any) {
