@@ -25,7 +25,7 @@ repositories {
 sourceSets {
     main {
         resources {
-            srcDirs("src/main/resources", "build/generated/resources")
+            srcDirs("build/generated/resources")
         }
     }
 }
