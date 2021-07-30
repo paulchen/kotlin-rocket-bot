@@ -15,7 +15,8 @@ class DateTimeDifferenceCalculatorTest extends Specification {
             def to = LocalDateTime.of(LocalDate.of(year2, month2, day2), LocalTime.of(hour2, minute2, second2))
 
         when:
-            def result = d.formatTimeDifference(from, to)
+            // TODO add test for third parameter of formatTimeDifference()
+            def result = d.formatTimeDifference(from, to, [])
 
         then:
             result == expectedResult
@@ -25,9 +26,9 @@ class DateTimeDifferenceCalculatorTest extends Specification {
             2021  | 7      | 12   | 20    | 56      | 16      | 2021  | 7      | 12   | 20    | 56      | 17      | "1 second from now"
             2021  | 7      | 12   | 20    | 56      | 16      | 2021  | 7      | 12   | 20    | 56      | 15      | "1 second ago"
             2021  | 7      | 12   | 20    | 56      | 16      | 2021  | 7      | 12   | 20    | 56      | 18      | "2 seconds from now"
-            2021  | 7      | 12   | 20    | 56      | 16      | 2021  | 7      | 12   | 20    | 57      | 18      | "1 minute, 2 seconds from now"
-            2021  | 7      | 12   | 20    | 56      | 16      | 2022  | 9      | 14   | 22    | 59      | 35      | "1 year, 2 months, 2 days, 2 hours, 3 minutes, 19 seconds from now"
-            2022  | 9      | 14   | 22    | 59      | 35      | 2021  | 7      | 12   | 20    | 56      | 16      | "1 year, 2 months, 2 days, 2 hours, 3 minutes, 19 seconds ago"
-            2021  | 7      | 12   | 20    | 56      | 16      | 2024  | 5      | 8    | 16    | 37      | 4       | "2 years, 9 months, 25 days, 19 hours, 40 minutes, 48 seconds from now"
+            2021  | 7      | 12   | 20    | 56      | 16      | 2021  | 7      | 12   | 20    | 57      | 18      | "1 minute and 2 seconds from now"
+            2021  | 7      | 12   | 20    | 56      | 16      | 2022  | 9      | 14   | 22    | 59      | 35      | "1 year, 2 months, 2 days, 2 hours, 3 minutes, and 19 seconds from now"
+            2022  | 9      | 14   | 22    | 59      | 35      | 2021  | 7      | 12   | 20    | 56      | 16      | "1 year, 2 months, 2 days, 2 hours, 3 minutes, and 19 seconds ago"
+            2021  | 7      | 12   | 20    | 56      | 16      | 2024  | 5      | 8    | 16    | 37      | 4       | "2 years, 9 months, 25 days, 19 hours, 40 minutes, and 48 seconds from now"
     }
 }
