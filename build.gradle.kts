@@ -41,6 +41,8 @@ dependencies {
     implementation("org.reflections:reflections:$reflectionsVersion")
     implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
+    implementation("org.slf4j:slf4j-api:1.7.32")
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.10")
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.4")
