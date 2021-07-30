@@ -90,6 +90,9 @@ tasks.processResources {
     dependsOn("createVersionFile")
 }
 
+tasks.dockerPrepare {
+    dependsOn(tasks.distTar)
+}
 tasks.docker {
     dependsOn(tasks.distTar)
 }
