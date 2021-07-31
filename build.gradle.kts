@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val ktorVersion = "1.6.1"
 val coroutinesVersion = "1.3.8"
 var commonsCodecVersion = "1.15"
-val gsonVersion = "2.8.7"
 val reflectionsVersion = "0.9.12"
 val log4jVersion = "2.14.1"
 
@@ -37,7 +36,6 @@ dependencies {
     implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("commons-codec:commons-codec:${commonsCodecVersion}")
-    implementation("com.google.code.gson:gson:$gsonVersion")
     implementation("org.reflections:reflections:$reflectionsVersion")
     implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")

@@ -6,7 +6,6 @@ import at.rueckgr.kotlin.rocketbot.util.logger
 import at.rueckgr.kotlin.rocketbot.webservice.ConnectMessage
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.Gson
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.websocket.*
@@ -44,11 +43,12 @@ class Bot(private val configuration: BotConfiguration) : Logging {
             messageOutputRoutine.join()
         }
     }
+
     private suspend fun DefaultClientWebSocketSession.sendMessage(message: Any) {
         // TODO implement token refresh
 
-        // TODO use jackson for this
-        val jsonMessage = Gson().toJson(message)
+        @Suppress("BlockingMethodInNonBlockingContext")
+        val jsonMessage = ObjectMapper().writeValueAsString(message)
         logger().debug("Outgoing message: {}", jsonMessage)
         send(Frame.Text(jsonMessage))
     }
