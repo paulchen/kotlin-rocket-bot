@@ -6,6 +6,7 @@ import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
 import at.rueckgr.kotlin.rocketbot.webservice.SendMessageMessage
 import at.rueckgr.kotlin.rocketbot.webservice.UnsubscribeMessage
+import com.fasterxml.jackson.databind.JsonNode
 import org.apache.commons.lang3.StringUtils
 import java.util.*
 
@@ -15,35 +16,29 @@ class RoomMessageStreamHandler : AbstractStreamHandler(), Logging {
     override fun getHandledStream() = "stream-room-messages"
 
     @Suppress("UNCHECKED_CAST")
-    override fun handleStreamMessage(configuration: BotConfiguration, data: Map<String, Any>): List<List<Any>> {
-        val fields = data["fields"] as Map<String, Any>
-        val args = fields["args"] as List<Map<String, Any>>
+    override fun handleStreamMessage(configuration: BotConfiguration, data: JsonNode): List<List<Any>> {
+        val args = data.get("fields")?.get("args") ?: emptyList()
 
         return args.map { handleStreamMessageItem(configuration, it) }
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun handleStreamMessageItem(configuration: BotConfiguration, it: Map<String, Any>): List<Any> {
-        val message = it["msg"] as String
-        val roomId = it["rid"] as String
+    private fun handleStreamMessageItem(configuration: BotConfiguration, it: JsonNode): List<Any> {
+        val message = it.get("msg").textValue()
+        val roomId = it.get("rid").textValue()
 
-        if ("t" in it && it["t"] == "ru" && message == configuration.username) {
+        val t = it.get("t") ?: ""
+        if (t == "ru" && message == configuration.username) {
             return listOf(UnsubscribeMessage(id = "subscribe-$roomId"))
         }
 
-        if("bot" in it) {
-            val botData = it["bot"] as Map<String, Any>
-            if ("i" in botData) {
-                val i = botData["it"] as String?
-                if (StringUtils.isNotBlank(i)) {
-                    logger().debug("Message comes from self-declared bot, ignoring")
-                    return emptyList()
-                }
-            }
+        val i = it.get("bot")?.get("i")?.textValue() ?: ""
+        if (StringUtils.isNotBlank(i)) {
+            logger().debug("Message comes from self-declared bot, ignoring")
+            return emptyList()
         }
 
-        val userData = it["u"] as Map<String, String>
-        val username = userData["username"] ?: ""
+        val username = it.get("u")?.get("username")?.textValue() ?: ""
         return handleUserMessage(configuration.username, roomId, username, message.trim())
     }
 

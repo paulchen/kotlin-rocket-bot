@@ -2,24 +2,28 @@ package at.rueckgr.kotlin.rocketbot.handler.stream
 
 import at.rueckgr.kotlin.rocketbot.BotConfiguration
 import at.rueckgr.kotlin.rocketbot.webservice.SubscribeMessage
+import com.fasterxml.jackson.databind.JsonNode
 
 class NotifyUserStreamHandler : AbstractStreamHandler() {
     override fun getHandledStream() = "stream-notify-user"
 
     @Suppress("UNCHECKED_CAST")
-    override fun handleStreamMessage(configuration: BotConfiguration, data: Map<String, Any>): List<List<Any>> {
-        val fields = data["fields"] as Map<String, Any>
-        val args = fields["args"] as List<Any>
+    override fun handleStreamMessage(configuration: BotConfiguration, data: JsonNode): List<List<Any>> {
+        val args: JsonNode = data.get("fields")?.get("args") ?: return emptyList()
 
-        if (args[0] != "inserted") {
+        if (args.get(0).textValue() != "inserted") {
             return emptyList()
         }
 
-        return args.subList(1, args.size).map {
-            val details = it as Map<String, String>
-            val roomId = details["_id"]
+        val items = ArrayList<JsonNode>()
+        for (i in 1 until args.size()) {
+            items.add(args.get(i))
+        }
 
-            if (configuration.ignoredChannels.contains(details["fname"])) {
+        return items.map {
+            val roomId = it.get("_id")
+
+            if (configuration.ignoredChannels.contains(it.get("fname")?.textValue())) {
                 emptyList()
             }
             else {
@@ -31,5 +35,6 @@ class NotifyUserStreamHandler : AbstractStreamHandler() {
                     )
                 )
             }
-        }    }
+        }
+    }
 }

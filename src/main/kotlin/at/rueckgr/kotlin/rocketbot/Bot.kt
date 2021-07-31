@@ -4,16 +4,14 @@ import at.rueckgr.kotlin.rocketbot.handler.message.AbstractMessageHandler
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
 import at.rueckgr.kotlin.rocketbot.webservice.ConnectMessage
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.websocket.*
-import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.http.cio.websocket.*
-import io.ktor.routing.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.reflections.Reflections
@@ -49,6 +47,7 @@ class Bot(private val configuration: BotConfiguration) : Logging {
     private suspend fun DefaultClientWebSocketSession.sendMessage(message: Any) {
         // TODO implement token refresh
 
+        // TODO use jackson for this
         val jsonMessage = Gson().toJson(message)
         logger().debug("Outgoing message: {}", jsonMessage)
         send(Frame.Text(jsonMessage))
@@ -66,12 +65,8 @@ class Bot(private val configuration: BotConfiguration) : Logging {
                 val text = message.readText()
                 logger().debug("Incoming message: {}", text)
 
-                @Suppress("UNCHECKED_CAST") val data = Gson().fromJson(text, Object::class.java) as Map<String, Any>
-                if("msg" !in data) {
-                    continue
-                }
-
-                val messageType = data["msg"]
+                @Suppress("BlockingMethodInNonBlockingContext") val data = ObjectMapper().readTree(text)
+                val messageType = data.get("msg")?.textValue() ?: continue
                 if(messageType !in handlers) {
                     logger().info("Unknown message type \"{}\", ignoring message", messageType)
                     continue
@@ -79,7 +74,7 @@ class Bot(private val configuration: BotConfiguration) : Logging {
 
                 try {
                     handlers[messageType]
-                        ?.handleMessage(configuration, data)
+                        ?.handleMessage(configuration, data, getTimestamp(data))
                         ?.forEach { sendMessage(it) }
                 }
                 catch (e: Exception) {
@@ -90,6 +85,18 @@ class Bot(private val configuration: BotConfiguration) : Logging {
         catch (e: Exception) {
             logger().error("Error while receiving", e)
         }
+    }
+
+    private fun getTimestamp(jsonNode: JsonNode): Long {
+        val dateNode = jsonNode.get("fields")
+            ?.get("args")
+            ?.get(0)
+            ?.get("ts")
+            ?.get("\$date") ?: return 0L
+        if (dateNode.isLong) {
+            return dateNode.asLong()
+        }
+        return 0L
     }
 }
 
