@@ -26,7 +26,13 @@ class Bot(private val configuration: BotConfiguration) : Logging {
         )
 
         val webservice = Webservice()
-        webservice.start()
+        try {
+            webservice.start()
+        }
+        catch (e: Exception) {
+            logger().error("Error while creating webservice", e)
+            return
+        }
         runBlocking { runWebsocketClient() }
 
         logger().debug("Shutting down bot")
