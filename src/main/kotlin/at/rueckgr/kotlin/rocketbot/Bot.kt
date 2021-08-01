@@ -36,24 +36,29 @@ class Bot(private val configuration: BotConfiguration) : Logging {
     private suspend fun runWebsocketClient() {
         var terminate = false
         while (!terminate) {
-            val client = HttpClient(CIO) {
-                install(WebSockets)
-            }
-            client.wss(
-                method = HttpMethod.Get,
-                host = configuration.host,
-                path = "/websocket"
-            ) {
-                try {
-                    val messageOutputRoutine = async { receiveMessages() }
-                    val userInputRoutine = async { sendMessage(ConnectMessage()) }
+            try {
+                val client = HttpClient(CIO) {
+                    install(WebSockets)
+                }
+                client.wss(
+                    method = HttpMethod.Get,
+                    host = configuration.host,
+                    path = "/websocket"
+                ) {
+                    try {
+                        val messageOutputRoutine = async { receiveMessages() }
+                        val userInputRoutine = async { sendMessage(ConnectMessage()) }
 
-                    userInputRoutine.await()
-                    messageOutputRoutine.await()
+                        userInputRoutine.await()
+                        messageOutputRoutine.await()
+                    } catch (e: Exception) {
+                        terminate = true
+                    }
                 }
-                catch (e: Exception) {
-                    terminate = true
-                }
+            }
+            catch (e: Exception) {
+                logger().error("Error while connecting", e)
+                terminate = true
             }
 
             if (!terminate) {
