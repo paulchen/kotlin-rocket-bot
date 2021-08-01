@@ -14,6 +14,7 @@ import io.ktor.client.features.websocket.*
 import io.ktor.http.*
 import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.reflections.Reflections
 
@@ -41,6 +42,7 @@ class Bot(private val configuration: BotConfiguration) : Logging {
 
     private suspend fun runWebsocketClient() {
         var terminate = false
+        var reconnect = false
         while (!terminate) {
             try {
                 val client = HttpClient(CIO) {
@@ -63,12 +65,20 @@ class Bot(private val configuration: BotConfiguration) : Logging {
                 }
             }
             catch (e: Exception) {
-                logger().error("Error while connecting", e)
-                terminate = true
+                if (reconnect) {
+                    logger().error("Error during reconnect, waiting 30 seconds", e)
+                    delay(30000L)
+                }
+                else {
+                    logger().error("Error while connecting", e)
+                    terminate = true
+                }
+
             }
 
             if (!terminate) {
                 logger().info("Websocket closed, trying to reconnect")
+                reconnect = true
             }
         }
     }
