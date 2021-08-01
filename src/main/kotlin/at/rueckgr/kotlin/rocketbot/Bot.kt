@@ -1,5 +1,6 @@
 package at.rueckgr.kotlin.rocketbot
 
+import at.rueckgr.kotlin.rocketbot.exception.LoginException
 import at.rueckgr.kotlin.rocketbot.handler.message.AbstractMessageHandler
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
@@ -23,8 +24,12 @@ class Bot(private val configuration: BotConfiguration) : Logging {
             configuration.host, configuration.username, configuration.ignoredChannels
         )
 
-        Webservice().start()
+        val webservice = Webservice()
+        webservice.start()
         runBlocking { runWebsocketClient() }
+
+        logger().debug("Shutting down bot")
+        webservice.stop()
     }
 
     private suspend fun runWebsocketClient() {
@@ -76,6 +81,10 @@ class Bot(private val configuration: BotConfiguration) : Logging {
                     handlers[messageType]
                         ?.handleMessage(configuration, data, getTimestamp(data))
                         ?.forEach { sendMessage(it) }
+                }
+                catch (e: LoginException) {
+                    logger().error(e.message, e)
+                    return
                 }
                 catch (e: Exception) {
                     logger().error(e.message, e)
