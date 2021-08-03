@@ -18,6 +18,7 @@ group = "at.rueckgr.kotlin.rocketbot"
 version = "1.0-SNAPSHOT"
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
@@ -44,6 +45,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.10")
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.4")
+    implementation("at.rueckgr.kotlin.rocketbot:kotlin-rocket-lib:1.0-SNAPSHOT")
 
     testImplementation(kotlin("test"))
     testImplementation("junit:junit:4.13.2")
