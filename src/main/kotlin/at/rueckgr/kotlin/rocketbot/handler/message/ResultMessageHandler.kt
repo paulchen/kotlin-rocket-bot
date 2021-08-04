@@ -1,12 +1,14 @@
 package at.rueckgr.kotlin.rocketbot.handler.message
 
 import at.rueckgr.kotlin.rocketbot.BotConfiguration
+import at.rueckgr.kotlin.rocketbot.RoomMessageHandler
 import at.rueckgr.kotlin.rocketbot.exception.LoginException
 import at.rueckgr.kotlin.rocketbot.websocket.RoomsGetMessage
 import at.rueckgr.kotlin.rocketbot.websocket.SubscribeMessage
 import com.fasterxml.jackson.databind.JsonNode
 
-class ResultMessageHandler : AbstractMessageHandler() {
+class ResultMessageHandler(roomMessageHandler: RoomMessageHandler, botConfiguration: BotConfiguration)
+        : AbstractMessageHandler(roomMessageHandler, botConfiguration) {
     override fun getHandledMessage() = "result"
 
     override fun handleMessage(configuration: BotConfiguration, data: JsonNode, timestamp: Long) = when (data.get("id")?.textValue()) {

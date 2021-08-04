@@ -19,11 +19,11 @@ import kotlinx.coroutines.runBlocking
 import org.reflections.Reflections
 
 
-class Bot(private val configuration: BotConfiguration) : Logging {
+class Bot(private val botConfiguration: BotConfiguration, private val roomMessageHandler: RoomMessageHandler) : Logging {
     fun start() {
         logger().info(
             "Configuration: host={}, username={}, ignoredChannels={}",
-            configuration.host, configuration.username, configuration.ignoredChannels
+            botConfiguration.host, botConfiguration.username, botConfiguration.ignoredChannels
         )
 
         val webservice = Webservice()
@@ -50,7 +50,7 @@ class Bot(private val configuration: BotConfiguration) : Logging {
                 }
                 client.wss(
                     method = HttpMethod.Get,
-                    host = configuration.host,
+                    host = botConfiguration.host,
                     path = "/websocket"
                 ) {
                     try {
@@ -95,7 +95,11 @@ class Bot(private val configuration: BotConfiguration) : Logging {
     private suspend fun DefaultClientWebSocketSession.receiveMessages() {
         val handlers = Reflections(AbstractMessageHandler::class.java.packageName)
             .getSubTypesOf(AbstractMessageHandler::class.java)
-            .map { it.getDeclaredConstructor().newInstance() }
+            .map {
+                it
+                    .getDeclaredConstructor(RoomMessageHandler::class.java, BotConfiguration::class.java)
+                    .newInstance(roomMessageHandler, botConfiguration)
+            }
             .associateBy { it.getHandledMessage() }
 
 
@@ -114,7 +118,7 @@ class Bot(private val configuration: BotConfiguration) : Logging {
 
                 try {
                     handlers[messageType]
-                        ?.handleMessage(configuration, data, getTimestamp(data))
+                        ?.handleMessage(botConfiguration, data, getTimestamp(data))
                         ?.forEach { sendMessage(it) }
                 }
                 catch (e: LoginException) {

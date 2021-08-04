@@ -1,7 +1,7 @@
 package at.rueckgr.kotlin.rocketbot.handler.stream
 
 import at.rueckgr.kotlin.rocketbot.BotConfiguration
-import at.rueckgr.kotlin.rocketbot.handler.PluginProvider
+import at.rueckgr.kotlin.rocketbot.RoomMessageHandler
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
 import at.rueckgr.kotlin.rocketbot.websocket.SendMessageMessage
@@ -10,9 +10,8 @@ import com.fasterxml.jackson.databind.JsonNode
 import org.apache.commons.lang3.StringUtils
 import java.util.*
 
-class RoomMessageStreamHandler : AbstractStreamHandler(), Logging {
-    private val pluginProvider = PluginProvider.instance
-
+class RoomMessageStreamHandler(roomMessageHandler: RoomMessageHandler, botConfiguration: BotConfiguration)
+        : AbstractStreamHandler(roomMessageHandler, botConfiguration), Logging {
     override fun getHandledStream() = "stream-room-messages"
 
     @Suppress("UNCHECKED_CAST")
@@ -47,18 +46,12 @@ class RoomMessageStreamHandler : AbstractStreamHandler(), Logging {
             logger().debug("Message comes from myself, ignoring")
             return emptyList()
         }
-        if (!message.startsWith("!")) {
-            logger().debug("Message contains no command, ignoring")
-            return emptyList()
-        }
 
-        val command = message.split(" ")[0].substring(1)
-        return pluginProvider
-            .getByCommand(command)
-            .flatMap { it.handle(message) }
+        return roomMessageHandler
+            .handle(username, message)
             .map {
                 val id = UUID.randomUUID().toString()
-                val botTag = mapOf("i" to "paulchen/kotlin-rocketBot")
+                val botTag = mapOf("i" to botConfiguration.host)
                 SendMessageMessage(id = id, params = listOf(mapOf("_id" to id, "rid" to roomId, "msg" to it, "bot" to botTag)))
             }
     }

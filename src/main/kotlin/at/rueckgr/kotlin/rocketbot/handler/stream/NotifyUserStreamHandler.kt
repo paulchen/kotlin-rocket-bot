@@ -1,10 +1,12 @@
 package at.rueckgr.kotlin.rocketbot.handler.stream
 
 import at.rueckgr.kotlin.rocketbot.BotConfiguration
+import at.rueckgr.kotlin.rocketbot.RoomMessageHandler
 import at.rueckgr.kotlin.rocketbot.websocket.SubscribeMessage
 import com.fasterxml.jackson.databind.JsonNode
 
-class NotifyUserStreamHandler : AbstractStreamHandler() {
+class NotifyUserStreamHandler(roomMessageHandler: RoomMessageHandler, botConfiguration: BotConfiguration)
+        : AbstractStreamHandler(roomMessageHandler, botConfiguration) {
     override fun getHandledStream() = "stream-notify-user"
 
     @Suppress("UNCHECKED_CAST")
