@@ -1,14 +1,18 @@
 package at.rueckgr.kotlin.rocketbot.plugins
 
+import at.rueckgr.kotlin.rocketbot.util.LibraryVersion
+
 class VersionPlugin : AbstractPlugin() {
     private val revision: String = when (val resource = VersionPlugin::class.java.getResource("/git-revision")) {
         null -> "unknown"
         else -> resource.readText().trim()
     }
 
+    private val libraryRevision = LibraryVersion.revision
+
     override fun getCommands(): List<String> = listOf("version")
 
-    override fun handle(message: String): List<String> = listOf("kotlin-rocket-bot revision `$revision`")
+    override fun handle(message: String): List<String> = listOf("*kotlin-rocket-bot* revision `$revision` (*kotlin-rocket-lib* revision `$libraryRevision`)")
 
     override fun getHelp(command: String): List<String> =
         listOf("`!version` outputs the Git revision of kotlin-rocket-bot currently running")
