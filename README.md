@@ -2,15 +2,20 @@
 
 [Rocket.Chat](https://rocket.chat/) bot implemented in Kotlin. Utilizes Rocket.Chat's websocket-based [Realtime API](https://developer.rocket.chat/api/realtime-api).
 
-[![Build Status](https://travis-ci.com/paulchen/kotlin-rocket-bot.svg?branch=master)](https://travis-ci.com/paulchen/kotlin-rocket-bot)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=paulchen_kotlin-rocket-bot&metric=alert_status)](https://sonarcloud.io/dashboard?id=paulchen_kotlin-rocket-bot)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-Build local Docker image (`kotlin-rocket-bot:latest`) with:
+This project depends on the library from the project [paulchen/kotlin-rocket-lib](https://github.com/paulchen/kotlin-rocket-lib),
+so make sure to check that one out as well. Build `kotlin-rocket-lib` and deploy it
+to the local Maven repository by running
+
+`gradlew publishToMavenLocal`
+
+Then, build the local Docker image of `kotlin-rocket-bot` (`kotlin-rocket-bot:latest`) with:
 
 `gradlew docker`
 
-Run with:
+Run the Docker image with:
 
 `docker run -it -e "ROCKETCHAT_HOST=<host>" -e "ROCKETCHAT_USERNAME=<username>" -e ROCKETCHAT_PASSWORD="<password>" kotlin-rocket-bot:latest`
 

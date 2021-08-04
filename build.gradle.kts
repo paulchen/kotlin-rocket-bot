@@ -1,13 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val ktorVersion = "1.6.1"
-val coroutinesVersion = "1.3.8"
-var commonsCodecVersion = "1.15"
 val reflectionsVersion = "0.9.12"
-val log4jVersion = "2.14.1"
+val coroutinesVersion = "1.3.8"
+val ktorVersion = "1.6.1"
 
 plugins {
-    kotlin("jvm") version "1.5.10"
+    kotlin("jvm") version "1.5.21"
     application
     id("com.palantir.docker") version "0.26.0"
     groovy
@@ -18,6 +16,7 @@ group = "at.rueckgr.kotlin.rocketbot"
 version = "1.0-SNAPSHOT"
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
@@ -30,20 +29,16 @@ sourceSets {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-client-websockets:$ktorVersion")
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
+    implementation("at.rueckgr.kotlin.rocketbot:kotlin-rocket-lib:1.0-SNAPSHOT")
+
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
-    implementation("io.ktor:ktor-server-netty:$ktorVersion")
-    implementation("io.ktor:ktor-jackson:$ktorVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
-    implementation("commons-codec:commons-codec:${commonsCodecVersion}")
-    implementation("org.reflections:reflections:$reflectionsVersion")
-    implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
-    implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
-    implementation("org.slf4j:slf4j-api:1.7.32")
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.10")
+
     implementation("org.apache.commons:commons-lang3:3.12.0")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.4")
+    implementation("org.reflections:reflections:$reflectionsVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
 
     testImplementation(kotlin("test"))
     testImplementation("junit:junit:4.13.2")
@@ -55,7 +50,7 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.withType<KotlinCompile>() {
+tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "11"
 }
 
