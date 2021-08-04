@@ -5,7 +5,7 @@ import at.rueckgr.kotlin.rocketbot.exception.TerminateWebsocketClientException
 import at.rueckgr.kotlin.rocketbot.handler.message.AbstractMessageHandler
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
-import at.rueckgr.kotlin.rocketbot.webservice.ConnectMessage
+import at.rueckgr.kotlin.rocketbot.websocket.ConnectMessage
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.client.*

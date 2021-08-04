@@ -1,7 +1,7 @@
 package at.rueckgr.kotlin.rocketbot.handler.message
 
 import at.rueckgr.kotlin.rocketbot.BotConfiguration
-import at.rueckgr.kotlin.rocketbot.webservice.PongMessage
+import at.rueckgr.kotlin.rocketbot.websocket.PongMessage
 import com.fasterxml.jackson.databind.JsonNode
 import java.time.LocalDateTime
 

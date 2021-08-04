@@ -1,4 +1,4 @@
-package at.rueckgr.kotlin.rocketbot.webservice
+package at.rueckgr.kotlin.rocketbot.websocket
 
 data class LoginMessage(val msg: String = "method", val method: String = "login", val id: String, val params: Array<WebserviceRequestParam>)
 

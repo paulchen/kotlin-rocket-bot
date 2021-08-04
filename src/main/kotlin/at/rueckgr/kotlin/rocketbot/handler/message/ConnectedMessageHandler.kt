@@ -1,10 +1,10 @@
 package at.rueckgr.kotlin.rocketbot.handler.message
 
 import at.rueckgr.kotlin.rocketbot.BotConfiguration
-import at.rueckgr.kotlin.rocketbot.webservice.LoginMessage
-import at.rueckgr.kotlin.rocketbot.webservice.PasswordData
-import at.rueckgr.kotlin.rocketbot.webservice.UserData
-import at.rueckgr.kotlin.rocketbot.webservice.WebserviceRequestParam
+import at.rueckgr.kotlin.rocketbot.websocket.LoginMessage
+import at.rueckgr.kotlin.rocketbot.websocket.PasswordData
+import at.rueckgr.kotlin.rocketbot.websocket.UserData
+import at.rueckgr.kotlin.rocketbot.websocket.WebserviceRequestParam
 import com.fasterxml.jackson.databind.JsonNode
 import org.apache.commons.codec.digest.DigestUtils
 

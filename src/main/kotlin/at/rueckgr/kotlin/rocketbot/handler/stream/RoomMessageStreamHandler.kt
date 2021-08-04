@@ -4,8 +4,8 @@ import at.rueckgr.kotlin.rocketbot.BotConfiguration
 import at.rueckgr.kotlin.rocketbot.handler.PluginProvider
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
-import at.rueckgr.kotlin.rocketbot.webservice.SendMessageMessage
-import at.rueckgr.kotlin.rocketbot.webservice.UnsubscribeMessage
+import at.rueckgr.kotlin.rocketbot.websocket.SendMessageMessage
+import at.rueckgr.kotlin.rocketbot.websocket.UnsubscribeMessage
 import com.fasterxml.jackson.databind.JsonNode
 import org.apache.commons.lang3.StringUtils
 import java.util.*

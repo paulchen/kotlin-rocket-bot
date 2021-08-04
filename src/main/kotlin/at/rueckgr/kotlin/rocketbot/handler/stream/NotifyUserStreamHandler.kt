@@ -1,7 +1,7 @@
 package at.rueckgr.kotlin.rocketbot.handler.stream
 
 import at.rueckgr.kotlin.rocketbot.BotConfiguration
-import at.rueckgr.kotlin.rocketbot.webservice.SubscribeMessage
+import at.rueckgr.kotlin.rocketbot.websocket.SubscribeMessage
 import com.fasterxml.jackson.databind.JsonNode
 
 class NotifyUserStreamHandler : AbstractStreamHandler() {
