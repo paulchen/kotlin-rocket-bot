@@ -5,6 +5,7 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
+import org.apache.commons.text.StringEscapeUtils
 
 
 class SloganPlugin : AbstractPlugin() {
@@ -24,11 +25,12 @@ class SloganPlugin : AbstractPlugin() {
             }
         }
 
-        return listOf(
+        val responseWithoutHtml = StringEscapeUtils.unescapeHtml4(
             response
                 .replace("""<[^>]*>""".toRegex(), "")
-                .replace("Sloganizer", "*$name*")
         )
+
+        return listOf(responseWithoutHtml.replace("Sloganizer", "*$name*"))
     }
 
     override fun getHelp(command: String) = listOf(
