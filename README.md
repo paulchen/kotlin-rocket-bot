@@ -43,6 +43,7 @@ ExecStart=/usr/bin/docker run \
     -e ROCKETCHAT_USERNAME=<username> \
     -e ROCKETCHAT_PASSWORD=<password> \
     -e IGNORED_CHANNELS=general \
+    -e TZ=Europe/Vienna \
     --net=rocketchat_default \
     -p 127.0.0.1:8081:8080 \
     kotlin-rocket-bot:latest
@@ -53,6 +54,8 @@ ExecStop=-/usr/bin/docker rm kotlin-rocket-bot
 [Install]
 WantedBy=multi-user.target
 ```
+
+Remember to set the TZ environment variable appropriately to your needs.
 
 The above systemd unit will expose the container's port 8080 to localhost:8081.
 This port features a webservice intended to be called by the Icinga check script `misc/check_bot.sh`.
