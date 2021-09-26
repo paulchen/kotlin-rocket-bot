@@ -2,8 +2,12 @@ package at.rueckgr.kotlin.rocketbot
 
 import org.apache.commons.lang3.StringUtils
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
+import kotlin.math.abs
 
 class DateTimeDifferenceCalculator {
+    private val NOW_MARGIN = 5L
+
     enum class TimeUnit(val plusFunction: (LocalDateTime, Long) -> LocalDateTime, val singular: String, val plural: String) {
         YEAR(LocalDateTime::plusYears, "year", "years"),
         MONTH(LocalDateTime::plusMonths, "month", "months"),
@@ -14,6 +18,10 @@ class DateTimeDifferenceCalculator {
     }
 
     fun formatTimeDifference(from: LocalDateTime, to: LocalDateTime, ignoredTimeUnits: List<TimeUnit> = emptyList()): String {
+        if (abs(ChronoUnit.SECONDS.between(from, to)) < NOW_MARGIN) {
+            return "now"
+        }
+
         val (startDate, endDate, suffix) = when (from.isAfter(to)) {
             false -> Triple(from, to, "from now")
             true -> Triple(to, from, "ago")
