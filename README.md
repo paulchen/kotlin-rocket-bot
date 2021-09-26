@@ -43,6 +43,7 @@ ExecStart=/usr/bin/docker run \
     -e ROCKETCHAT_USERNAME=<username> \
     -e ROCKETCHAT_PASSWORD=<password> \
     -e IGNORED_CHANNELS=general \
+    --net=rocketchat_default \
     -p 127.0.0.1:8081:8080 \
     kotlin-rocket-bot:latest
 
