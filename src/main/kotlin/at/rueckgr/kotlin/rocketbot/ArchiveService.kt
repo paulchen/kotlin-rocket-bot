@@ -7,11 +7,11 @@ import io.ktor.client.features.json.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
 import java.net.URLEncoder
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 data class UserDetails(val user: User)
 
-data class User(val username: String, val timestamp: LocalDateTime?)
+data class User(val username: String, val timestamp: ZonedDateTime?)
 
 class ArchiveService {
     fun getUserDetails(username: String): UserDetails? {
