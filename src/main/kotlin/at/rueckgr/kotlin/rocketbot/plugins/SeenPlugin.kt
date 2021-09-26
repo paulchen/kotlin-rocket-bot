@@ -30,7 +30,7 @@ class SeenPlugin : AbstractPlugin() {
             "*${userDetails.user.username}* has never been active."
         }
         else {
-            val localDateTime = LocalDateTime.ofInstant(userDetails.user.timestamp.toInstant(), ZoneId.systemDefault())
+            val localDateTime = LocalDateTime.ofInstant(userDetails.user.timestamp.toInstant(), ZoneId.of("Europe/Vienna"))
             val timestamp = TimestampFormatter().formatTimestamp(localDateTime)
             val ago = DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), localDateTime)
             "*${userDetails.user.username}* wrote their last message at $timestamp ($ago)."
