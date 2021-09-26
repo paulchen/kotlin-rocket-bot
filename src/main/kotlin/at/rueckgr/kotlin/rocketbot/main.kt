@@ -11,7 +11,7 @@ fun main() {
     val password = System.getenv("ROCKETCHAT_PASSWORD") ?: return
     val ignoredChannels = System.getenv("IGNORED_CHANNELS")?.split(",") ?: emptyList()
 
-    Bot(BotConfiguration(host, username, password, ignoredChannels, "paulchen/kotlin-rocket-bot"), Handler()).start()
+    Bot(BotConfiguration(host, username, password, ignoredChannels, "paulchen/kotlin-rocket-bot", 8080), Handler()).start()
 
 }
 

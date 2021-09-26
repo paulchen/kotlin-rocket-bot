@@ -35,6 +35,8 @@ dependencies {
     implementation("at.rueckgr.kotlin.rocketbot:kotlin-rocket-lib:1.0-SNAPSHOT")
 
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation("io.ktor:ktor-client-jackson:$ktorVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.4")
 
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("org.apache.commons:commons-text:1.9")
