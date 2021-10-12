@@ -1,13 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val reflectionsVersion = "0.9.12"
+val reflectionsVersion = "0.10.1"
 val coroutinesVersion = "1.5.2"
-val ktorVersion = "1.6.3"
+val ktorVersion = "1.6.4"
 
 plugins {
     kotlin("jvm") version "1.5.31"
     application
-    id("com.palantir.docker") version "0.29.0"
+    id("com.palantir.docker") version "0.30.0"
     groovy
     id("com.palantir.git-version") version "0.12.3"
 }
@@ -36,7 +36,7 @@ dependencies {
 
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.5")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0")
 
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("org.apache.commons:commons-text:1.9")
@@ -45,7 +45,7 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.21")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.codehaus.groovy:groovy-all:3.0.8")
+    testImplementation("org.codehaus.groovy:groovy-all:3.0.9")
     testImplementation("org.spockframework:spock-core:2.0-groovy-3.0")
 }
 
