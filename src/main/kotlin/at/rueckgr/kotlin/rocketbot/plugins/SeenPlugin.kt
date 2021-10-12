@@ -14,13 +14,7 @@ class SeenPlugin : AbstractPlugin() {
     override fun getCommands(): List<String> = listOf("seen")
 
     override fun handle(message: String): List<String> {
-        // TODO create utility class for this
-        val pos = message.indexOf(" ")
-        if (pos < 0) {
-            return emptyList()
-        }
-        val rawUsername = message.substring(pos + 1).trim()
-
+        val rawUsername = stripCommand(message) ?: return emptyList()
         val username = if (rawUsername.startsWith("@")) {
             rawUsername.substring(1)
         }

@@ -12,11 +12,7 @@ class SloganPlugin : AbstractPlugin() {
     override fun getCommands() = listOf("slogan")
 
     override fun handle(message: String): List<String> {
-        val pos = message.indexOf(" ")
-        if (pos < 0) {
-            return emptyList()
-        }
-        val name = message.substring(pos + 1)
+        val name = stripCommand(message) ?: return emptyList()
 
         val response = runBlocking {
             HttpClient(CIO).request<String> {

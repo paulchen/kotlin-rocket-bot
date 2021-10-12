@@ -6,4 +6,12 @@ abstract class AbstractPlugin {
     abstract fun handle(message: String): List<String>
 
     abstract fun getHelp(command: String): List<String>
+
+    fun stripCommand(message: String): String? {
+        val pos = message.indexOf(" ")
+        if (pos < 0) {
+            return null
+        }
+        return message.substring(pos + 1).trim()
+    }
 }
