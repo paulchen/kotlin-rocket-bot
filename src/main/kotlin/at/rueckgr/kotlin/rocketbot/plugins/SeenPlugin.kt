@@ -19,7 +19,14 @@ class SeenPlugin : AbstractPlugin() {
         if (pos < 0) {
             return emptyList()
         }
-        val username = message.substring(pos + 1)
+        val rawUsername = message.substring(pos + 1).trim()
+
+        val username = if (rawUsername.startsWith("@")) {
+            rawUsername.substring(1)
+        }
+        else {
+            rawUsername
+        }
 
         val userDetails: UserDetails? = ArchiveService().getUserDetails(username)
 
