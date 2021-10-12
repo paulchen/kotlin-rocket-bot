@@ -59,6 +59,12 @@ tasks.withType<KotlinCompile> {
 
 application {
     mainClass.set("at.rueckgr.kotlin.rocketbot.MainKt")
+    applicationDefaultJvmArgs = listOf(
+        "--add-opens", "java.base/jdk.internal.misc=ALL-UNNAMED",
+        "--add-opens", "java.base/java.nio=ALL-UNNAMED",
+        "-Dio.netty.tryReflectionSetAccessible=true",
+        "--illegal-access=deny"
+    )
 }
 
 distributions {
