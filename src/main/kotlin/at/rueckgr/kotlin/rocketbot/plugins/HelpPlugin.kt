@@ -25,7 +25,7 @@ class HelpPlugin : AbstractPlugin() {
                 .getCommands()
                 .sorted()
                 .joinToString(", ") { "`$it`" }
-            + "\nType `!help <command>` for details about <command>"
+            + "\nType `!help <command>` for details about <command>\nI am also happy to serve you via private messages."
     )
 
     private fun detailedHelp(command: String): List<String> = listOf(
