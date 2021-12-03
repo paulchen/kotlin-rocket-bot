@@ -17,15 +17,20 @@ fun main() {
 
 class Handler : RoomMessageHandler, Logging {
     override fun handle(username: String, message: String): List<String> {
-        if (!message.startsWith("!")) {
+        val messageWithoutQuote = removeQuote(message)
+        if (!messageWithoutQuote.startsWith("!")) {
             logger().debug("Message contains no command, ignoring")
             return emptyList()
         }
 
-        val command = message.split(" ")[0].substring(1)
+        val command = messageWithoutQuote.split(" ")[0].substring(1)
         return PluginProvider
             .instance
             .getByCommand(command)
-            .flatMap { it.handle(message) }
+            .flatMap { it.handle(messageWithoutQuote) }
+    }
+
+    private fun removeQuote(message: String): String {
+        return message.replace("""^\[[^]]*]\([^)]*\)""".toRegex(), "").trim()
     }
 }
