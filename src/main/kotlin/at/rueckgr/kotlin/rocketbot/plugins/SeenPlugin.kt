@@ -4,6 +4,7 @@ import at.rueckgr.kotlin.rocketbot.ArchiveService
 import at.rueckgr.kotlin.rocketbot.DateTimeDifferenceCalculator
 import at.rueckgr.kotlin.rocketbot.TimestampFormatter
 import at.rueckgr.kotlin.rocketbot.UserDetails
+import at.rueckgr.kotlin.rocketbot.util.formatUsername
 import java.time.LocalDateTime
 import java.time.ZoneId
 
@@ -11,8 +12,6 @@ import java.time.ZoneId
 
 
 class SeenPlugin : AbstractPlugin() {
-    private val ZWNBSP = "\uFEFF"
-
     override fun getCommands(): List<String> = listOf("seen")
 
     override fun handle(message: String): List<String> {
@@ -43,9 +42,4 @@ class SeenPlugin : AbstractPlugin() {
 
     override fun getHelp(command: String): List<String> =
         listOf("`!seen <nickname>` shows the time when the given user was active for the last time")
-
-    private fun formatUsername(username: String): String {
-        // insert ZWNBSP to avoid highlighting
-        return username.substring(0, 1) + ZWNBSP + username.substring(1)
-    }
 }
