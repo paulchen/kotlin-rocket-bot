@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.ByteArrayOutputStream
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.5.2"
@@ -9,7 +10,6 @@ plugins {
     application
     id("com.palantir.docker") version "0.31.0"
     groovy
-    id("com.palantir.git-version") version "0.12.3"
 }
 
 group = "at.rueckgr.kotlin.rocketbot"
@@ -80,12 +80,22 @@ docker {
 
 tasks.create("createVersionFile") {
     doLast {
-        val gitVersion: groovy.lang.Closure<String> by project.extra
         val file = File("build/generated/resources/git-revision")
         project.mkdir(file.parentFile.path)
         file.delete()
-        file.appendText(gitVersion())
+
+        file.appendText(String.format("revision = %s\n", runGit("git", "rev-parse", "--short", "HEAD")))
+        file.appendText(String.format("commitMessage = %s\n", runGit("git", "log", "-1", "--pretty=%B")))
     }
+}
+
+fun runGit(vararg args: String): String {
+    val outputStream = ByteArrayOutputStream()
+    project.exec {
+        commandLine(*args)
+        standardOutput = outputStream
+    }
+    return outputStream.toString().trim()
 }
 
 tasks.processResources {

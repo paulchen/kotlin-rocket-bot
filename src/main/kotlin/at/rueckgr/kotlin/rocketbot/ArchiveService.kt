@@ -1,5 +1,6 @@
 package at.rueckgr.kotlin.rocketbot
 
+import at.rueckgr.kotlin.rocketbot.util.VersionInfo
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.*
@@ -13,7 +14,7 @@ data class UserDetails(val user: User)
 
 data class User(val username: String, val timestamp: ZonedDateTime?)
 
-data class VersionDetails(val version: String)
+data class VersionDetails(val version: VersionInfo)
 
 class ArchiveService {
     fun getUserDetails(username: String): UserDetails? {
@@ -36,14 +37,14 @@ class ArchiveService {
         }
     }
 
-    fun getVersion(): String {
+    fun getVersion(): VersionInfo {
         return runBlocking {
             try {
                 val versionDetails: VersionDetails = getClient().get("http://backend:8081/version")
                 versionDetails.version
             }
-            catch (e: ClientRequestException) {
-                "unknown"
+            catch (e: Exception) {
+                VersionInfo("unknown", "unknown")
             }
         }
     }
