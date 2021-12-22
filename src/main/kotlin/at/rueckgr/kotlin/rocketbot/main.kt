@@ -19,11 +19,15 @@ class Handler : RoomMessageHandler, Logging {
     override fun handle(username: String, message: String): List<String> {
         val messageWithoutQuote = removeQuote(message)
         if (!messageWithoutQuote.startsWith("!")) {
-            logger().debug("Message contains no command, ignoring")
-            return emptyList()
+            logger().debug("Message contains no command, applying general plugins")
+            return PluginProvider
+                .instance
+                .getGeneralPlugins()
+                .flatMap { it.handle(messageWithoutQuote) }
         }
 
         val command = messageWithoutQuote.split(" ")[0].substring(1)
+        logger().debug("Message contains command: {}", command)
         return PluginProvider
             .instance
             .getByCommand(command)

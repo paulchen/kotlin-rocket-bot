@@ -4,7 +4,8 @@ import at.rueckgr.kotlin.rocketbot.plugins.AbstractPlugin
 import org.reflections.Reflections
 
 class PluginProvider {
-    private val plugins = HashMap<String, MutableList<AbstractPlugin>>()
+    private val commandPlugins = HashMap<String, MutableList<AbstractPlugin>>()
+    private val generalPlugins = ArrayList<AbstractPlugin>()
 
     companion object {
         val instance = PluginProvider()
@@ -16,17 +17,31 @@ class PluginProvider {
             .map { it.getDeclaredConstructor().newInstance() }
 
         pluginInstances.forEach { plugin ->
-            plugin.getCommands().forEach { command ->
-                if(command !in plugins) {
-                    plugins[command] = ArrayList()
-                }
-                plugins[command]?.add(plugin)
+
+            val commands = plugin.getCommands()
+            when (commands.isEmpty()) {
+                true -> addGeneralPlugin(plugin)
+                false -> addCommandPlugin(plugin, commands)
             }
         }
     }
 
+    private fun addGeneralPlugin(plugin: AbstractPlugin) {
+        generalPlugins.add(plugin)
+    }
 
-    fun getByCommand(command: String): List<AbstractPlugin> = plugins[command].orEmpty()
+    private fun addCommandPlugin(plugin: AbstractPlugin, commands: List<String>) {
+        commands.forEach { command ->
+            if(command !in commandPlugins) {
+                commandPlugins[command] = ArrayList()
+            }
+            commandPlugins[command]?.add(plugin)
+        }
+    }
 
-    fun getCommands() = plugins.keys
+    fun getByCommand(command: String): List<AbstractPlugin> = commandPlugins[command].orEmpty()
+
+    fun getCommands() = commandPlugins.keys.toList()
+
+    fun getGeneralPlugins() = generalPlugins.toList()
 }
