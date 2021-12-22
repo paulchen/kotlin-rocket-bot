@@ -2,20 +2,24 @@ package at.rueckgr.kotlin.rocketbot.plugins
 
 import at.rueckgr.kotlin.rocketbot.ArchiveService
 import at.rueckgr.kotlin.rocketbot.util.LibraryVersion
+import at.rueckgr.kotlin.rocketbot.util.VersionHelper
 
 class VersionPlugin : AbstractPlugin() {
-    private val botRevision: String = when (val resource = VersionPlugin::class.java.getResource("/git-revision")) {
-        null -> "unknown"
-        else -> resource.readText().trim()
-    }
-
-    private val libraryRevision = LibraryVersion.revision
+    private val botRevision = VersionHelper.instance.getVersion()
+    private val libraryRevision = LibraryVersion.instance.getVersion()
 
     override fun getCommands(): List<String> = listOf("version")
 
     override fun handle(message: String): List<String> {
         val archiveRevision = ArchiveService().getVersion()
-        return listOf("*kotlin-rocket-bot* revision `$botRevision`, *kotlin-rocket-lib* revision `$libraryRevision`, *rocketchat-archive* revision `$archiveRevision`")
+
+        val builder = StringBuilder()
+
+        builder.append("*kotlin-rocket-bot* revision `${botRevision.revision}` ( _${botRevision.commitMessage}_ )\n")
+        builder.append("*kotlin-rocket-lib* revision `${libraryRevision.revision}` ( _${libraryRevision.commitMessage}_ )\n")
+        builder.append("*rocketchat-archive* revision `${archiveRevision.revision}` ( _${archiveRevision.commitMessage}_ )")
+
+        return listOf(builder.toString())
     }
 
     override fun getHelp(command: String): List<String> =
