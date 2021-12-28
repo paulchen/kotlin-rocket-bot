@@ -95,7 +95,7 @@ fun runGit(vararg args: String): String {
         commandLine(*args)
         standardOutput = outputStream
     }
-    return outputStream.toString().trim()
+    return outputStream.toString().split("\n")[0].trim()
 }
 
 tasks.processResources {
