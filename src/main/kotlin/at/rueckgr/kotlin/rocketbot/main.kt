@@ -5,13 +5,16 @@ import at.rueckgr.kotlin.rocketbot.handler.PluginProvider
 import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
+import kotlinx.coroutines.*
 import kotlin.system.exitProcess
 
 fun main() {
     // TODO store authentication token somewhere
 
+    val configurationFile = "/config/kotlin-rocket-bot.yaml"
+
     val config = try {
-        ConfigurationProvider.instance.loadConfiguration("/config/kotlin-rocket-bot.yaml")
+        ConfigurationProvider.instance.loadConfiguration(configurationFile)
     }
     catch (e: ConfigurationException) {
         println(e.message)
@@ -19,10 +22,19 @@ fun main() {
     }
 
     val general = config.general
-    Bot(
-        BotConfiguration(general!!.host!!, general.username!!, general.password!!, general.ignoredChannels!!, general.botId!!, 8082),
-        Handler()
-    ).start()
+    runBlocking {
+        launch {
+            withContext(Dispatchers.IO) {
+                ConfigurationProvider.instance.checkForConfigurationUpdates(configurationFile)
+            }
+        }
+        launch {
+            Bot(
+                BotConfiguration(general!!.host!!, general.username!!, general.password!!, general.ignoredChannels!!, general.botId!!, 8082),
+                Handler()
+            ).start()
+        }
+    }
 }
 
 class Handler : RoomMessageHandler, Logging {

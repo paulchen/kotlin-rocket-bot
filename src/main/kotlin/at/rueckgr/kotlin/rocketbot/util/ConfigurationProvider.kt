@@ -6,8 +6,10 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import org.apache.commons.lang3.StringUtils
 import java.io.File
 import java.io.IOException
+import java.nio.file.FileSystems
+import java.nio.file.StandardWatchEventKinds
 
-class ConfigurationProvider {
+class ConfigurationProvider : Logging {
     private var config: UserConfiguration? = null
 
     companion object {
@@ -15,6 +17,11 @@ class ConfigurationProvider {
     }
 
     fun loadConfiguration(configurationFile: String): UserConfiguration {
+        this.config = this.reloadConfiguration(configurationFile)
+        return this.config!!
+    }
+
+    private fun reloadConfiguration(configurationFile: String): UserConfiguration {
         val file = File(configurationFile)
         if (!file.exists()) {
             throw ConfigurationException(1, "Configuration file $configurationFile not found")
@@ -39,6 +46,21 @@ class ConfigurationProvider {
 
         this.config = config
         return config
+    }
+
+    fun checkForConfigurationUpdates(configurationFile: String) {
+        val path = File(File(configurationFile).parent).toPath()
+        val watchService = FileSystems.getDefault().newWatchService()
+
+        while (true) {
+            val pathKey = path.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY)
+            watchService.take()
+
+            logger().info("Configuration file has changed, reloading now")
+            reloadConfiguration(configurationFile)
+
+            pathKey.cancel()
+        }
     }
 
     fun getConfiguration(): UserConfiguration = this.config!!
