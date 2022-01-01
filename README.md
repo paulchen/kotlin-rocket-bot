@@ -57,3 +57,27 @@ This port features a webservice intended to be called by the Icinga check script
 This script expects the port of the webservice in the environment variable `WEBSERVICE_PORT`:
 
 `WEBSERVICE_PORT=8081 misc/check_bot.sh`
+
+Furthermore, that webservice offers an operation for submitting messages (`POST /message`).
+This operation requires HTTP basic auth. Configure the users in `kotlin-rocket-bot.yaml` (see above).
+
+This operation accepts post data in JSON format when using the `Content-Type: application/json`
+which has the following format:
+
+```
+{
+    "roomId": "GENERAL",
+    "message": "Just some spam to annoy users.",
+    "emoji": ":soccer:"
+}
+```
+
+You can obtain the room id from the URLs used by the Rocket.Chat archive
+(see [paulchen/rocketchat-archive](https://github.com/paulchen/rocketchat-archive)).
+
+A cURL request might look like this:
+
+```
+curl -v -d '{"roomId": "GENERAL", "message": "Just some spam to annoy users", "emoji": ":soccer:"}' -H "Content-Type: application/json" -u "username:password" http://
+localhost:8081/message`
+```

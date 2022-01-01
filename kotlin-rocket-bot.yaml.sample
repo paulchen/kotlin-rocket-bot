@@ -12,3 +12,8 @@ plugins:
       - regex: (.*[^0-9a-z_.,\-]|^)69([^0-9.,a-z_\-].*|$)
         reply: _nice_
         probability: 50
+
+webservice:
+  users:
+    - username: abc
+      password: def
