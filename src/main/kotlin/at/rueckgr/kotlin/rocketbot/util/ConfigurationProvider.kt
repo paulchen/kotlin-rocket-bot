@@ -40,4 +40,6 @@ class ConfigurationProvider {
         this.config = config
         return config
     }
+
+    fun getConfiguration(): UserConfiguration = this.config!!
 }

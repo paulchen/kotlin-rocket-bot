@@ -6,3 +6,9 @@ general:
   ignoredChannels:
     - general
 
+plugins:
+  simpleReply:
+    replies:
+      - regex: (.*[^0-9a-z_.,\-]|^)69([^0-9.,a-z_\-].*|$)
+        reply: _nice_
+        probability: 50
