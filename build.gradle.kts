@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.6.0"
 val ktorVersion = "1.6.7"
+val jacksonVersion = "2.13.1"
 
 plugins {
     kotlin("jvm") version "1.6.10"
@@ -36,7 +37,8 @@ dependencies {
 
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.1")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
 
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("org.apache.commons:commons-text:1.9")

@@ -15,13 +15,12 @@ Then, build the local Docker image of `kotlin-rocket-bot` (`kotlin-rocket-bot:la
 
 `gradlew docker`
 
+Copy the example configuration file (`kotlin-rocket-bot.yaml.sample`) to an otherwise empty directory of your choice,
+e.g. `/etc/kotlin-rocket-bot`. Rename the file to `kotlin-rocket-bot.yaml` and edit it to your needs. 
+
 Run the Docker image with:
 
-`docker run -it -e "ROCKETCHAT_HOST=<host>" -e "ROCKETCHAT_USERNAME=<username>" -e ROCKETCHAT_PASSWORD="<password>" kotlin-rocket-bot:latest`
-
-Set the environment variables `ROCKETCHAT_HOST`, `ROCKETCHAT_USERNAME`, and `ROCKETCHAT_PASSWORD` according to your needs.
-
-An additional environment variable named `IGNORED_CHANNELS` is supported, containing a comma-separated list of channel names (without leading `#`) the bot should ignore (intended for testing purposes).
+`docker run -it -v /etc/kotlin-rocket-bot:/config kotlin-rocket-bot:latest`
 
 A systemd unit file for launching the bot could look like this:
 
@@ -39,11 +38,7 @@ ExecStartPre=-/usr/bin/docker rm kotlin-rocket-bot
 
 ExecStart=/usr/bin/docker run \
     --name kotlin-rocket-bot \
-    -e ROCKETCHAT_HOST=<host> \
-    -e ROCKETCHAT_USERNAME=<username> \
-    -e ROCKETCHAT_PASSWORD=<password> \
-    -e IGNORED_CHANNELS=general \
-    -e TZ=Europe/Vienna \
+    -v /etc/kotlin-rocket-bot:/config \
     --net=rocketchat_default \
     -p 127.0.0.1:8081:8082 \
     kotlin-rocket-bot:latest
@@ -54,8 +49,6 @@ ExecStop=-/usr/bin/docker rm kotlin-rocket-bot
 [Install]
 WantedBy=multi-user.target
 ```
-
-Remember to set the TZ environment variable appropriately to your needs.
 
 The above systemd unit will expose the container's port `8082` to `localhost:8081`.
 This port features a webservice intended to be called by the Icinga check script `misc/check_bot.sh`.
