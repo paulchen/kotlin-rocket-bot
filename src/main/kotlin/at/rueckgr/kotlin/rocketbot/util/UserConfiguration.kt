@@ -2,7 +2,8 @@ package at.rueckgr.kotlin.rocketbot.util
 
 data class UserConfiguration(
     val general: GeneralConfiguration?,
-    val plugins: PluginsConfiguration?
+    val plugins: PluginsConfiguration?,
+    val webservice: WebserviceConfiguration?
 )
 
 data class GeneralConfiguration(
@@ -25,4 +26,13 @@ data class SimpleReply(
     val regex: String?,
     val reply: String?,
     val probability: Int
+)
+
+data class WebserviceConfiguration(
+    val users: List<WebserviceUser>?
+)
+
+data class WebserviceUser(
+    val username: String?,
+    val password: String?
 )

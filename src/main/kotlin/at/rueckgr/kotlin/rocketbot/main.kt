@@ -31,7 +31,8 @@ fun main() {
         launch {
             Bot(
                 BotConfiguration(general!!.host!!, general.username!!, general.password!!, general.ignoredChannels!!, general.botId!!, 8082),
-                Handler()
+                Handler(),
+                UserValidator()
             ).start()
         }
     }
