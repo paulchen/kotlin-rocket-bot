@@ -44,6 +44,7 @@ dependencies {
     implementation("org.apache.commons:commons-text:1.9")
     implementation("org.reflections:reflections:$reflectionsVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
+    implementation("at.favre.lib:bcrypt:0.9.0")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.10")
     testImplementation("junit:junit:4.13.2")
