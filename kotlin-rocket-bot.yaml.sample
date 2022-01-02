@@ -16,4 +16,4 @@ plugins:
 webservice:
   users:
     - username: abc
-      password: def
+      password: bcrypt
