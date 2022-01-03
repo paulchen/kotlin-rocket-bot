@@ -15,7 +15,8 @@ data class GeneralConfiguration(
 )
 
 data class PluginsConfiguration(
-    val simpleReply: SimpleReplyPluginConfiguration?
+    val simpleReply: SimpleReplyPluginConfiguration?,
+    val time: TimePluginConfiguration?
 )
 
 data class SimpleReplyPluginConfiguration(
@@ -26,6 +27,10 @@ data class SimpleReply(
     val regex: String?,
     val reply: String?,
     val probability: Int
+)
+
+data class TimePluginConfiguration(
+    val soccerUsername: String?
 )
 
 data class WebserviceConfiguration(

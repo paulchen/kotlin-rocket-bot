@@ -3,6 +3,7 @@ package at.rueckgr.kotlin.rocketbot.plugins
 import at.rueckgr.kotlin.rocketbot.DateTimeDifferenceCalculator
 import at.rueckgr.kotlin.rocketbot.DateTimeDifferenceCalculator.TimeUnit
 import at.rueckgr.kotlin.rocketbot.OutgoingMessage
+import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
 import java.time.LocalDate
@@ -85,7 +86,12 @@ class TimePlugin : AbstractPlugin(), Logging {
                 "!newyear" -> getBeginOfCurrentYear().plusYears(1)
                 else -> return emptyList()
             }
-            return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date)))
+
+            val (emoji, username) = when (message) {
+                "!wm" -> listOf(":soccer:", ConfigurationProvider.instance.getConfiguration().plugins?.time?.soccerUsername)
+                else -> listOf(null, null)
+            }
+            return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date), emoji, username))
         }
 
         return emptyList()
