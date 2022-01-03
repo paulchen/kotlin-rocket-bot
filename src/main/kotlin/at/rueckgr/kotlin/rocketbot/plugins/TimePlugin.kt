@@ -2,6 +2,7 @@ package at.rueckgr.kotlin.rocketbot.plugins
 
 import at.rueckgr.kotlin.rocketbot.DateTimeDifferenceCalculator
 import at.rueckgr.kotlin.rocketbot.DateTimeDifferenceCalculator.TimeUnit
+import at.rueckgr.kotlin.rocketbot.OutgoingMessage
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
 import java.time.LocalDate
@@ -57,7 +58,7 @@ class TimePlugin : AbstractPlugin(), Logging {
         return listOf("t", "wm", "oldyear", "newyear", "pizza")
     }
 
-    override fun handle(message: String): List<String> {
+    override fun handle(message: String): List<OutgoingMessage> {
         if (message.contains(" ")) {
             val dateString = message.substring(message.indexOf(" ") + 1)
 
@@ -65,7 +66,7 @@ class TimePlugin : AbstractPlugin(), Logging {
                 for (format in Format.values()) {
                     if (format.regex.matches(dateString)) {
                         val date = format.function.invoke(this, format.pattern, dateString)
-                        return listOf(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date))
+                        return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date)))
                     }
                 }
             } catch (e: DateTimeParseException) {
@@ -76,7 +77,7 @@ class TimePlugin : AbstractPlugin(), Logging {
                 val difference = DateTimeDifferenceCalculator()
                     .formatTimeDifference(LocalDateTime.now(), pizzaDate, listOf(TimeUnit.YEAR, TimeUnit.MONTH))
                     .replace(" ago", "")
-                return listOf("enri owes us pizza for $difference")
+                return listOf(OutgoingMessage("enri owes us pizza for $difference"))
             }
             val date: LocalDateTime = when (message) {
                 "!wm" -> wmDate
@@ -84,7 +85,7 @@ class TimePlugin : AbstractPlugin(), Logging {
                 "!newyear" -> getBeginOfCurrentYear().plusYears(1)
                 else -> return emptyList()
             }
-            return listOf(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date))
+            return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date)))
         }
 
         return emptyList()

@@ -39,7 +39,7 @@ fun main() {
 }
 
 class Handler : RoomMessageHandler, Logging {
-    override fun handle(username: String, message: String): List<String> {
+    override fun handle(username: String, message: String): List<OutgoingMessage> {
         val messageWithoutQuote = removeQuote(message)
         if (!messageWithoutQuote.startsWith("!")) {
             logger().debug("Message contains no command, applying general plugins")

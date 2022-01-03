@@ -1,5 +1,6 @@
 package at.rueckgr.kotlin.rocketbot.plugins
 
+import at.rueckgr.kotlin.rocketbot.OutgoingMessage
 import at.rueckgr.kotlin.rocketbot.util.formatUsername
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -12,7 +13,7 @@ import org.apache.commons.text.StringEscapeUtils
 class SloganPlugin : AbstractPlugin() {
     override fun getCommands() = listOf("slogan")
 
-    override fun handle(message: String): List<String> {
+    override fun handle(message: String): List<OutgoingMessage> {
         val name = stripCommand(message) ?: return emptyList()
         val formattedName = formatUsername(name)
 
@@ -28,7 +29,7 @@ class SloganPlugin : AbstractPlugin() {
                 .replace("""<[^>]*>""".toRegex(), "")
         )
 
-        return listOf(responseWithoutHtml.replace("Sloganizer", "*$formattedName*"))
+        return listOf(OutgoingMessage(responseWithoutHtml.replace("Sloganizer", "*$formattedName*")))
     }
 
     override fun getHelp(command: String) = listOf(

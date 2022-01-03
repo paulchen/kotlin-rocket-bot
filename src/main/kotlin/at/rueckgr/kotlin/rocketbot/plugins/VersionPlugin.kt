@@ -1,6 +1,7 @@
 package at.rueckgr.kotlin.rocketbot.plugins
 
 import at.rueckgr.kotlin.rocketbot.ArchiveService
+import at.rueckgr.kotlin.rocketbot.OutgoingMessage
 import at.rueckgr.kotlin.rocketbot.util.LibraryVersion
 import at.rueckgr.kotlin.rocketbot.util.VersionHelper
 
@@ -10,7 +11,7 @@ class VersionPlugin : AbstractPlugin() {
 
     override fun getCommands(): List<String> = listOf("version")
 
-    override fun handle(message: String): List<String> {
+    override fun handle(message: String): List<OutgoingMessage> {
         val archiveRevision = ArchiveService().getVersion()
 
         val builder = StringBuilder()
@@ -19,7 +20,7 @@ class VersionPlugin : AbstractPlugin() {
         builder.append("*kotlin-rocket-lib* revision `${libraryRevision.revision}` ( _${libraryRevision.commitMessage}_ )\n")
         builder.append("*rocketchat-archive* revision `${archiveRevision.revision}` ( _${archiveRevision.commitMessage}_ )")
 
-        return listOf(builder.toString())
+        return listOf(OutgoingMessage(builder.toString()))
     }
 
     override fun getHelp(command: String): List<String> =

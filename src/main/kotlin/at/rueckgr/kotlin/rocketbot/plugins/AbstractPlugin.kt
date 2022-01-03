@@ -1,9 +1,11 @@
 package at.rueckgr.kotlin.rocketbot.plugins
 
+import at.rueckgr.kotlin.rocketbot.OutgoingMessage
+
 abstract class AbstractPlugin {
     abstract fun getCommands(): List<String>
 
-    abstract fun handle(message: String): List<String>
+    abstract fun handle(message: String): List<OutgoingMessage>
 
     abstract fun getHelp(command: String): List<String>
 

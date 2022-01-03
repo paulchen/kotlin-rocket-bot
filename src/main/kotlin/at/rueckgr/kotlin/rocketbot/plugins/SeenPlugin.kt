@@ -1,9 +1,6 @@
 package at.rueckgr.kotlin.rocketbot.plugins
 
-import at.rueckgr.kotlin.rocketbot.ArchiveService
-import at.rueckgr.kotlin.rocketbot.DateTimeDifferenceCalculator
-import at.rueckgr.kotlin.rocketbot.TimestampFormatter
-import at.rueckgr.kotlin.rocketbot.UserDetails
+import at.rueckgr.kotlin.rocketbot.*
 import at.rueckgr.kotlin.rocketbot.util.formatUsername
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -14,7 +11,7 @@ import java.time.ZoneId
 class SeenPlugin : AbstractPlugin() {
     override fun getCommands(): List<String> = listOf("seen")
 
-    override fun handle(message: String): List<String> {
+    override fun handle(message: String): List<OutgoingMessage> {
         val rawUsername = stripCommand(message) ?: return emptyList()
         val username = if (rawUsername.startsWith("@")) {
             rawUsername.substring(1)
@@ -37,7 +34,7 @@ class SeenPlugin : AbstractPlugin() {
             val ago = DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), localDateTime)
             "*${formatUsername(userDetails.user.username)}* wrote their last message at $timestamp ($ago)."
         }
-        return listOf(response)
+        return listOf(OutgoingMessage(response))
     }
 
     override fun getHelp(command: String): List<String> =

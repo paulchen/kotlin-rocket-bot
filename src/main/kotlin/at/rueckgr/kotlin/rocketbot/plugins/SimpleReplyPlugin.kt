@@ -1,5 +1,6 @@
 package at.rueckgr.kotlin.rocketbot.plugins
 
+import at.rueckgr.kotlin.rocketbot.OutgoingMessage
 import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
@@ -7,7 +8,7 @@ import at.rueckgr.kotlin.rocketbot.util.logger
 class SimpleReplyPlugin : AbstractPlugin(), Logging {
     override fun getCommands(): List<String> = emptyList()
 
-    override fun handle(message: String): List<String> {
+    override fun handle(message: String): List<OutgoingMessage> {
         val replies = ConfigurationProvider.instance.getConfiguration().plugins?.simpleReply?.replies
         if (replies == null) {
             logger().debug("Plugin configuration missing")
@@ -19,7 +20,7 @@ class SimpleReplyPlugin : AbstractPlugin(), Logging {
                     it.reply != null &&
                     activatePlugin(it.probability) &&
                     message.matches(it.regex.toRegex())) {
-                true -> listOf(it.reply)
+                true -> listOf(OutgoingMessage(it.reply))
                 false -> emptyList()
             }
         }
