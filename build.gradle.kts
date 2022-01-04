@@ -60,6 +60,10 @@ tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
 }
 
+tasks.withType<GroovyCompile> {
+    targetCompatibility = "17"
+}
+
 application {
     mainClass.set("at.rueckgr.kotlin.rocketbot.MainKt")
     applicationDefaultJvmArgs = listOf(
