@@ -57,7 +57,7 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = "17"
 }
 
 application {
@@ -66,7 +66,6 @@ application {
         "--add-opens", "java.base/jdk.internal.misc=ALL-UNNAMED",
         "--add-opens", "java.base/java.nio=ALL-UNNAMED",
         "-Dio.netty.tryReflectionSetAccessible=true",
-        "--illegal-access=deny"
     )
 }
 

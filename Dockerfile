@@ -1,4 +1,4 @@
-FROM openjdk:11-jre-slim
+FROM openjdk:17-jdk-slim
 RUN mkdir /app
 ADD kotlin-rocket-bot.tar /app
 
