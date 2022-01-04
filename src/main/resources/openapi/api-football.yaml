@@ -1,0 +1,153 @@
+openapi: 3.0.3
+info:
+  title: API-Football
+  description: RESTful API for football data
+  termsOfService: https://www.api-football.com/pricing
+  version: 3.8.1
+servers:
+  - url: https://v3.football.api-sports.io/
+paths:
+  /fixtures/rounds:
+    get:
+      summary: Get the rounds for a league or a cup.
+      parameters:
+        - name: league
+          in: query
+          description: The id of the league
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - name: season
+          in: query
+          description: The season of the league (4 characters, YYYY)
+          schema:
+            type: integer
+            format: int32
+            minimum: 1900
+            maximum: 2100
+        - name: current
+          in: query
+          description: The current round only
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/fixtureRoundsResponse'
+        '204':
+          description: No Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/fixtureRoundsResponse'
+        '499':
+          $ref: '#/components/responses/timeOut'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+components:
+  schemas:
+    fixtureRoundsResponse:
+      type: object
+      required:
+        - get
+        - parameters
+        - errors
+        - results
+        - response
+      properties:
+        get:
+          $ref: '#/components/schemas/getResponse'
+        parameters:
+          $ref: '#/components/schemas/parametersResponse'
+        errors:
+          $ref: '#/components/schemas/errorsResponse'
+        results:
+          $ref: '#/components/schemas/resultsResponse'
+        paging:
+          $ref: '#/components/schemas/pagingResponse'
+        response:
+          type: array
+          items:
+            type: string
+    getResponse:
+      type: string
+    parametersResponse:
+      type: array
+      items:
+        type: string
+    errorsResponse:
+      type: array
+      items:
+        type: string
+    resultsResponse:
+      type: integer
+      format: int64
+      minimum: 0
+    pagingResponse:
+      type: object
+      required:
+        - current
+        - total
+      properties:
+        current:
+          type: integer
+          format: int64
+          minimum: 0
+        total:
+          type: integer
+          format: int64
+          minimum: 0
+    errorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+  responses:
+    timeOut:
+      description: Time Out
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorResponse'
+    internalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorResponse'
+  headers:
+    x-ratelimit-requests-limit:
+      description: The number of requests allocated per day according to your subscription.
+      schema:
+        type: integer
+        format: int64
+    x-ratelimit-requests-remaining:
+      description: The number of remaining requests per day according to your subscription.
+      schema:
+        type: integer
+        format: int64
+    X-RateLimit-Limit:
+      description: Maximum number of API calls per minute.
+      schema:
+        type: integer
+        format: int64
+    X-RateLimit-Remaining:
+      description: Number of API calls remaining before reaching the limit per minute
+      schema:
+        type: integer
+        format: int64
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-apisports-key
+security:
+  - ApiKeyAuth: []
+externalDocs:
+  url: https://www.api-football.com/documentation-v3
