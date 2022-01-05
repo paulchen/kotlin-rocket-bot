@@ -11,6 +11,7 @@ plugins {
     application
     id("com.palantir.docker") version "0.31.0"
     groovy
+    id("org.openapi.generator") version "5.3.0"
 }
 
 group = "at.rueckgr.kotlin.rocketbot"
@@ -23,6 +24,12 @@ repositories {
 
 sourceSets {
     main {
+        java {
+            srcDirs(
+                "src/main/kotlin",
+                "build/generated/openapi/src/main/kotlin"
+            )
+        }
         resources {
             srcDirs("build/generated/resources")
         }
@@ -46,6 +53,11 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("at.favre.lib:bcrypt:0.9.0")
 
+    // dependencies for generated OpenAPI client
+    implementation("com.squareup.moshi:moshi-kotlin:1.13.0")
+    implementation("com.squareup.moshi:moshi-adapters:1.13.0")
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.10")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.codehaus.groovy:groovy-all:3.0.9")
@@ -58,6 +70,7 @@ tasks.test {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
+    dependsOn("openApiGenerate")
 }
 
 tasks.withType<GroovyCompile> {
@@ -110,4 +123,22 @@ tasks.processResources {
 
 tasks.dockerPrepare {
     dependsOn(tasks.build)
+}
+
+openApiValidate {
+    inputSpec.set("$rootDir/src/main/resources/openapi/api-football.yaml")
+}
+
+openApiGenerate {
+    generatorName.set("kotlin")
+    inputSpec.set("$rootDir/src/main/resources/openapi/api-football.yaml")
+    validateSpec.set(true)
+    logToStderr.set(true)
+    outputDir.set("$buildDir/generated/openapi")
+    apiPackage.set("com.api_football.api")
+    invokerPackage.set("com.api_football.invoker")
+    modelPackage.set("com.api_football.model")
+    configOptions.put("dateLibrary", "java8")
+    globalProperties.put("modelDocs", "false")
+    typeMappings.put("datetime", "LocalDateTime")
 }
