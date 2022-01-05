@@ -9,6 +9,7 @@ servers:
 paths:
   /fixtures/rounds:
     get:
+      operationId: getFixturesRounds
       summary: Get the rounds for a league or a cup.
       parameters:
         - $ref: '#/components/parameters/league'
@@ -37,6 +38,7 @@ paths:
           $ref: '#/components/responses/internalServerError'
   /fixtures:
     get:
+      operationId: getFixtures
       summary: Get details for one or more fixtures.
       parameters:
         - name: id
