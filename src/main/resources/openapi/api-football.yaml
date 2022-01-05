@@ -356,9 +356,7 @@ components:
                           type:
                             type: string
                           value:
-                            type: integer
-                            format: int32
-                            minimum: 0
+                            type: string
               players:
                 type: array
                 items:
@@ -376,13 +374,11 @@ components:
     getResponse:
       type: string
     parametersResponse:
-      type: array
-      items:
-        type: string
+      type: object
+      properties: {}
     errorsResponse:
-      type: array
-      items:
-        type: string
+      type: object
+      properties: {}
     resultsResponse:
       type: integer
       format: int64

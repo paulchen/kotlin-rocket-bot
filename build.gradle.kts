@@ -140,5 +140,5 @@ openApiGenerate {
     modelPackage.set("com.api_football.model")
     configOptions.put("dateLibrary", "java8")
     globalProperties.put("modelDocs", "false")
-    typeMappings.put("datetime", "LocalDateTime")
+    typeMappings.put("datetime", "DateTime")
 }
