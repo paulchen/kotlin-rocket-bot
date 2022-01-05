@@ -243,22 +243,22 @@ components:
                 type: object
                 properties:
                   home:
-                    $ref: '#/components/schema/teamShort'
+                    $ref: '#/components/schemas/teamShort'
                   away:
-                    $ref: '#/components/schema/teamShort'
+                    $ref: '#/components/schemas/teamShort'
               goals:
-                $ref: '#/components/schema/goalsShort'
+                $ref: '#/components/schemas/goalsShort'
               score:
                 type: object
                 properties:
                   halftime:
-                    $ref: '#/components/schema/goalsShort'
+                    $ref: '#/components/schemas/goalsShort'
                   fulltime:
-                    $ref: '#/components/schema/goalsShort'
+                    $ref: '#/components/schemas/goalsShort'
                   extratime:
-                    $ref: '#/components/schema/goalsShort'
+                    $ref: '#/components/schemas/goalsShort'
                   penalty:
-                    $ref: '#/components/schema/goalsShort'
+                    $ref: '#/components/schemas/goalsShort'
               events:
                 type: array
                 items:
@@ -276,9 +276,9 @@ components:
                           format: int32
                           minimum: 0
                     team:
-                      $ref: '#/components/schema/teamShort'
+                      $ref: '#/components/schemas/teamShort'
                     player:
-                      $ref: '#/components/schema/player'
+                      $ref: '#/components/schemas/player'
                     assist:
                       type: object
                       properties:
@@ -304,11 +304,11 @@ components:
                     startXI:
                       type: array
                       items:
-                        $ref: '#/player'
+                        $ref: '#/components/schemas/player'
                     substitutes:
                       type: array
                       items:
-                        $ref: '#/player'
+                        $ref: '#/components/schemas/player'
                     coach:
                       type: object
                       properties:
