@@ -153,6 +153,29 @@ components:
         response:
           type: array
           items:
+            type: string
+    fixtureResponse:
+      type: object
+      required:
+        - get
+        - parameters
+        - errors
+        - results
+        - response
+      properties:
+        get:
+          $ref: '#/components/schemas/getResponse'
+        parameters:
+          $ref: '#/components/schemas/parametersResponse'
+        errors:
+          $ref: '#/components/schemas/errorsResponse'
+        results:
+          $ref: '#/components/schemas/resultsResponse'
+        paging:
+          $ref: '#/components/schemas/pagingResponse'
+        response:
+          type: array
+          items:
             type: object
             required:
               - fixture
@@ -348,29 +371,6 @@ components:
                         properties:
                           player:
                             $ref: '#/components/schemas/player'
-    fixtureResponse:
-      type: object
-      required:
-        - get
-        - parameters
-        - errors
-        - results
-        - response
-      properties:
-        get:
-          $ref: '#/components/schemas/getResponse'
-        parameters:
-          $ref: '#/components/schemas/parametersResponse'
-        errors:
-          $ref: '#/components/schemas/errorsResponse'
-        results:
-          $ref: '#/components/schemas/resultsResponse'
-        paging:
-          $ref: '#/components/schemas/pagingResponse'
-        response:
-          type: array
-          items:
-            type: string
     getResponse:
       type: string
     parametersResponse:
