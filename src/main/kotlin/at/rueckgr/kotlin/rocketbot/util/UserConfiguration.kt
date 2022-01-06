@@ -36,8 +36,11 @@ data class TimePluginConfiguration(
 )
 
 data class SoccerPluginConfiguration(
+    val leagueId: Int?,
+    val season: Int?,
+    val rounds: List<String>?,
     val apiKey: String?,
-    val notificationChannel: List<String>?
+    val notificationChannels: List<String>?
 )
 
 data class WebserviceConfiguration(

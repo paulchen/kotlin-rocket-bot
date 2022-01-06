@@ -12,9 +12,16 @@ plugins:
       - regex: (.*[^0-9a-z_.,\-]|^)69([^0-9.,a-z_\-].*|$)
         reply: _nice_
         probability: 50
-  timePlugin:
+  time:
     soccerUsername: soccerbot
-  soccerPlugin:
+  soccer:
+    leagueId: 4
+    season: 2020
+    rounds:
+      - Round of 16
+      - Quarter-finals
+      - Semi-finals
+      - Final
     apiKey: TODO
     notificationChannels:
       - paulchens-bot
