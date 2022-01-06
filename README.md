@@ -74,6 +74,15 @@ which has the following format:
 
 You can obtain the room id from the URLs used by the Rocket.Chat archive
 (see [paulchen/rocketchat-archive](https://github.com/paulchen/rocketchat-archive)).
+Additionally, instead of the `roomId` you may also use the `roomName`:
+
+```
+{
+    "roomId": "general",
+    "message": "Just some spam to annoy users.",
+    "emoji": ":soccer:"
+}
+```
 
 A cURL request might look like this:
 
