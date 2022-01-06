@@ -53,6 +53,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("at.favre.lib:bcrypt:0.9.0")
 
+    implementation("org.postgresql:postgresql:42.3.1")
+    implementation("me.liuwj.ktorm:ktorm-core:3.1.0")
+
     // dependencies for generated OpenAPI client
     implementation("com.squareup.moshi:moshi-kotlin:1.13.0")
     implementation("com.squareup.moshi:moshi-adapters:1.13.0")

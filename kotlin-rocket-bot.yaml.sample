@@ -14,8 +14,18 @@ plugins:
         probability: 50
   timePlugin:
     soccerUsername: soccerbot
+  soccerPlugin:
+    apiKey: TODO
+    notificationChannels:
+      - paulchens-bot
 
 webservice:
   users:
     - username: abc
       password: bcrypt
+
+database:
+  host: host.docker.internal
+  database: kotlin-rocket-bot
+  username: kotlin-rocket-bot
+  password: TODO

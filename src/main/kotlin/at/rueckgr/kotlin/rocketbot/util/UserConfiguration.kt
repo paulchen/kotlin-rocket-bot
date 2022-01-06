@@ -3,7 +3,8 @@ package at.rueckgr.kotlin.rocketbot.util
 data class UserConfiguration(
     val general: GeneralConfiguration?,
     val plugins: PluginsConfiguration?,
-    val webservice: WebserviceConfiguration?
+    val webservice: WebserviceConfiguration?,
+    val database: DatabaseConfiguration?
 )
 
 data class GeneralConfiguration(
@@ -16,7 +17,8 @@ data class GeneralConfiguration(
 
 data class PluginsConfiguration(
     val simpleReply: SimpleReplyPluginConfiguration?,
-    val time: TimePluginConfiguration?
+    val time: TimePluginConfiguration?,
+    val soccer: SoccerPluginConfiguration?
 )
 
 data class SimpleReplyPluginConfiguration(
@@ -33,11 +35,23 @@ data class TimePluginConfiguration(
     val soccerUsername: String?
 )
 
+data class SoccerPluginConfiguration(
+    val apiKey: String?,
+    val notificationChannel: List<String>?
+)
+
 data class WebserviceConfiguration(
     val users: List<WebserviceUser>?
 )
 
 data class WebserviceUser(
+    val username: String?,
+    val password: String?
+)
+
+data class DatabaseConfiguration(
+    val host: String?,
+    val database: String?,
     val username: String?,
     val password: String?
 )
