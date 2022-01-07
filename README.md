@@ -83,7 +83,7 @@ Additionally, instead of the `roomId` you may also use the `roomName`:
 
 ```
 {
-    "roomId": "general",
+    "roomName": "general",
     "message": "Just some spam to annoy users.",
     "emoji": ":soccer:"
 }
