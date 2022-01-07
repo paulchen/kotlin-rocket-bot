@@ -1,5 +1,7 @@
 CREATE TABLE fixture (
     id INT NOT NULL,
+    league_id INT NOT NULL,
+    season INT NOT NULL,
     date TIMESTAMP WITH TIME ZONE NOT NULL,
     round VARCHAR(255) NOT NULL,
     team_home VARCHAR(255) NOT NULL,

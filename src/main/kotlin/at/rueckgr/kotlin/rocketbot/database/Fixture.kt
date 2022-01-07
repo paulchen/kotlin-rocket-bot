@@ -7,6 +7,8 @@ import me.liuwj.ktorm.schema.varchar
 
 object Fixture : Table<Nothing>("fixture") {
     val id = int("id").primaryKey()
+    val leagueId = int("league_id")
+    val season = int("season")
     val date = datetime("date")
     val round = varchar("round")
     val teamHome = varchar("team_home")
