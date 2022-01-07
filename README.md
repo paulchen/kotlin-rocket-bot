@@ -43,6 +43,7 @@ ExecStartPre=-/usr/bin/docker rm kotlin-rocket-bot
 ExecStart=/usr/bin/docker run \
     --name kotlin-rocket-bot \
     -v /etc/kotlin-rocket-bot:/config \
+    -v /var/cache/kotlin-rocket-bot:/cache \
     -e TZ=Europe/Vienna \
     --net=rocketchat_default \
     -p 127.0.0.1:8081:8082 \
@@ -56,6 +57,16 @@ ExecStop=-/usr/bin/docker rm kotlin-rocket-bot
 WantedBy=multi-user.target
 ```
 Remember to set the `TZ` environment variable appropriately to your needs.
+
+Create the directory `/var/cache/kotlin-rocket-bot`, set its setuid bit and its gid to 1024:
+
+```
+mkdir /var/cache/kotlin-rocket-bot
+chmod u=rwxs,g=rwx,o= /var/cache/kotlin-rocket-bot
+chgrp 1024 /var/cache/kotlin-rocket-bot
+```
+
+When correctly set up, the bot will place files there that may help for tracing down any problems.
 
 The above systemd unit will expose the container's port `8082` to `localhost:8081`.
 This port features a webservice intended to be called by the Icinga check script `misc/check_bot.sh`.

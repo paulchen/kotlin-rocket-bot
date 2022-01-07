@@ -64,4 +64,6 @@ class ConfigurationProvider : Logging {
     }
 
     fun getConfiguration(): UserConfiguration = this.config!!
+
+    fun getSoccerConfiguration(): SoccerPluginConfiguration = this.config?.plugins?.soccer!!
 }
