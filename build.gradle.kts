@@ -81,6 +81,10 @@ tasks.withType<GroovyCompile> {
     targetCompatibility = "17"
 }
 
+tasks.named<GroovyCompile>("compileTestGroovy") {
+    classpath += files(tasks.compileTestKotlin)
+}
+
 application {
     mainClass.set("at.rueckgr.kotlin.rocketbot.MainKt")
     applicationDefaultJvmArgs = listOf(
