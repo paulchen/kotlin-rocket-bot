@@ -24,6 +24,7 @@ interface Fixture : Entity<Fixture> {
     var goalsPenaltyHome: Int?
     var goalsPenaltyAway: Int?
     var eventsProcessed: Int
+    var venue: Venue?
 }
 
 object Fixtures : Table<Fixture>("fixture") {
@@ -44,4 +45,5 @@ object Fixtures : Table<Fixture>("fixture") {
     var goalsPenaltyHome = int("goals_penalty_home").bindTo { it.goalsPenaltyHome }
     var goalsPenaltyAway = int("goals_penalty_away").bindTo { it.goalsPenaltyAway }
     var eventsProcessed = int("events_processed").bindTo { it.eventsProcessed }
+    var venueId = int("venue_id").references(Venues) { it.venue }
 }

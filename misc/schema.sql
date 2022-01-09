@@ -1,3 +1,12 @@
+CREATE TABLE venue (
+    id INT NOT NULL,
+    name VARCHAR(255),
+    city VARCHAR(255),
+    country VARCHAR(255),
+    capacity VARCHAR(255),
+    PRIMARY KEY (id)
+);
+
 CREATE TABLE fixture (
     id INT NOT NULL,
     league_id INT NOT NULL,
@@ -16,5 +25,7 @@ CREATE TABLE fixture (
     goals_penalty_home INT,
     goals_penalty_away INT,
     events_processed INT NOT NULL,
-    PRIMARY KEY (id)
+    venue_id INT,
+    PRIMARY KEY (id),
+    FOREIGN KEY (venue_id) REFERENCES venue (id)
 );
