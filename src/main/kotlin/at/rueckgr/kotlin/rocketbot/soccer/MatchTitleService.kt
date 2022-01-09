@@ -2,19 +2,26 @@ package at.rueckgr.kotlin.rocketbot.soccer
 
 import at.rueckgr.kotlin.rocketbot.database.Fixture
 import at.rueckgr.kotlin.rocketbot.database.Venue
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class MatchTitleService {
     fun formatMatchTitle(fixture: Fixture): String {
+        val time = formatTime(fixture.date)
         val venue = formatVenue(fixture.venue!!)
         val score = formatMatchScore(fixture)
 
         return if (score == null) {
-            "${fixture.teamHome}\u00a0-\u00a0${fixture.teamAway} ($venue)"
+            "$time: *${fixture.teamHome}\u00a0-\u00a0${fixture.teamAway}* ($venue)"
         }
         else {
-            "${fixture.teamHome}\u00a0-\u00a0${fixture.teamAway} ($venue): $score"
+            "$time: *${fixture.teamHome}\u00a0-\u00a0${fixture.teamAway}* ($venue): $score"
 
         }
+    }
+
+    private fun formatTime(date: LocalDateTime): String {
+        return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
     }
 
     private fun formatVenue(venue: Venue): String {
