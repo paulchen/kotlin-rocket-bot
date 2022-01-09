@@ -20,16 +20,27 @@ class MatchInfoService {
 
     private fun getMatches(connection: Database, period: FixtureStatePeriod, matchesCount: Int): List<String> {
         val matchTitleService = MatchTitleService()
-        return connection
+        val list = connection
             .from(Fixtures)
             .joinReferencesAndSelect()
             .where { Fixtures.status inList getStates(period) }
-            .orderBy(Fixtures.date.desc())
-            .limit(0, matchesCount)
+            .orderBy(when (period) {
+                FixtureStatePeriod.PAST -> Fixtures.date.desc()
+                else -> Fixtures.date.asc()
+            })
+            .limit(0, when (period) {
+                FixtureStatePeriod.LIVE -> Int.MAX_VALUE
+                else -> matchesCount
+            })
             .map { row -> Fixtures.createEntity(row) }
             .toList()
-            .reversed()
-            .map { match -> matchTitleService.formatMatchTitle(match) }
+
+        return if (period == FixtureStatePeriod.PAST) {
+            list.reversed()
+        }
+        else {
+            list
+        }.map { match -> matchTitleService.formatMatchTitle(match) }
     }
 
     private fun getStates(period: FixtureStatePeriod): List<String> {
