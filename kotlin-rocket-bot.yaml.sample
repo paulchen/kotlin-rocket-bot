@@ -12,8 +12,6 @@ plugins:
       - regex: (.*[^0-9a-z_.,\-]|^)69([^0-9.,a-z_\-].*|$)
         reply: _nice_
         probability: 50
-  time:
-    soccerUsername: soccerbot
   soccer:
     leagueId: 4
     season: 2020
@@ -25,6 +23,8 @@ plugins:
     apiKey: TODO
     notificationChannels:
       - paulchens-bot
+    matchesToShow: 3
+    username: soccerbot
 
 webservice:
   users:

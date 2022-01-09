@@ -2,17 +2,18 @@ package at.rueckgr.kotlin.rocketbot.plugins
 
 import at.rueckgr.kotlin.rocketbot.OutgoingMessage
 import at.rueckgr.kotlin.rocketbot.soccer.MatchInfoService
+import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 
 class SoccerPlugin : AbstractPlugin() {
     override fun getCommands() = listOf("cl")
 
     override fun handle(message: String): List<OutgoingMessage> {
-        // TODO configurable
-        val (pastMatches, liveMatches, futureMatches) = MatchInfoService().getMatchInfo(3)
+        val configuration = ConfigurationProvider.instance.getSoccerConfiguration()
+        val matchesToShow = configuration.matchesToShow ?: 3
+        val (pastMatches, liveMatches, futureMatches) = MatchInfoService().getMatchInfo(matchesToShow)
 
         if (pastMatches.isEmpty() && liveMatches.isEmpty() && futureMatches.isEmpty()) {
-            // TODO emoji, username
-            return listOf(OutgoingMessage("Keine Spieldaten vorhanden."))
+            return listOf(OutgoingMessage("Keine Spieldaten vorhanden.", ":emoji:", configuration.username))
         }
         val parts = ArrayList<String>(3)
         parts.add(processMatches(pastMatches, "Verganenes Spiel", "Verganene Spiele"))
@@ -21,8 +22,7 @@ class SoccerPlugin : AbstractPlugin() {
 
         val result = parts.filter { it.isNotBlank() }.joinToString("\n\n")
 
-        // TODO emoji, username
-        return listOf(OutgoingMessage(result))
+        return listOf(OutgoingMessage(result, ":emoji:", configuration.username))
     }
 
     private fun processMatches(matches: List<String>, singular: String, plural: String): String {
