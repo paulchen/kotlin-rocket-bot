@@ -5,6 +5,7 @@ import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
 import com.api_football.api.FootballApi
 import com.api_football.model.FixtureResponse
+import com.api_football.model.VenueResponseResponse
 import okhttp3.Interceptor
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
@@ -31,12 +32,24 @@ class FootballApiService : Logging {
     fun getAllFixtures(): FixtureResponse {
         val soccerConfiguration = ConfigurationProvider.instance.getSoccerConfiguration()
 
+        logger().debug("Calling getFixtures() with parameters: leagueId={}, season={}", soccerConfiguration.leagueId, soccerConfiguration.season)
+
         val fixtureResponse = FootballApi()
             .getFixtures(null, null, null, soccerConfiguration.leagueId, null, null, null, soccerConfiguration.season, null, null, null, null, null)
 
         logger().debug("Data returned by getFixtures(): {}", fixtureResponse)
 
         return fixtureResponse
+    }
+
+    fun getVenue(id: Long): VenueResponseResponse {
+        logger().debug("Calling getVenues() with parameters: id={}", id)
+
+        val venue = FootballApi().getVenues(id, null, null, null, null)
+
+        logger().debug("Data returned by getVenues(): {}", venue)
+
+        return venue.response[0]
     }
 }
 

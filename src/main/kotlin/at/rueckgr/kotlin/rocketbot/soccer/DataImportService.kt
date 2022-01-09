@@ -22,13 +22,40 @@ class DataImportService : Logging {
     fun runDailyUpdate() {
         val database = Db().connection
 
-        val importedFixtures = FootballApiService()
+        val existingVenues = findExistingVenues(database)
+
+        val importedFixtures = FootballApiService.instance
             .getAllFixtures()
             .response
             .map { importFixture(database, it); it.fixture.id!! }
             .toList()
 
         removeUnlistedFixtures(database, importedFixtures)
+
+        processNewVenues(database, existingVenues)
+    }
+
+    private fun findExistingVenues(database: Database): List<Long> = database.venues.map { it.id }.toList()
+
+    private fun processNewVenues(database: Database, existingVenues: List<Long>) {
+        val venues = database.venues
+            .filter { it.id notInList existingVenues }
+            .toList()
+
+        logger().debug("Updating venue data of {} venues with ids {}", venues.size, venues)
+
+        venues.forEach { updateVenue(it) }
+    }
+
+    private fun updateVenue(entity: Venue) {
+        val venue = FootballApiService().getVenue(entity.id)
+
+        entity.name = venue.name
+        entity.city = venue.city
+        entity.country = venue.country ?: entity.country
+        entity.capacity = venue.capacity ?: entity.capacity
+
+        entity.flushChanges()
     }
 
     private fun importFixture(database: Database, fixtureResponse: FixtureResponseResponse): Fixture {
