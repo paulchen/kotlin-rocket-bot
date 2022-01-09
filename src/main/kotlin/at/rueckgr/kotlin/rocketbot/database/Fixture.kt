@@ -1,7 +1,7 @@
 package at.rueckgr.kotlin.rocketbot.database
 
-import me.liuwj.ktorm.entity.Entity
-import me.liuwj.ktorm.schema.*
+import org.ktorm.entity.Entity
+import org.ktorm.schema.*
 import java.time.LocalDateTime
 
 interface Fixture : Entity<Fixture> {

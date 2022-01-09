@@ -5,14 +5,14 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class GameTitleServiceTest extends Specification {
+class MatchTitleServiceTest extends Specification {
     def "FormatGameScore"(htHome, htAway, ftHome, ftAway, etHome, etAway, pHome, pAway, expectedResult) {
         given:
-            def g = new GameTitleService()
+            def g = new MatchTitleService()
             def fixture = new FixtureImpl(0L, 0L, 0, LocalDateTime.now(), "", "", "", "", htHome, htAway, ftHome, ftAway, etHome, etAway, pHome, pAway, 0)
 
         when:
-            def result = g.formatGameScore(fixture)
+            def result = g.formatMatchScore(fixture)
 
         then:
             result == expectedResult

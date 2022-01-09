@@ -3,10 +3,10 @@ package at.rueckgr.kotlin.rocketbot.soccer
 import at.rueckgr.kotlin.rocketbot.database.Fixture
 import at.rueckgr.kotlin.rocketbot.database.Venue
 
-class GameTitleService {
-    fun formatGameTitle(fixture: Fixture): String {
+class MatchTitleService {
+    fun formatMatchTitle(fixture: Fixture): String {
         val venue = formatVenue(fixture.venue!!)
-        val score = formatGameScore(fixture)
+        val score = formatMatchScore(fixture)
 
         return if (score == null) {
             "${fixture.teamHome}\u00a0-\u00a0${fixture.teamAway} ($venue)"
@@ -28,7 +28,7 @@ class GameTitleService {
         return builder.toString()
     }
 
-    fun formatGameScore(fixture: Fixture): String? {
+    fun formatMatchScore(fixture: Fixture): String? {
         val htHome = fixture.goalsHalftimeHome
         val htAway = fixture.goalsHalftimeAway
         val ftHome = fixture.goalsFullftimeHome

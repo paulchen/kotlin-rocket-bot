@@ -1,10 +1,10 @@
 package at.rueckgr.kotlin.rocketbot.database
 
-import me.liuwj.ktorm.entity.Entity
-import me.liuwj.ktorm.schema.Table
-import me.liuwj.ktorm.schema.int
-import me.liuwj.ktorm.schema.long
-import me.liuwj.ktorm.schema.varchar
+import org.ktorm.entity.Entity
+import org.ktorm.schema.Table
+import org.ktorm.schema.int
+import org.ktorm.schema.long
+import org.ktorm.schema.varchar
 
 interface Venue : Entity<Venue> {
     companion object : Entity.Factory<Venue>()

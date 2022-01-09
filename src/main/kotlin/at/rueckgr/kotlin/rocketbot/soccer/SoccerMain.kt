@@ -2,16 +2,16 @@ package at.rueckgr.kotlin.rocketbot.soccer
 
 import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import at.rueckgr.kotlin.rocketbot.util.Db
-import me.liuwj.ktorm.dsl.eq
-import me.liuwj.ktorm.entity.find
+import org.ktorm.dsl.eq
+import org.ktorm.entity.find
 
 fun main() {
     ConfigurationProvider.instance.loadConfiguration("/config/kotlin-rocket-bot.yaml")
 
-//    DataImportService().runDailyUpdate()
+    DataImportService().runDailyUpdate()
 
-    val fixture = Db().connection.fixtures.find { it.id eq 708775 }
-    println(GameTitleService().formatGameTitle(fixture!!))
+//    val fixture = Db().connection.fixtures.find { it.id eq 708775 }
+//    println(MatchTitleService().formatMatchTitle(fixture!!))
 
     // TODO stuff yet to be implemented:
     //  - GameInfoService for providing information about past, current and future games

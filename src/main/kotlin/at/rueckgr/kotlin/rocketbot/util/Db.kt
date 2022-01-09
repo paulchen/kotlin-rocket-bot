@@ -1,6 +1,6 @@
 package at.rueckgr.kotlin.rocketbot.util
 
-import me.liuwj.ktorm.database.Database
+import org.ktorm.database.Database
 
 class Db {
     val connection: Database;

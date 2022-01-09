@@ -10,9 +10,9 @@ import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
 import com.api_football.model.FixtureResponseFixtureVenue
 import com.api_football.model.FixtureResponseResponse
-import me.liuwj.ktorm.database.Database
-import me.liuwj.ktorm.dsl.*
-import me.liuwj.ktorm.entity.*
+import org.ktorm.database.Database
+import org.ktorm.dsl.*
+import org.ktorm.entity.*
 import java.time.ZoneId
 
 val Database.fixtures get() = this.sequenceOf(Fixtures)
@@ -40,6 +40,7 @@ class DataImportService : Logging {
     private fun processNewVenues(database: Database, existingVenues: List<Long>) {
         val venues = database.venues
             .filter { it.id notInList existingVenues }
+            .filter { it.id greaterEq 0 }
             .toList()
 
         logger().debug("Updating venue data of {} venues with ids {}", venues.size, venues)
@@ -134,9 +135,13 @@ class DataImportService : Logging {
 
     private fun getVenue(database: Database, fixtureResponse: FixtureResponseResponse): Venue? {
         val venue = fixtureResponse.fixture.venue ?: return null
-        val id = venue.id ?: return null
 
-        val entity = database.venues.find { it.id eq id } ?: return createNewVenue(database, venue)
+        val entity = if (venue.id == null) {
+            database.venues.find { (it.name eq venue.name!!) and (it.city eq venue.city!!) } ?: return createNewVenue(database, venue)
+        }
+        else {
+            database.venues.find { it.id eq venue.id } ?: return createNewVenue(database, venue)
+        }
 
         mapToEntity(venue, entity)
         entity.flushChanges()
@@ -149,12 +154,27 @@ class DataImportService : Logging {
     }
 
     private fun createNewVenue(database: Database, venue: FixtureResponseFixtureVenue): Venue {
+        val venueId = venue.id ?: createArtificialVenueId(database)
         val entity = Venue {
-            id = venue.id!!
+            id = venueId
             name = venue.name
             city = venue.city
         }
         database.venues.add(entity)
         return entity
+    }
+
+    private fun createArtificialVenueId(database: Database): Long {
+        val query = database
+            .from(Venues)
+            .select(Venues.id)
+            .where { Venues.id less 0 }
+            .orderBy(Venues.id.asc())
+            .limit(0, 1)
+        for (row in query) {
+            return row.getLong(1) - 1
+        }
+
+        return -1L
     }
 }

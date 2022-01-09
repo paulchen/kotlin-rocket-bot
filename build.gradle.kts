@@ -54,7 +54,8 @@ dependencies {
     implementation("at.favre.lib:bcrypt:0.9.0")
 
     implementation("org.postgresql:postgresql:42.3.1")
-    implementation("me.liuwj.ktorm:ktorm-core:3.1.0")
+    implementation("org.ktorm:ktorm-core:3.4.1")
+    implementation("org.ktorm:ktorm-support-postgresql:3.4.1")
 
     // dependencies for generated OpenAPI client
     implementation("com.squareup.moshi:moshi-kotlin:1.13.0")
