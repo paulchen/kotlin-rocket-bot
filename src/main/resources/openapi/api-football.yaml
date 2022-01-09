@@ -135,6 +135,55 @@ paths:
           $ref: '#/components/responses/timeOut'
         '500':
           $ref: '#/components/responses/internalServerError'
+  /venues:
+    get:
+      tags:
+        - Football
+      operationId: getVenues
+      summary: Get the list of available venues
+      parameters:
+        - name: id
+          in: query
+          description: The id of the venue
+          schema:
+            $ref: '#/components/schemas/id'
+        - name: name
+          in: query
+          description: The name of the venue
+          schema:
+            type: string
+        - name: city
+          in: query
+          description: The city of the venue
+          schema:
+            type: string
+        - name: country
+          in: query
+          description: The country name of the teavenue
+          schema:
+            type: string
+        - name: search
+          in: query
+          description: The name, city or the country of the venue (>=3 characters)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/venueResponse'
+        '204':
+          description: No Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/venueResponse'
+        '499':
+          $ref: '#/components/responses/timeOut'
+        '500':
+          $ref: '#/components/responses/internalServerError'
 components:
   schemas:
     fixtureRoundsResponse:
@@ -375,6 +424,52 @@ components:
                         properties:
                           player:
                             $ref: '#/components/schemas/player'
+    venueResponse:
+      type: object
+      required:
+        - get
+        - parameters
+        - errors
+        - results
+        - response
+      properties:
+        get:
+          $ref: '#/components/schemas/getResponse'
+        parameters:
+          $ref: '#/components/schemas/parametersResponse'
+        errors:
+          $ref: '#/components/schemas/errorsResponse'
+        results:
+          $ref: '#/components/schemas/resultsResponse'
+        paging:
+          $ref: '#/components/schemas/pagingResponse'
+        response:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - name
+              - city
+            properties:
+              id:
+                $ref: '#/components/schemas/id'
+              name:
+                type: string
+              address:
+                type: string
+              city:
+                type: string
+              country:
+                type: string
+              capacity:
+                type: integer
+                format: int32
+                minimum: 0
+              surface:
+                type: string
+              image:
+                type: string
     getResponse:
       type: string
     parametersResponse:
