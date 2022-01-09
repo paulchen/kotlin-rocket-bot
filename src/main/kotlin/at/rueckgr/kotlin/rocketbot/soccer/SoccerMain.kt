@@ -14,7 +14,6 @@ fun main() {
 //    println(MatchTitleService().formatMatchTitle(fixture!!))
 
     // TODO stuff yet to be implemented:
-    //  - GameInfoService for providing information about past, current and future games
     //  - DataImportService.runLiveUpdate() for updating games that will start shortly, are currently live or have just ended
     //    - check for a change of fixture state
     //      - send notifications about certain types of changes
