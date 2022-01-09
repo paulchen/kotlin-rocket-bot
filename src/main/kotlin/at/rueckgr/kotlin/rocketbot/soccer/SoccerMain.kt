@@ -1,16 +1,20 @@
 package at.rueckgr.kotlin.rocketbot.soccer
 
 import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
+import at.rueckgr.kotlin.rocketbot.util.Db
+import me.liuwj.ktorm.dsl.eq
+import me.liuwj.ktorm.entity.find
 
 fun main() {
     ConfigurationProvider.instance.loadConfiguration("/config/kotlin-rocket-bot.yaml")
 
-    DataImportService().runDailyUpdate()
+//    DataImportService().runDailyUpdate()
+
+    val fixture = Db().connection.fixtures.find { it.id eq 708775 }
+    println(GameTitleService().formatGameTitle(fixture!!))
 
     // TODO stuff yet to be implemented:
     //  - GameInfoService for providing information about past, current and future games
-    //    - service for formatting game scores
-    //    - service for formatting game titles (involved teams, venue, score)
     //  - DataImportService.runLiveUpdate() for updating games that will start shortly, are currently live or have just ended
     //    - check for a change of fixture state
     //      - send notifications about certain types of changes
