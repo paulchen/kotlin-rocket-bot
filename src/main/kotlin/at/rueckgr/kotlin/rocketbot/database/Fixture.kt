@@ -47,5 +47,5 @@ object Fixtures : Table<Fixture>("fixture") {
     var goalsPenaltyAway = int("goals_penalty_away").bindTo { it.goalsPenaltyAway }
     var eventsProcessed = int("events_processed").bindTo { it.eventsProcessed }
     var venueId = int("venue_id").references(Venues) { it.venue }
-    var endDate = datetime("endDate").bindTo { it.endDate }
+    var endDate = datetime("end_date").bindTo { it.endDate }
 }

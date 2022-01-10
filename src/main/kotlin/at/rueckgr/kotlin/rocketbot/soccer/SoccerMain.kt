@@ -8,7 +8,8 @@ import org.ktorm.entity.find
 fun main() {
     ConfigurationProvider.instance.loadConfiguration("/config/kotlin-rocket-bot.yaml")
 
-    DataImportService().runDailyUpdate()
+//    DataImportService().runDailyUpdate()
+    DataImportService().runLiveUpdate()
 
 //    val fixture = Db().connection.fixtures.find { it.id eq 708775 }
 //    println(MatchTitleService().formatMatchTitle(fixture!!))

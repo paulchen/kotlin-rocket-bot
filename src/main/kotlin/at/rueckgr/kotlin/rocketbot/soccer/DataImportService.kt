@@ -17,6 +17,8 @@ val Database.venues get() = this.sequenceOf(Venues)
 
 class DataImportService : Logging {
     fun runDailyUpdate() {
+        logger().info("Running daily update")
+
         val database = Db().connection
 
         val existingVenues = findExistingVenues(database)
@@ -30,15 +32,27 @@ class DataImportService : Logging {
         removeUnlistedFixtures(database, importedFixtures)
 
         processNewVenues(database, existingVenues)
+
+        logger().info("Daily update complete")
     }
 
     fun runLiveUpdate(): List<ImportFixtureResult> {
+        logger().info("Running live update")
+
         val database = Db().connection
-        return findLiveFixtures(database)
+        val liveFixtures = findLiveFixtures(database)
+
+        logger().info("Matches currently live: {}", liveFixtures.map { it.id })
+
+        val result = liveFixtures
             .map {
                 importFixture(database, FootballApiService.instance.getFixture(it.id).response[0])
             }
             .toList()
+
+        logger().info("Live update complete")
+
+        return result
     }
 
     private fun findExistingVenues(database: Database): List<Long> = database.venues.map { it.id }.toList()
@@ -197,9 +211,9 @@ class DataImportService : Logging {
 
         return fixtureResponse
             .players
-            .first { it.team?.id == teamId }
-            .players
-            ?.first { it.player?.id == playerId }
+            .firstOrNull { it.team?.id == teamId }
+            ?.players
+            ?.firstOrNull { it.player?.id == playerId }
             ?.player
             ?.name ?: fallbackName
     }
