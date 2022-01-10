@@ -19,11 +19,11 @@ class MatchInfoService {
     }
 
     private fun getMatches(connection: Database, period: FixtureStatePeriod, matchesCount: Int): List<String> {
-        val matchTitleService = MatchTitleService()
+        val matchTitleService = MatchTitleService.instance
         val list = connection
             .from(Fixtures)
             .joinReferencesAndSelect()
-            .where { Fixtures.status inList getStates(period) }
+            .where { Fixtures.status inList FixtureState.getByPeriod(period) }
             .orderBy(when (period) {
                 FixtureStatePeriod.PAST -> Fixtures.date.desc()
                 else -> Fixtures.date.asc()
@@ -41,13 +41,6 @@ class MatchInfoService {
         else {
             list
         }.map { match -> matchTitleService.formatMatchTitle(match) }
-    }
-
-    private fun getStates(period: FixtureStatePeriod): List<String> {
-        return FixtureState
-            .values()
-            .filter { it.period == period }
-            .map { it.code }
     }
 }
 

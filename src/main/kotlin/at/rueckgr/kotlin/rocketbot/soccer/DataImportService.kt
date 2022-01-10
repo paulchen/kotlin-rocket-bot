@@ -1,18 +1,15 @@
 package at.rueckgr.kotlin.rocketbot.soccer
 
-import at.rueckgr.kotlin.rocketbot.database.Fixture
-import at.rueckgr.kotlin.rocketbot.database.Fixtures
-import at.rueckgr.kotlin.rocketbot.database.Venue
-import at.rueckgr.kotlin.rocketbot.database.Venues
+import at.rueckgr.kotlin.rocketbot.database.*
 import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import at.rueckgr.kotlin.rocketbot.util.Db
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
-import com.api_football.model.FixtureResponseFixtureVenue
-import com.api_football.model.FixtureResponseResponse
+import com.api_football.model.*
 import org.ktorm.database.Database
 import org.ktorm.dsl.*
 import org.ktorm.entity.*
+import java.time.LocalDateTime
 import java.time.ZoneId
 
 val Database.fixtures get() = this.sequenceOf(Fixtures)
@@ -35,7 +32,30 @@ class DataImportService : Logging {
         processNewVenues(database, existingVenues)
     }
 
+    fun runLiveUpdate(): List<ImportFixtureResult> {
+        val database = Db().connection
+        return findLiveFixtures(database)
+            .map {
+                importFixture(database, FootballApiService.instance.getFixture(it.id).response[0])
+            }
+            .toList()
+    }
+
     private fun findExistingVenues(database: Database): List<Long> = database.venues.map { it.id }.toList()
+
+    private fun findLiveFixtures(database: Database): List<Fixture> {
+        val liveStates = FixtureState.getByPeriod(FixtureStatePeriod.LIVE)
+        val oneHourAgo = LocalDateTime.now().minusHours(1)
+        val inOneHour = LocalDateTime.now().plusHours(1)
+
+        return database.from(Fixtures)
+            .joinReferencesAndSelect()
+            .where {
+                (Fixtures.status inList liveStates) or ((Fixtures.date greater oneHourAgo) and (Fixtures.date less inOneHour)) or (Fixtures.endDate greater oneHourAgo)
+            }
+            .map { row -> Fixtures.createEntity(row) }
+            .toList()
+    }
 
     private fun processNewVenues(database: Database, existingVenues: List<Long>) {
         val venues = database.venues
@@ -59,14 +79,13 @@ class DataImportService : Logging {
         entity.flushChanges()
     }
 
-    private fun importFixture(database: Database, fixtureResponse: FixtureResponseResponse): Fixture {
+    private fun importFixture(database: Database, fixtureResponse: FixtureResponseResponse): ImportFixtureResult {
         val id = fixtureResponse.fixture.id!!
 
-        val entity = database.fixtures.find { it.id eq id } ?: return createNewFixture(database, fixtureResponse)
+        val entity = database.fixtures.find { it.id eq id }
+            ?: return ImportFixtureResult(createNewFixture(database, fixtureResponse), emptyList(), null)
 
-        mapToEntity(database, fixtureResponse, entity)
-        entity.flushChanges()
-        return entity
+        return mapToEntity(database, fixtureResponse, entity)
     }
 
     private fun createNewFixture(database: Database, fixtureResponse: FixtureResponseResponse): Fixture {
@@ -94,14 +113,23 @@ class DataImportService : Logging {
         return entity
     }
 
-    private fun mapToEntity(database: Database, fixtureResponse: FixtureResponseResponse, entity: Fixture) {
+    private fun mapToEntity(database: Database, fixtureResponse: FixtureResponseResponse, entity: Fixture): ImportFixtureResult {
         entity.leagueId = fixtureResponse.league.id!!
         entity.season = fixtureResponse.league.season!!
         entity.date = fixtureResponse.fixture.date!!.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
         entity.round = fixtureResponse.league.round!!
-        entity.teamHome = fixtureResponse.teams.home?.name ?: "unknown"
-        entity.teamAway = fixtureResponse.teams.away?.name ?: "unknown"
-        entity.status = fixtureResponse.fixture.status?.short?.value!!
+        entity.teamHome = fixtureResponse.teams.home?.name ?: "unbekannt"
+        entity.teamAway = fixtureResponse.teams.away?.name ?: "unbekannt"
+
+        val status = fixtureResponse.fixture.status?.short?.value ?: "TBD"
+        val stateChange = if (status != entity.status) {
+            processStateChange(status)
+        }
+        else {
+            null
+        }
+        entity.status = status
+
         entity.goalsHalftimeHome = fixtureResponse.score.halftime?.home
         entity.goalsHalftimeAway = fixtureResponse.score.halftime?.away
         entity.goalsFullftimeHome = fixtureResponse.score.fulltime?.home
@@ -110,8 +138,65 @@ class DataImportService : Logging {
         entity.goalsExtratimeAway = fixtureResponse.score.extratime?.away
         entity.goalsPenaltyHome = fixtureResponse.score.penalty?.home
         entity.goalsPenaltyAway = fixtureResponse.score.penalty?.away
-        entity.eventsProcessed = fixtureResponse.events?.size ?: 0
+
+        val eventsCount = fixtureResponse.events?.size ?: 0
+        val newEvents = if (eventsCount > entity.eventsProcessed) {
+            fixtureResponse
+                .events!!
+                .subList(entity.eventsProcessed, fixtureResponse.events.size)
+                .mapNotNull { processEvent(fixtureResponse, entity, it) }
+        }
+        else {
+            emptyList()
+        }
+        entity.eventsProcessed = eventsCount
+
         entity.venue = getVenue(database, fixtureResponse)
+
+        entity.flushChanges()
+
+        return ImportFixtureResult(entity, newEvents, stateChange)
+    }
+
+    private fun processStateChange(newState: String): String? = FixtureState.getByCode(newState)?.description
+
+    private fun processEvent(fixtureResponse: FixtureResponseResponse, entity: Fixture, event: FixtureResponseEvents): String? {
+        return if (event.type == "Goal") {
+            val type = when (event.detail) {
+                "Normal Goal" -> "Tor"
+                "Own Goal" -> "Eigentor"
+                "Penalty" -> "Elfmetertreffer"
+                "Missed Penalty" -> "Vergebener Elfmeter"
+                else -> event.detail
+            }
+            val team = TeamMapper.instance.mapTeamName(event.team?.name ?: "unbekannt")
+            val player = findPlayer(fixtureResponse, event.team?.id, event.player?.id, event.player?.name)
+            val score = MatchTitleService.instance.formatMatchScore(entity)
+
+            if (player != null) {
+                "$type für $team durch $player; Spielstand: $score"
+            }
+            else {
+                "$type für $team; Spielstand: $score"
+            }
+        }
+        else {
+            null
+        }
+    }
+
+    private fun findPlayer(fixtureResponse: FixtureResponseResponse, teamId: Long?, playerId: Long?, fallbackName: String?): String? {
+        playerId ?: return fallbackName
+        teamId ?: return fallbackName
+        fixtureResponse.players ?: return fallbackName
+
+        return fixtureResponse
+            .players
+            .first { it.team?.id == teamId }
+            .players
+            ?.first { it.player?.id == playerId }
+            ?.player
+            ?.name ?: fallbackName
     }
 
     private fun removeUnlistedFixtures(database: Database, importedFixtures: List<Long>) {
@@ -178,3 +263,9 @@ class DataImportService : Logging {
         return -1L
     }
 }
+
+data class ImportFixtureResult(
+    val fixture: Fixture,
+    val newEvents: List<String>,
+    val stateChange: String?
+)

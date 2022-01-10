@@ -26,6 +26,7 @@ CREATE TABLE fixture (
     goals_penalty_away INT,
     events_processed INT NOT NULL,
     venue_id INT,
+    end_date TIMESTAMP WITH TIME ZONE,
     PRIMARY KEY (id),
     FOREIGN KEY (venue_id) REFERENCES venue (id)
 );

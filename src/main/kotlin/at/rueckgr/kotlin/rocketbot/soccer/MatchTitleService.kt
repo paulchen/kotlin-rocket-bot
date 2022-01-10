@@ -6,16 +6,23 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class MatchTitleService {
+    companion object {
+        val instance = MatchTitleService()
+    }
+
     fun formatMatchTitle(fixture: Fixture): String {
         val time = formatTime(fixture.date)
         val venue = formatVenue(fixture.venue!!)
         val score = formatMatchScore(fixture)
 
+        val teamHome = TeamMapper.instance.mapTeamName(fixture.teamHome)
+        val teamAway = TeamMapper.instance.mapTeamName(fixture.teamAway)
+
         return if (score == null) {
-            "$time: *${fixture.teamHome}\u00a0-\u00a0${fixture.teamAway}* ($venue)"
+            "$time: *$teamHome\u00a0-\u00a0$teamAway* ($venue)"
         }
         else {
-            "$time: *${fixture.teamHome}\u00a0-\u00a0${fixture.teamAway}* ($venue): $score"
+            "$time: *$teamHome\u00a0-\u00a0$teamAway* ($venue): $score"
 
         }
     }

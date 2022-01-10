@@ -42,6 +42,17 @@ class FootballApiService : Logging {
         return fixtureResponse
     }
 
+    fun getFixture(id: Long): FixtureResponse {
+        logger().debug("Calling getFixture() with parameter: id={}", id)
+
+        val fixtureResponse = FootballApi()
+            .getFixtures(id, null, null, null, null, null, null, null, null, null, null, null, null)
+
+        logger().debug("Data returned by getFixtures(): {}", fixtureResponse)
+
+        return fixtureResponse
+    }
+
     fun getVenue(id: Long): VenueResponseResponse {
         logger().debug("Calling getVenues() with parameters: id={}", id)
 
