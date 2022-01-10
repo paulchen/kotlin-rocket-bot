@@ -15,12 +15,6 @@ fun main() {
 //    println(MatchTitleService().formatMatchTitle(fixture!!))
 
     // TODO stuff yet to be implemented:
-    //  - DataImportService.runLiveUpdate() for updating games that will start shortly, are currently live or have just ended
-    //    - check for a change of fixture state
-    //      - send notifications about certain types of changes
-    //    - check for unprocessed events
-    //      - send notifications about certain types of events
-    //        - especially goals; in case of a goal, provide new score
     //  - put a scheduler in place
     //    - run the daily update everyday (at 3am?) and during bot startup
     //    - run the live update when at least a game is currently live, one hour before a game will start and one hour after a game has ended
