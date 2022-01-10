@@ -123,6 +123,11 @@ class DataImportService : Logging {
 
         val status = fixtureResponse.fixture.status?.short?.value ?: "TBD"
         val stateChange = if (status != entity.status) {
+            if (entity.endDate == null
+                    && FixtureState.getByCode(entity.status)?.period != FixtureStatePeriod.PAST
+                    && FixtureState.getByCode(status)?.period == FixtureStatePeriod.PAST) {
+                entity.endDate = LocalDateTime.now()
+            }
             processStateChange(status)
         }
         else {
