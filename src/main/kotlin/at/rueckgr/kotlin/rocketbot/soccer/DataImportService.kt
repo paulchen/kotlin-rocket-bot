@@ -100,6 +100,8 @@ class DataImportService : Logging {
         entity.capacity = venue.capacity ?: entity.capacity
 
         entity.flushChanges()
+
+        Thread.sleep(10000)
     }
 
     private fun importFixture(database: Database, fixtureResponse: FixtureResponseResponse): ImportFixtureResult {
