@@ -74,10 +74,17 @@ class DataImportService : Logging {
     }
 
     private fun processNewVenues(database: Database, existingVenues: List<Long>) {
-        val venues = database.venues
-            .filter { it.id notInList existingVenues }
-            .filter { it.id greaterEq 0 }
-            .toList()
+        val venues = if (existingVenues.isEmpty()) {
+            database.venues
+                .filter { it.id greaterEq 0 }
+                .toList()
+        }
+        else {
+            database.venues
+                .filter { it.id notInList existingVenues }
+                .filter { it.id greaterEq 0 }
+                .toList()
+        }
 
         logger().debug("Updating venue data of {} venues with ids {}", venues.size, venues)
 
