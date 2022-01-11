@@ -37,7 +37,7 @@ fun main() {
             ).start()
         }
         launch {
-            SoccerUpdateService().runDailyUpdate()
+            SoccerUpdateService().scheduleImmediateDailyUpdate()
         }
     }
 }

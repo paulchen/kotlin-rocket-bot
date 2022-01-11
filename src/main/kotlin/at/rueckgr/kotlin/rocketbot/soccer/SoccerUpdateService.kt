@@ -19,7 +19,12 @@ import kotlin.math.max
 class SoccerUpdateService : Logging {
     private val executorService = Executors.newScheduledThreadPool(1)
 
-    fun runDailyUpdate() {
+    fun scheduleImmediateDailyUpdate() {
+        logger().debug("Scheduling next daily update for {} (in 1 seconds)", LocalDateTime.now().plusSeconds(1))
+        executorService.schedule( { runDailyUpdate() }, 1, TimeUnit.SECONDS)
+    }
+
+    private fun runDailyUpdate() {
         val updateResult = try {
             DataImportService().runDailyUpdate()
         }
@@ -81,7 +86,7 @@ class SoccerUpdateService : Logging {
 
         val formattedMessage = "*$teamHome\u00a0-\u00a0$teamAway*: $message"
 
-        return WebserviceMessage(null, roomName, formattedMessage, ":soccer:", username)
+        return WebserviceMessage(Bot.knownChannelNamesToIds[roomName], null, formattedMessage, ":soccer:", username)
     }
 
     private fun hasLiveFixtures(updateResult: List<ImportFixtureResult>): Boolean {
@@ -97,17 +102,24 @@ class SoccerUpdateService : Logging {
             }
     }
 
-    private fun scheduleQuickLiveUpdate() = executorService.schedule( { runLiveUpdate() }, 30, TimeUnit.SECONDS)
+    private fun scheduleQuickLiveUpdate() {
+        logger().debug("Scheduling next live update for {} (in 30 seconds)", LocalDateTime.now().plusSeconds(30))
+        executorService.schedule( { runLiveUpdate() }, 30, TimeUnit.SECONDS)
+    }
 
     private fun scheduleLiveOrDailyUpdate() {
         val nextDailyUpdate = getNextDailyUpdate()
         val nextLiveUpdate = getNextLiveUpdate()
 
         if (nextLiveUpdate == null || nextDailyUpdate.isBefore(nextLiveUpdate)) {
-            executorService.schedule( { runDailyUpdate() }, getSeconds(nextDailyUpdate), TimeUnit.SECONDS)
+            val seconds = getSeconds(nextDailyUpdate)
+            logger().debug("Scheduling next daily update for {} (in {} seconds)", nextDailyUpdate, seconds)
+            executorService.schedule( { runDailyUpdate() }, seconds, TimeUnit.SECONDS)
         }
         else {
-            executorService.schedule( { runLiveUpdate() }, getSeconds(nextLiveUpdate), TimeUnit.SECONDS)
+            val seconds = getSeconds(nextLiveUpdate)
+            logger().debug("Scheduling next live update for {} (in {} seconds)", nextLiveUpdate, seconds)
+            executorService.schedule( { runLiveUpdate() }, seconds, TimeUnit.SECONDS)
         }
     }
 
