@@ -20,7 +20,9 @@ class FixtureImpl(
     override var goalsExtratimeAway: Int?,
     override var goalsPenaltyHome: Int?,
     override var goalsPenaltyAway: Int?,
-    override var eventsProcessed: Int
+    override var eventsProcessed: Int,
+    override var venue: Venue?,
+    override var endDate: LocalDateTime?
 ) : Fixture {
     override val entityClass: KClass<Fixture>
         get() = TODO("Not yet implemented")
@@ -39,6 +41,10 @@ class FixtureImpl(
         TODO("Not yet implemented")
     }
 
+    override fun equals(other: Any?): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override fun flushChanges(): Int {
         TODO("Not yet implemented")
     }
@@ -47,7 +53,15 @@ class FixtureImpl(
         TODO("Not yet implemented")
     }
 
+    override fun hashCode(): Int {
+        TODO("Not yet implemented")
+    }
+
     override fun set(name: String, value: Any?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun toString(): String {
         TODO("Not yet implemented")
     }
 }
