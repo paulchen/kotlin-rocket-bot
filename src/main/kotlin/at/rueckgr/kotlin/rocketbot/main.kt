@@ -2,6 +2,7 @@ package at.rueckgr.kotlin.rocketbot
 
 import at.rueckgr.kotlin.rocketbot.exception.ConfigurationException
 import at.rueckgr.kotlin.rocketbot.handler.PluginProvider
+import at.rueckgr.kotlin.rocketbot.soccer.SoccerUpdateService
 import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
@@ -34,6 +35,9 @@ fun main() {
                 Handler(),
                 UserValidator()
             ).start()
+        }
+        launch {
+            SoccerUpdateService().runDailyUpdate()
         }
     }
 }

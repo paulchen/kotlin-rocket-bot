@@ -16,24 +16,26 @@ val Database.fixtures get() = this.sequenceOf(Fixtures)
 val Database.venues get() = this.sequenceOf(Venues)
 
 class DataImportService : Logging {
-    fun runDailyUpdate() {
+    fun runDailyUpdate(): List<ImportFixtureResult> {
         logger().info("Running daily update")
 
         val database = Db().connection
 
         val existingVenues = findExistingVenues(database)
 
-        val importedFixtures = FootballApiService.instance
+        val result = FootballApiService.instance
             .getAllFixtures()
             .response
-            .map { importFixture(database, it); it.fixture.id!! }
+            .map { importFixture(database, it); }
             .toList()
 
-        removeUnlistedFixtures(database, importedFixtures)
+        removeUnlistedFixtures(database, result.map { it.fixture.id })
 
         processNewVenues(database, existingVenues)
 
         logger().info("Daily update complete")
+
+        return result
     }
 
     fun runLiveUpdate(): List<ImportFixtureResult> {
