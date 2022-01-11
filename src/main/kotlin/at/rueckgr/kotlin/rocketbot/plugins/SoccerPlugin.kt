@@ -16,7 +16,7 @@ class SoccerPlugin : AbstractPlugin() {
             return listOf(OutgoingMessage("Keine Spieldaten vorhanden.", ":emoji:", configuration.username))
         }
         val parts = ArrayList<String>(3)
-        parts.add(processMatches(pastMatches, "Verganenes Spiel", "Verganene Spiele"))
+        parts.add(processMatches(pastMatches, "Vergangenes Spiel", "Vergangene Spiele"))
         parts.add(processMatches(liveMatches, "Laufendes Spiel", "Laufende Spiele"))
         parts.add(processMatches(futureMatches, "Zukünftiges Spiel", "Zukünftige Spiele"))
 
