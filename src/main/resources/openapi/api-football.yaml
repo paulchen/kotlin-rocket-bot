@@ -1,0 +1,624 @@
+openapi: 3.0.3
+info:
+  title: API-Football
+  description: RESTful API for football data
+  termsOfService: https://www.api-football.com/pricing
+  version: 3.8.1
+servers:
+  - url: https://v3.football.api-sports.io/
+paths:
+  /fixtures/rounds:
+    get:
+      tags:
+        - Football
+      operationId: getFixturesRounds
+      summary: Get the rounds for a league or a cup.
+      parameters:
+        - $ref: '#/components/parameters/league'
+        - $ref: '#/components/parameters/season'
+        - name: current
+          in: query
+          description: The current round only
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/fixtureRoundsResponse'
+        '204':
+          description: No Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/fixtureRoundsResponse'
+        '499':
+          $ref: '#/components/responses/timeOut'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+  /fixtures:
+    get:
+      tags:
+        - Football
+      operationId: getFixtures
+      summary: Get details for one or more fixtures.
+      parameters:
+        - name: id
+          in: query
+          description: The id of the fixture
+          schema:
+            $ref: '#/components/schemas/id'
+        - name: live
+          in: query
+          description: all or all-id
+          schema:
+            type: string
+            enum:
+              - all
+              - all-id
+        - name: date
+          in: query
+          description: A valid date (YYYY-MM-DD)
+          schema:
+            type: string
+            format: date
+        - $ref: '#/components/parameters/league'
+        - name: team
+          in: query
+          description: The id of the team
+          schema:
+            $ref: '#/components/schemas/id'
+        - name: last
+          in: query
+          description: For the X last fixture
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            maximum: 99
+        - name: next
+          in: query
+          description: For the X next fixture
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            maximum: 99
+        - name: season
+          in: query
+          description: The season of the league (4 characters, YYYY)
+          schema:
+            $ref: '#/components/schemas/season'
+        - name: from
+          in: query
+          description: A valid date (YYYY-MM-DD)
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          description: A valid date (YYYY-MM-DD)
+          schema:
+            type: string
+            format: date
+        - name: round
+          in: query
+          description: The round of the fixture
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: The status short of the fixture
+          schema:
+            type: string
+        - name: timezone
+          in: query
+          description: A valid timezone from the endpoint Timezone
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/fixtureResponse'
+        '204':
+          description: No Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/fixtureResponse'
+        '499':
+          $ref: '#/components/responses/timeOut'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+  /venues:
+    get:
+      tags:
+        - Football
+      operationId: getVenues
+      summary: Get the list of available venues
+      parameters:
+        - name: id
+          in: query
+          description: The id of the venue
+          schema:
+            $ref: '#/components/schemas/id'
+        - name: name
+          in: query
+          description: The name of the venue
+          schema:
+            type: string
+        - name: city
+          in: query
+          description: The city of the venue
+          schema:
+            type: string
+        - name: country
+          in: query
+          description: The country name of the teavenue
+          schema:
+            type: string
+        - name: search
+          in: query
+          description: The name, city or the country of the venue (>=3 characters)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/venueResponse'
+        '204':
+          description: No Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/venueResponse'
+        '499':
+          $ref: '#/components/responses/timeOut'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+components:
+  schemas:
+    fixtureRoundsResponse:
+      type: object
+      required:
+        - get
+        - parameters
+        - errors
+        - results
+        - response
+      properties:
+        get:
+          $ref: '#/components/schemas/getResponse'
+        parameters:
+          $ref: '#/components/schemas/parametersResponse'
+        errors:
+          $ref: '#/components/schemas/errorsResponse'
+        results:
+          $ref: '#/components/schemas/resultsResponse'
+        paging:
+          $ref: '#/components/schemas/pagingResponse'
+        response:
+          type: array
+          items:
+            type: string
+    fixtureResponse:
+      type: object
+      required:
+        - get
+        - parameters
+        - errors
+        - results
+        - response
+      properties:
+        get:
+          $ref: '#/components/schemas/getResponse'
+        parameters:
+          $ref: '#/components/schemas/parametersResponse'
+        errors:
+          $ref: '#/components/schemas/errorsResponse'
+        results:
+          $ref: '#/components/schemas/resultsResponse'
+        paging:
+          $ref: '#/components/schemas/pagingResponse'
+        response:
+          type: array
+          items:
+            type: object
+            required:
+              - fixture
+              - league
+              - teams
+              - goals
+              - score
+            properties:
+              fixture:
+                type: object
+                properties:
+                  id:
+                    $ref: '#/components/schemas/id'
+                  referee:
+                    type: string
+                  timezone:
+                    type: string
+                  date:
+                    type: string
+                    format: datetime
+                  timestamp:
+                    $ref: '#/components/schemas/timestamp'
+                  periods:
+                    type: object
+                    properties:
+                      first:
+                        $ref: '#/components/schemas/timestamp'
+                      second:
+                        $ref: '#/components/schemas/timestamp'
+                  venue:
+                    type: object
+                    properties:
+                      id:
+                        $ref: '#/components/schemas/id'
+                      name:
+                        type: string
+                      city:
+                        type: string
+                  status:
+                    type: object
+                    properties:
+                      long:
+                        type: string
+                      short:
+                        type: string
+                        enum:
+                          - TBD
+                          - NS
+                          - 1H
+                          - HT
+                          - 2H
+                          - ET
+                          - P
+                          - FT
+                          - AET
+                          - PEN
+                          - BT
+                          - SUSP
+                          - INT
+                          - PST
+                          - CANC
+                          - ABD
+                          - AWD
+                          - WO
+                          - LIVE
+                      elapsed:
+                        type: integer
+                        format: int32
+                        minimum: 0
+              league:
+                type: object
+                properties:
+                  id:
+                    $ref: '#/components/schemas/id'
+                  name:
+                    type: string
+                  country:
+                    type: string
+                  logo:
+                    type: string
+                  flag:
+                    type: string
+                  season:
+                    $ref: '#/components/schemas/season'
+                  round:
+                    type: string
+              teams:
+                type: object
+                properties:
+                  home:
+                    $ref: '#/components/schemas/teamShort'
+                  away:
+                    $ref: '#/components/schemas/teamShort'
+              goals:
+                $ref: '#/components/schemas/goalsShort'
+              score:
+                type: object
+                properties:
+                  halftime:
+                    $ref: '#/components/schemas/goalsShort'
+                  fulltime:
+                    $ref: '#/components/schemas/goalsShort'
+                  extratime:
+                    $ref: '#/components/schemas/goalsShort'
+                  penalty:
+                    $ref: '#/components/schemas/goalsShort'
+              events:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    time:
+                      type: object
+                      properties:
+                        elapsed:
+                          type: integer
+                          format: int32
+                          minimum: 0
+                        extra:
+                          type: integer
+                          format: int32
+                          minimum: 0
+                    team:
+                      $ref: '#/components/schemas/teamShort'
+                    player:
+                      $ref: '#/components/schemas/player'
+                    assist:
+                      type: object
+                      properties:
+                        id:
+                          $ref: '#/components/schemas/id'
+                        name:
+                          type: string
+                    type:
+                      type: string
+                    detail:
+                      type: string
+                    comments:
+                      type: string
+              lineups:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    team:
+                      $ref: '#/components/schemas/teamShort'
+                    formation:
+                      type: string
+                    startXI:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/player'
+                    substitutes:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/player'
+                    coach:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+              statistics:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    team:
+                      $ref: '#/components/schemas/teamShort'
+                    statistics:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                          value:
+                            type: string
+              players:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    team:
+                      $ref: '#/components/schemas/teamShort'
+                    players:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          player:
+                            $ref: '#/components/schemas/player'
+    venueResponse:
+      type: object
+      required:
+        - get
+        - parameters
+        - errors
+        - results
+        - response
+      properties:
+        get:
+          $ref: '#/components/schemas/getResponse'
+        parameters:
+          $ref: '#/components/schemas/parametersResponse'
+        errors:
+          $ref: '#/components/schemas/errorsResponse'
+        results:
+          $ref: '#/components/schemas/resultsResponse'
+        paging:
+          $ref: '#/components/schemas/pagingResponse'
+        response:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - name
+              - city
+            properties:
+              id:
+                $ref: '#/components/schemas/id'
+              name:
+                type: string
+              address:
+                type: string
+              city:
+                type: string
+              country:
+                type: string
+              capacity:
+                type: integer
+                format: int32
+                minimum: 0
+              surface:
+                type: string
+              image:
+                type: string
+    getResponse:
+      type: string
+    parametersResponse:
+      type: object
+      properties: {}
+    errorsResponse:
+      type: object
+      properties: {}
+    resultsResponse:
+      type: integer
+      format: int64
+      minimum: 0
+    pagingResponse:
+      type: object
+      required:
+        - current
+        - total
+      properties:
+        current:
+          type: integer
+          format: int64
+          minimum: 0
+        total:
+          type: integer
+          format: int64
+          minimum: 0
+    errorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+    id:
+      type: integer
+      format: int64
+      minimum: 1
+    timestamp:
+      type: integer
+      format: int64
+    season:
+      type: integer
+      format: int32
+      minimum: 1900
+      maximum: 2100
+    teamShort:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        name:
+          type: string
+        logo:
+          type: string
+        winner:
+          type: boolean
+        colors:
+          type: object
+          properties:
+            player:
+              $ref: '#/components/schemas/colors'
+    goalsShort:
+      type: object
+      properties:
+        home:
+          $ref: '#/components/schemas/goalsCount'
+        away:
+          $ref: '#/components/schemas/goalsCount'
+    goalsCount:
+      type: integer
+      format: int32
+      minimum: 0
+    colors:
+      type: object
+      properties:
+        primary:
+          type: string
+        number:
+          type: string
+        border:
+          type: string
+    player:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        name:
+          type: string
+        number:
+          type: integer
+          format: int32
+          minimum: 0
+        pos:
+          type: string
+        grid:
+          type: string
+  responses:
+    timeOut:
+      description: Time Out
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorResponse'
+    internalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorResponse'
+  parameters:
+    league:
+      name: league
+      in: query
+      description: The id of the league
+      schema:
+        $ref: '#/components/schemas/id'
+    season:
+      name: season
+      in: query
+      description: The season of the league (4 characters, YYYY)
+      schema:
+        $ref: '#/components/schemas/season'
+  headers:
+    x-ratelimit-requests-limit:
+      description: The number of requests allocated per day according to your subscription.
+      schema:
+        type: integer
+        format: int64
+    x-ratelimit-requests-remaining:
+      description: The number of remaining requests per day according to your subscription.
+      schema:
+        type: integer
+        format: int64
+    X-RateLimit-Limit:
+      description: Maximum number of API calls per minute.
+      schema:
+        type: integer
+        format: int64
+    X-RateLimit-Remaining:
+      description: Number of API calls remaining before reaching the limit per minute
+      schema:
+        type: integer
+        format: int64
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-apisports-key
+security:
+  - ApiKeyAuth: []
+externalDocs:
+  url: https://www.api-football.com/documentation-v3

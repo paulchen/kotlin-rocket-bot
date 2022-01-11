@@ -88,7 +88,7 @@ class TimePlugin : AbstractPlugin(), Logging {
             }
 
             val (emoji, username) = when (message) {
-                "!wm" -> listOf(":soccer:", ConfigurationProvider.instance.getConfiguration().plugins?.time?.soccerUsername)
+                "!wm" -> listOf(":soccer:", ConfigurationProvider.instance.getSoccerConfiguration().username)
                 else -> listOf(null, null)
             }
             return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date), emoji, username))

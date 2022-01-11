@@ -16,7 +16,11 @@ Then, build the local Docker image of `kotlin-rocket-bot` (`kotlin-rocket-bot:la
 `gradlew docker`
 
 Copy the example configuration file (`kotlin-rocket-bot.yaml.sample`) to an otherwise empty directory of your choice,
-e.g. `/etc/kotlin-rocket-bot`. Rename the file to `kotlin-rocket-bot.yaml` and edit it to your needs. 
+e.g. `/etc/kotlin-rocket-bot`. Rename the file to `kotlin-rocket-bot.yaml` and edit it to your needs.
+When running the bot using Docker, keep the database hostname `host.docker.internal` if you
+want to connect to a PostgreSQL instance on your host.
+Make sure that PostgreSQL is configured to accept connections and logins from Docker containers
+(i.e. from the interface `docker0` on Linux hosts, may be different on other host operating systems). 
 
 Run the Docker image with:
 
@@ -39,9 +43,11 @@ ExecStartPre=-/usr/bin/docker rm kotlin-rocket-bot
 ExecStart=/usr/bin/docker run \
     --name kotlin-rocket-bot \
     -v /etc/kotlin-rocket-bot:/config \
+    -v /var/cache/kotlin-rocket-bot:/cache \
     -e TZ=Europe/Vienna \
     --net=rocketchat_default \
     -p 127.0.0.1:8081:8082 \
+    --add-host=host.docker.internal:host-gateway \
     kotlin-rocket-bot:latest
 
 ExecStop=-/usr/bin/docker stop kotlin-rocket-bot
@@ -51,6 +57,16 @@ ExecStop=-/usr/bin/docker rm kotlin-rocket-bot
 WantedBy=multi-user.target
 ```
 Remember to set the `TZ` environment variable appropriately to your needs.
+
+Create the directory `/var/cache/kotlin-rocket-bot`, set its setuid bit and its gid to 1024:
+
+```
+mkdir /var/cache/kotlin-rocket-bot
+chmod u=rwxs,g=rwx,o= /var/cache/kotlin-rocket-bot
+chgrp 1024 /var/cache/kotlin-rocket-bot
+```
+
+When correctly set up, the bot will place files there that may help for tracing down any problems.
 
 The above systemd unit will expose the container's port `8082` to `localhost:8081`.
 This port features a webservice intended to be called by the Icinga check script `misc/check_bot.sh`.
@@ -78,7 +94,7 @@ Additionally, instead of the `roomId` you may also use the `roomName`:
 
 ```
 {
-    "roomId": "general",
+    "roomName": "general",
     "message": "Just some spam to annoy users.",
     "emoji": ":soccer:"
 }

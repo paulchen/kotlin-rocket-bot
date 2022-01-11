@@ -1,0 +1,24 @@
+{
+    "get": "venues",
+    "parameters": {
+        "id": "145"
+    },
+    "errors": [],
+    "results": 1,
+    "paging": {
+        "current": 1,
+        "total": 1
+    },
+    "response": [
+        {
+            "id": 145,
+            "name": "Allianz Stadion",
+            "address": "Keisslergasse 6, H\u00fctteldorf",
+            "city": "Wien",
+            "country": "Austria",
+            "capacity": 28345,
+            "surface": "grass",
+            "image": "https://media.api-sports.io/football/venues/145.png"
+        }
+    ]
+}
