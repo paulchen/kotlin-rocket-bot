@@ -57,6 +57,9 @@ class ConfigurationProvider : Logging {
             watchService.take()
 
             logger().info("Configuration file has changed, reloading now")
+
+            Thread.sleep(1000)
+
             reloadConfiguration(configurationFile)
 
             pathKey.cancel()
