@@ -16,4 +16,6 @@ abstract class AbstractPlugin {
         }
         return message.substring(pos + 1).trim()
     }
+
+    abstract fun getProblems(): List<String>
 }

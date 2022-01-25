@@ -10,4 +10,6 @@ class AboutPlugin : AbstractPlugin() {
 
     override fun getHelp(command: String): List<String> =
         listOf("`!about` shows information about this bot")
+
+    override fun getProblems() = emptyList<String>()
 }

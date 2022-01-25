@@ -39,4 +39,6 @@ class SeenPlugin : AbstractPlugin() {
 
     override fun getHelp(command: String): List<String> =
         listOf("`!seen <nickname>` shows the time when the given user was active for the last time")
+
+    override fun getProblems() = emptyList<String>()
 }

@@ -16,6 +16,10 @@ val Database.fixtures get() = this.sequenceOf(Fixtures)
 val Database.venues get() = this.sequenceOf(Venues)
 
 class DataImportService : Logging {
+    companion object {
+        var lastUpdate: LocalDateTime? = null
+    }
+
     fun runDailyUpdate(): List<ImportFixtureResult> {
         logger().info("Running daily update")
 
@@ -32,6 +36,8 @@ class DataImportService : Logging {
         removeUnlistedFixtures(database, result.map { it.fixture.id })
 
         processNewVenues(database, existingVenues)
+
+        lastUpdate = LocalDateTime.now()
 
         logger().info("Daily update complete")
 
@@ -51,6 +57,8 @@ class DataImportService : Logging {
                 importFixture(database, FootballApiService.instance.getFixture(it.id).response[0])
             }
             .toList()
+
+        lastUpdate = LocalDateTime.now()
 
         logger().info("Live update complete")
 

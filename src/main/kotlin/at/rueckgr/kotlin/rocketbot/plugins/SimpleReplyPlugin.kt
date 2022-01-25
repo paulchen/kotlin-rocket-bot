@@ -9,7 +9,7 @@ class SimpleReplyPlugin : AbstractPlugin(), Logging {
     override fun getCommands(): List<String> = emptyList()
 
     override fun handle(message: String): List<OutgoingMessage> {
-        val replies = ConfigurationProvider.instance.getConfiguration().plugins?.simpleReply?.replies
+        val replies = getReplies()
         if (replies == null) {
             logger().debug("Plugin configuration missing")
             return emptyList()
@@ -26,7 +26,14 @@ class SimpleReplyPlugin : AbstractPlugin(), Logging {
         }
     }
 
+    private fun getReplies() = ConfigurationProvider.instance.getConfiguration().plugins?.simpleReply?.replies
+
     private fun activatePlugin(probability: Int): Boolean =(0..99).random() < probability
 
-    override fun getHelp(command: String): List<String> = emptyList()
+    override fun getHelp(command: String): List<String> = when (getReplies()) {
+        null -> listOf("Configuration of SimpleReplyPlugin missing")
+        else -> emptyList()
+    }
+
+    override fun getProblems(): List<String> = emptyList()
 }

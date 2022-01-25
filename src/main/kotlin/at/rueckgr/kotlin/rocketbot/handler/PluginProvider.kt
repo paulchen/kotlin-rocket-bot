@@ -6,6 +6,7 @@ import org.reflections.Reflections
 class PluginProvider {
     private val commandPlugins = HashMap<String, MutableList<AbstractPlugin>>()
     private val generalPlugins = ArrayList<AbstractPlugin>()
+    private val allPlugins = ArrayList<AbstractPlugin>()
 
     companion object {
         val instance = PluginProvider()
@@ -28,6 +29,7 @@ class PluginProvider {
 
     private fun addGeneralPlugin(plugin: AbstractPlugin) {
         generalPlugins.add(plugin)
+        allPlugins.add(plugin)
     }
 
     private fun addCommandPlugin(plugin: AbstractPlugin, commands: List<String>) {
@@ -37,6 +39,7 @@ class PluginProvider {
             }
             commandPlugins[command]?.add(plugin)
         }
+        allPlugins.add(plugin)
     }
 
     fun getByCommand(command: String): List<AbstractPlugin> = commandPlugins[command].orEmpty()
@@ -44,4 +47,6 @@ class PluginProvider {
     fun getCommands() = commandPlugins.keys.toList()
 
     fun getGeneralPlugins() = generalPlugins.toList()
+
+    fun getAllPlugins() = allPlugins.toList()
 }

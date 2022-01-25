@@ -35,4 +35,6 @@ class SloganPlugin : AbstractPlugin() {
     override fun getHelp(command: String) = listOf(
         "`!slogan <object>` prints a slogan for `<object>`"
     )
+
+    override fun getProblems() = emptyList<String>()
 }

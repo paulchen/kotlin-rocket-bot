@@ -33,7 +33,8 @@ fun main() {
             Bot(
                 BotConfiguration(general!!.host!!, general.username!!, general.password!!, general.ignoredChannels!!, general.botId!!, 8082),
                 Handler(),
-                UserValidator()
+                UserValidator(),
+                BotHealthChecker()
             ).start()
         }
         launch {

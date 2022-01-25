@@ -25,4 +25,15 @@ class VersionPlugin : AbstractPlugin() {
 
     override fun getHelp(command: String): List<String> =
         listOf("`!version` outputs the Git revision of kotlin-rocket-bot currently running")
+
+    override fun getProblems(): List<String> {
+        val archiveRevision = ArchiveService().getVersion()
+
+        return if (archiveRevision.revision == "unknown" || archiveRevision.commitMessage == "unknown") {
+            listOf("Unable to fetch version information from archive")
+        }
+        else {
+            emptyList()
+        }
+    }
 }

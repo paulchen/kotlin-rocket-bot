@@ -1,8 +1,10 @@
 package at.rueckgr.kotlin.rocketbot.plugins
 
 import at.rueckgr.kotlin.rocketbot.OutgoingMessage
+import at.rueckgr.kotlin.rocketbot.soccer.DataImportService
 import at.rueckgr.kotlin.rocketbot.soccer.MatchInfoService
 import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
+import java.time.LocalDateTime
 
 class SoccerPlugin : AbstractPlugin() {
     override fun getCommands() = listOf("cl")
@@ -37,4 +39,17 @@ class SoccerPlugin : AbstractPlugin() {
     override fun getHelp(command: String) = listOf(
         "`!cl` provides some information about past, current, and future matches within the UEFA Champions League"
     )
+
+    override fun getProblems(): List<String> {
+        val lastUpdate = DataImportService.lastUpdate
+        return if (lastUpdate == null) {
+            listOf("Soccer data has never been updated")
+        }
+        else if (lastUpdate.isBefore(LocalDateTime.now().minusDays(1))) {
+            listOf("Last soccer data update is more than one day ago")
+        }
+        else {
+            emptyList()
+        }
+    }
 }

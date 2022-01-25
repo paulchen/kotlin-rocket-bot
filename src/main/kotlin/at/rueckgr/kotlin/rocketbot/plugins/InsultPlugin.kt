@@ -20,4 +20,6 @@ class InsultPlugin : AbstractPlugin() {
     override fun getHelp(command: String) = listOf(
         "`!insult <name>` issues an insult towards `<name>`"
     )
+
+    override fun getProblems() = emptyList<String>()
 }

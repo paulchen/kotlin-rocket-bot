@@ -117,6 +117,8 @@ class TimePlugin : AbstractPlugin(), Logging {
         else -> emptyList()
     }
 
+    override fun getProblems() = emptyList<String>()
+
     private fun parseDay(pattern: String, dateString: String): LocalDateTime {
         val f = DateTimeFormatter.ofPattern(pattern)
         return LocalDateTime.of(LocalDate.parse(dateString, f), LocalTime.MIDNIGHT)

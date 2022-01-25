@@ -1,6 +1,8 @@
 package at.rueckgr.kotlin.rocketbot
 
+import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.VersionInfo
+import at.rueckgr.kotlin.rocketbot.util.logger
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.*
@@ -16,7 +18,7 @@ data class User(val username: String, val timestamp: ZonedDateTime?)
 
 data class VersionDetails(val version: VersionInfo)
 
-class ArchiveService {
+class ArchiveService : Logging {
     fun getUserDetails(username: String): UserDetails? {
         val encodedUsername = URLEncoder.encode(username, "utf-8")
         return runBlocking {
@@ -24,6 +26,7 @@ class ArchiveService {
                 getClient().get("http://backend:8081/user/$encodedUsername")
             }
             catch (e: ClientRequestException) {
+                logger().error(e)
                 null
             }
         }
@@ -44,6 +47,7 @@ class ArchiveService {
                 versionDetails.version
             }
             catch (e: Exception) {
+                logger().error(e)
                 VersionInfo("unknown", "unknown")
             }
         }

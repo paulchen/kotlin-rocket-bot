@@ -35,4 +35,6 @@ class HelpPlugin : AbstractPlugin() {
             .flatMap { it.getHelp(command) }
             .joinToString("\n")
         ).filter { it.isNotBlank() }
+
+    override fun getProblems() = emptyList<String>()
 }
