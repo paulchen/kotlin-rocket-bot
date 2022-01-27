@@ -1,5 +1,6 @@
-package at.rueckgr.kotlin.rocketbot
+package at.rueckgr.kotlin.rocketbot.util.time
 
+import at.rueckgr.kotlin.rocketbot.util.time.DateTimeDifferenceCalculator
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -9,7 +10,7 @@ import java.time.LocalTime
 class DateTimeDifferenceCalculatorTest extends Specification {
     def "DateTimeDifferenceCalculator"(year1, month1, day1, hour1, minute1, second1, year2, month2, day2, hour2, minute2, second2, expectedResult) {
         given:
-            DateTimeDifferenceCalculator d = new DateTimeDifferenceCalculator()
+        DateTimeDifferenceCalculator d = new DateTimeDifferenceCalculator()
 
             def from = LocalDateTime.of(LocalDate.of(year1, month1, day1), LocalTime.of(hour1, minute1, second1))
             def to = LocalDateTime.of(LocalDate.of(year2, month2, day2), LocalTime.of(hour2, minute2, second2))

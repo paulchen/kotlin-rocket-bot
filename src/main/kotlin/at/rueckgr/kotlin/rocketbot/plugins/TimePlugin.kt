@@ -1,54 +1,54 @@
 package at.rueckgr.kotlin.rocketbot.plugins
 
-import at.rueckgr.kotlin.rocketbot.DateTimeDifferenceCalculator
-import at.rueckgr.kotlin.rocketbot.DateTimeDifferenceCalculator.TimeUnit
+import at.rueckgr.kotlin.rocketbot.util.time.DateTimeDifferenceCalculator
+import at.rueckgr.kotlin.rocketbot.util.time.DateTimeDifferenceCalculator.TimeUnit
 import at.rueckgr.kotlin.rocketbot.OutgoingMessage
 import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
+import at.rueckgr.kotlin.rocketbot.util.time.DateTimeParser
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 class TimePlugin : AbstractPlugin(), Logging {
     enum class Format(
         val regex: Regex,
         val pattern: String,
-        val function: (TimePlugin, String, String) -> LocalDateTime
+        val function: (DateTimeParser, String, String) -> LocalDateTime
     ) {
-        DATE_EN("""^[0-9]{4}-[0-9]{2}-[0-9]{2}$""".toRegex(), "yyyy-MM-dd", TimePlugin::parseDay),
-        DATE_DE("""^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4}$""".toRegex(), "d.M.yyyy", TimePlugin::parseDay),
-        DATE_DE_WITHOUT_YEAR("""^[0-9]{1,2}\.[0-9]{1,2}\.$""".toRegex(), "d.M.yyyy", TimePlugin::parseDayWithoutYear),
+        DATE_EN("""^[0-9]{4}-[0-9]{2}-[0-9]{2}$""".toRegex(), "yyyy-MM-dd", DateTimeParser::parseDay),
+        DATE_DE("""^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4}$""".toRegex(), "d.M.yyyy", DateTimeParser::parseDay),
+        DATE_DE_WITHOUT_YEAR("""^[0-9]{1,2}\.[0-9]{1,2}\.$""".toRegex(), "d.M.yyyy", DateTimeParser::parseDayWithoutYear),
 
-        TIME_HHMM("""^[0-9]{2}:[0-9]{2}$""".toRegex(), "HH:mm", TimePlugin::parseTime),
-        TIME_HHMMSS("""^[0-9]{2}:[0-9]{2}:[0-9]{2}$""".toRegex(), "HH:mm:ss", TimePlugin::parseTime),
+        TIME_HHMM("""^[0-9]{2}:[0-9]{2}$""".toRegex(), "HH:mm", DateTimeParser::parseTime),
+        TIME_HHMMSS("""^[0-9]{2}:[0-9]{2}:[0-9]{2}$""".toRegex(), "HH:mm:ss", DateTimeParser::parseTime),
 
         DATETIME_EN(
             """^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$""".toRegex(),
             "yyyy-MM-dd HH:mm",
-            TimePlugin::parseDateTime
+            DateTimeParser::parseDateTime
         ),
         DATETIME_EN_SECONDS(
             """^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$""".toRegex(),
             "yyyy-MM-dd HH:mm:ss",
-            TimePlugin::parseDateTime
+            DateTimeParser::parseDateTime
         ),
         DATETIME_DE(
             """^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4} [0-9]{2}:[0-9]{2}$""".toRegex(),
             "d.M.yyyy HH:mm",
-            TimePlugin::parseDateTime
+            DateTimeParser::parseDateTime
         ),
         DATETIME_DE_SECONDS(
             """^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}$""".toRegex(),
             "d.M.yyyy HH:mm:ss",
-            TimePlugin::parseDateTime
+            DateTimeParser::parseDateTime
         ),
         DATETIME_DE_WITHOUT_YEAR(
             """^[0-9]{1,2}\.[0-9]{1,2}\. [0-9]{2}:[0-9]{2}$""".toRegex(),
             "d.M.yyyy HH:mm",
-            TimePlugin::parseDateTimeWithoutYear
+            DateTimeParser::parseDateTimeWithoutYear
         ),
     }
 
@@ -66,7 +66,7 @@ class TimePlugin : AbstractPlugin(), Logging {
             try {
                 for (format in Format.values()) {
                     if (format.regex.matches(dateString)) {
-                        val date = format.function.invoke(this, format.pattern, dateString)
+                        val date = format.function.invoke(DateTimeParser(), format.pattern, dateString)
                         return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date)))
                     }
                 }
@@ -119,41 +119,4 @@ class TimePlugin : AbstractPlugin(), Logging {
 
     override fun getProblems() = emptyList<String>()
 
-    private fun parseDay(pattern: String, dateString: String): LocalDateTime {
-        val f = DateTimeFormatter.ofPattern(pattern)
-        return LocalDateTime.of(LocalDate.parse(dateString, f), LocalTime.MIDNIGHT)
-    }
-
-    private fun parseDayWithoutYear(pattern: String, dateString: String): LocalDateTime {
-        val f = DateTimeFormatter.ofPattern(pattern)
-        val localDate = LocalDate.parse(dateString + LocalDate.now().year, f)
-        if (LocalDate.now().isAfter(localDate)) {
-            return LocalDateTime.of(localDate, LocalTime.MIDNIGHT).plusYears(1)
-        }
-        return LocalDateTime.of(localDate, LocalTime.MIDNIGHT)
-    }
-
-    private fun parseTime(pattern: String, dateString: String): LocalDateTime {
-        val f = DateTimeFormatter.ofPattern(pattern)
-        val localTime = LocalTime.parse(dateString, f)
-        if (LocalTime.now().isAfter(localTime)) {
-            return LocalDateTime.of(LocalDate.now().plusDays(1), localTime)
-        }
-        return LocalDateTime.of(LocalDate.now(), localTime)
-    }
-
-    private fun parseDateTime(pattern: String, dateString: String): LocalDateTime {
-        val f = DateTimeFormatter.ofPattern(pattern)
-        return LocalDateTime.parse(dateString, f)
-    }
-
-    private fun parseDateTimeWithoutYear(pattern: String, dateString: String): LocalDateTime {
-        val f = DateTimeFormatter.ofPattern(pattern)
-        val localDate = LocalDateTime.parse(dateString.replace(" ", LocalDate.now().year.toString() + " "), f)
-        if (LocalDateTime.now().isAfter(localDate)) {
-            return localDate.plusYears(1)
-        }
-        return localDate
-
-    }
 }

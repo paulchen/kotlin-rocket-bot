@@ -1,4 +1,4 @@
-package at.rueckgr.kotlin.rocketbot
+package at.rueckgr.kotlin.rocketbot.util.time
 
 import org.apache.commons.lang3.StringUtils
 import java.time.LocalDateTime
