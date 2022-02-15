@@ -84,7 +84,7 @@ class SoccerUpdateService : Logging {
         val teamHome = TeamMapper.instance.mapTeamName(fixture.teamHome)
         val teamAway = TeamMapper.instance.mapTeamName(fixture.teamAway)
 
-        val formattedMessage = "*$teamHome\u00a0-\u00a0$teamAway*: $message"
+        val formattedMessage = ":mega: *$teamHome\u00a0-\u00a0$teamAway*: $message"
 
         return WebserviceMessage(Bot.knownChannelNamesToIds[roomName], null, formattedMessage, ":soccer:", username)
     }
