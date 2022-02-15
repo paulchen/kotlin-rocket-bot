@@ -70,8 +70,8 @@ class JsonDumpInterceptor : Interceptor, Logging {
         val response = chain.proceed(request)
 
         if (response.body != null) {
-            val query = request.url.pathSegments.joinToString("/")
-            val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
+            val query = request.url.pathSegments.joinToString("_")
+            val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"))
             val filename = "/cache/soccer/$query-$timestamp.json"
 
             try {
