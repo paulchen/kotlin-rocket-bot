@@ -10,6 +10,8 @@ class MatchTitleService {
         val instance = MatchTitleService()
     }
 
+    private val zwnbsp = "\ufeff"
+
     fun formatMatchTitle(fixture: Fixture): String {
         val time = formatTime(fixture.date)
         val venue = formatVenue(fixture.venue!!)
@@ -56,22 +58,22 @@ class MatchTitleService {
             null
         }
         else if(ftHome == null) {
-            "$htHome:$htAway"
+            "$htHome$zwnbsp:$zwnbsp$htAway"
         }
         else if (etHome == null && ftHome == 0 && ftAway == 0) {
-            "0:0" + formatPenalty(pHome, pAway)
+            "0$zwnbsp:${zwnbsp}0" + formatPenalty(pHome, pAway)
         }
         else if (etHome == null) {
-            "$ftHome:$ftAway ($htHome:$htAway)" + formatPenalty(pHome, pAway)
+            "$ftHome$zwnbsp:$zwnbsp$ftAway ($htHome$zwnbsp:$zwnbsp$htAway)" + formatPenalty(pHome, pAway)
         }
         else if (etHome == 0 && etAway == 0) {
-            "0:0 n.V. (0:0)" + formatPenalty(pHome, pAway)
+            "0$zwnbsp:${zwnbsp}0 n.V. (0$zwnbsp:${zwnbsp}0)" + formatPenalty(pHome, pAway)
         }
         else if (etHome > 0 && ftHome == 0 && ftAway == 0) {
-            "$etHome:$etAway n.V. (0:0)" + formatPenalty(pHome, pAway)
+            "$etHome:$etAway n.V. (0$zwnbsp:${zwnbsp}0)" + formatPenalty(pHome, pAway)
         }
         else if (etHome > 0) {
-            "$etHome:$etAway n.V. ($ftHome:$ftAway, $htHome:$htAway)" + formatPenalty(pHome, pAway)
+            "$etHome$zwnbsp:$zwnbsp$etAway n.V. ($ftHome$zwnbsp:$zwnbsp$ftAway, $htHome$zwnbsp:$zwnbsp$htAway)" + formatPenalty(pHome, pAway)
         }
         else {
             null
@@ -83,7 +85,7 @@ class MatchTitleService {
             ""
         }
         else {
-            ", $pHome:$pAway i.E."
+            ", $pHome$zwnbsp:$zwnbsp$pAway i.E."
         }
     }
 }
