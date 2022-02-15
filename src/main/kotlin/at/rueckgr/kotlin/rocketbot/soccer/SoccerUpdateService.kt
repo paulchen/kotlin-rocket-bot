@@ -4,6 +4,7 @@ import at.rueckgr.kotlin.rocketbot.Bot
 import at.rueckgr.kotlin.rocketbot.WebserviceMessage
 import at.rueckgr.kotlin.rocketbot.database.Fixture
 import at.rueckgr.kotlin.rocketbot.database.FixtureState
+import at.rueckgr.kotlin.rocketbot.database.FixtureStatePeriod
 import at.rueckgr.kotlin.rocketbot.database.Fixtures
 import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import at.rueckgr.kotlin.rocketbot.util.Db
@@ -96,7 +97,7 @@ class SoccerUpdateService : Logging {
         return updateResult
             .map { it.fixture }
             .any {
-                (FixtureState.getByCode(it.status) == FixtureState.LIVE)
+                (FixtureState.getByCode(it.status)?.period == FixtureStatePeriod.LIVE)
                     || (it.date.isAfter(oneHourAgo) && it.date.isBefore(inOneHour))
                     || (it.endDate != null && it.endDate!!.isAfter(oneHourAgo))
             }
