@@ -177,7 +177,7 @@ class DataImportService : Logging {
         entity.goalsPenaltyHome = fixtureResponse.score.penalty?.home
         entity.goalsPenaltyAway = fixtureResponse.score.penalty?.away
 
-        val eventsCount = fixtureResponse.events?.size ?: 0
+        val eventsCount = fixtureResponse.events?.size ?: entity.eventsProcessed
         val newEvents = if (eventsCount > entity.eventsProcessed) {
             fixtureResponse
                 .events!!
