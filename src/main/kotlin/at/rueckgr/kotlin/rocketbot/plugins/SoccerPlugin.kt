@@ -15,7 +15,7 @@ class SoccerPlugin : AbstractPlugin() {
         val (pastMatches, liveMatches, futureMatches) = MatchInfoService().getMatchInfo(matchesToShow)
 
         if (pastMatches.isEmpty() && liveMatches.isEmpty() && futureMatches.isEmpty()) {
-            return listOf(OutgoingMessage("Keine Spieldaten vorhanden.", ":emoji:", configuration.username))
+            return listOf(OutgoingMessage("Keine Spieldaten vorhanden.", ":soccer:", configuration.username))
         }
         val parts = ArrayList<String>(3)
         parts.add(processMatches(pastMatches, "Vergangenes Spiel", "Vergangene Spiele"))
@@ -24,7 +24,7 @@ class SoccerPlugin : AbstractPlugin() {
 
         val result = parts.filter { it.isNotBlank() }.joinToString("\n\n")
 
-        return listOf(OutgoingMessage(result, ":emoji:", configuration.username))
+        return listOf(OutgoingMessage(result, ":soccer:", configuration.username))
     }
 
     private fun processMatches(matches: List<String>, singular: String, plural: String): String {
