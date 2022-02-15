@@ -15,7 +15,7 @@ class MatchTitleServiceTest extends Specification {
             def result = g.formatMatchScore(fixture)
 
         then:
-            result == expectedResult
+            result == expectedResult?.replaceAll(":", "\ufeff:\ufeff")
 
         where:
         htHome | htAway | ftHome | ftAway | etHome | etAway | pHome | pAway | expectedResult

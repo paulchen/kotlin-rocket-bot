@@ -70,7 +70,7 @@ class MatchTitleService {
             "0$zwnbsp:${zwnbsp}0 n.V. (0$zwnbsp:${zwnbsp}0)" + formatPenalty(pHome, pAway)
         }
         else if (etHome > 0 && ftHome == 0 && ftAway == 0) {
-            "$etHome:$etAway n.V. (0$zwnbsp:${zwnbsp}0)" + formatPenalty(pHome, pAway)
+            "$etHome$zwnbsp:$zwnbsp$etAway n.V. (0$zwnbsp:${zwnbsp}0)" + formatPenalty(pHome, pAway)
         }
         else if (etHome > 0) {
             "$etHome$zwnbsp:$zwnbsp$etAway n.V. ($ftHome$zwnbsp:$zwnbsp$ftAway, $htHome$zwnbsp:$zwnbsp$htAway)" + formatPenalty(pHome, pAway)
