@@ -40,6 +40,9 @@ object ConfigurationProvider : Logging {
             throw ConfigurationException(3, "Configuration is incomplete")
         }
 
+
+        logger().debug("New configuration: {}", config)
+
         this.config = config
         return config
     }
