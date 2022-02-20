@@ -155,16 +155,29 @@ class DataImportService : Logging {
         entity.teamHome = fixtureResponse.teams.home?.name ?: "unbekannt"
         entity.teamAway = fixtureResponse.teams.away?.name ?: "unbekannt"
 
+        val status = fixtureResponse.fixture.status?.short?.value ?: "TBD"
+
         entity.goalsHalftimeHome = fixtureResponse.score.halftime?.home
         entity.goalsHalftimeAway = fixtureResponse.score.halftime?.away
-        entity.goalsFullftimeHome = fixtureResponse.score.fulltime?.home
-        entity.goalsFulltimeAway = fixtureResponse.score.fulltime?.away
-        entity.goalsExtratimeHome = fixtureResponse.score.extratime?.home
-        entity.goalsExtratimeAway = fixtureResponse.score.extratime?.away
+        if (status == FixtureState.SECOND_HALF.code) {
+            entity.goalsFullftimeHome = fixtureResponse.goals.home
+            entity.goalsFulltimeAway = fixtureResponse.goals.away
+        }
+        else {
+            entity.goalsFullftimeHome = fixtureResponse.score.fulltime?.home
+            entity.goalsFulltimeAway = fixtureResponse.score.fulltime?.away
+        }
+        if (status == FixtureState.EXTRA_TIME.code) {
+            entity.goalsExtratimeHome = fixtureResponse.goals.home
+            entity.goalsExtratimeAway = fixtureResponse.goals.away
+        }
+        else {
+            entity.goalsExtratimeHome = fixtureResponse.score.extratime?.home
+            entity.goalsExtratimeAway = fixtureResponse.score.extratime?.away
+        }
         entity.goalsPenaltyHome = fixtureResponse.score.penalty?.home
         entity.goalsPenaltyAway = fixtureResponse.score.penalty?.away
 
-        val status = fixtureResponse.fixture.status?.short?.value ?: "TBD"
         val stateChange = if (status != entity.status) {
             if (entity.endDate == null
                     && FixtureState.getByCode(entity.status)?.period != FixtureStatePeriod.PAST
