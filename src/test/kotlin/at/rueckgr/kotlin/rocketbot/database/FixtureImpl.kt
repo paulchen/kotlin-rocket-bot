@@ -22,7 +22,8 @@ class FixtureImpl(
     override var goalsPenaltyAway: Int?,
     override var eventsProcessed: Int,
     override var venue: Venue?,
-    override var endDate: LocalDateTime?
+    override var endDate: LocalDateTime?,
+    override var announced: Boolean
 ) : Fixture {
     override val entityClass: KClass<Fixture>
         get() = TODO("Not yet implemented")
