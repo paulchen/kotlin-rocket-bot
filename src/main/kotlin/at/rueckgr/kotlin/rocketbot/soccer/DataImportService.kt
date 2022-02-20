@@ -142,6 +142,7 @@ class DataImportService : Logging {
             goalsPenaltyAway = fixtureResponse.score.penalty?.away
             eventsProcessed = 0
             venue = getVenue(database, fixtureResponse)
+            announced = false
         }
         database.fixtures.add(entity)
         return entity

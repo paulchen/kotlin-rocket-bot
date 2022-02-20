@@ -27,6 +27,7 @@ CREATE TABLE fixture (
     events_processed INT NOT NULL,
     venue_id INT,
     end_date TIMESTAMP WITH TIME ZONE,
+    announced BOOLEAN NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (venue_id) REFERENCES venue (id)
 );
