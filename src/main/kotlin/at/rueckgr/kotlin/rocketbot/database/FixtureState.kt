@@ -1,16 +1,16 @@
 package at.rueckgr.kotlin.rocketbot.database
 
-enum class FixtureState(val code: String, val period: FixtureStatePeriod, val description: String? = null) {
+enum class FixtureState(val code: String, val period: FixtureStatePeriod, val description: String? = null, val appendScore: Boolean = false) {
     TO_BE_DEFINED("TBD", FixtureStatePeriod.FUTURE),
     NOT_STARTED("NS", FixtureStatePeriod.FUTURE),
     FIRST_HALF("1H", FixtureStatePeriod.LIVE, "Anpfiff 1. Halbzeit"),
-    HALF_TIME("HT", FixtureStatePeriod.LIVE, "Halbzeit"),
-    SECOND_HALF("2H", FixtureStatePeriod.LIVE, "Anpfiff 2. Halbzeit"),
-    EXTRA_TIME("EXTRA_TIME", FixtureStatePeriod.LIVE, "Verlängerung"),
-    PENALTY("PENALTY", FixtureStatePeriod.LIVE, "Elfmeterschießen"),
-    MATCH_FINISHED("FT", FixtureStatePeriod.PAST, "Schlusspfiff nach regulärer Spielzeit"),
-    MATCH_FINISHED_AFTER_EXTRATIME("AET", FixtureStatePeriod.PAST, "Schlusspfiff nach Verlängerung"),
-    MATCH_FINISHED_AFTER_PENALTY("PEN", FixtureStatePeriod.PAST, "Spielende nach Elfmeterschießen"),
+    HALF_TIME("HT", FixtureStatePeriod.LIVE, "Halbzeit", true),
+    SECOND_HALF("2H", FixtureStatePeriod.LIVE, "Anpfiff 2. Halbzeit", true),
+    EXTRA_TIME("EXTRA_TIME", FixtureStatePeriod.LIVE, "Verlängerung", true),
+    PENALTY("PENALTY", FixtureStatePeriod.LIVE, "Elfmeterschießen", true),
+    MATCH_FINISHED("FT", FixtureStatePeriod.PAST, "Schlusspfiff nach regulärer Spielzeit", true),
+    MATCH_FINISHED_AFTER_EXTRATIME("AET", FixtureStatePeriod.PAST, "Schlusspfiff nach Verlängerung", true),
+    MATCH_FINISHED_AFTER_PENALTY("PEN", FixtureStatePeriod.PAST, "Spielende nach Elfmeterschießen", true),
     BREAK_TIME("BT", FixtureStatePeriod.LIVE, "Pause"),
     SUSPENDED("SUSP", FixtureStatePeriod.LIVE),
     INTERRUPTED("INT", FixtureStatePeriod.LIVE),

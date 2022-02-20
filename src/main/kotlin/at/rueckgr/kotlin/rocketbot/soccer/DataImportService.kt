@@ -155,20 +155,6 @@ class DataImportService : Logging {
         entity.teamHome = fixtureResponse.teams.home?.name ?: "unbekannt"
         entity.teamAway = fixtureResponse.teams.away?.name ?: "unbekannt"
 
-        val status = fixtureResponse.fixture.status?.short?.value ?: "TBD"
-        val stateChange = if (status != entity.status) {
-            if (entity.endDate == null
-                    && FixtureState.getByCode(entity.status)?.period != FixtureStatePeriod.PAST
-                    && FixtureState.getByCode(status)?.period == FixtureStatePeriod.PAST) {
-                entity.endDate = LocalDateTime.now()
-            }
-            processStateChange(status)
-        }
-        else {
-            null
-        }
-        entity.status = status
-
         entity.goalsHalftimeHome = fixtureResponse.score.halftime?.home
         entity.goalsHalftimeAway = fixtureResponse.score.halftime?.away
         entity.goalsFullftimeHome = fixtureResponse.score.fulltime?.home
@@ -177,6 +163,20 @@ class DataImportService : Logging {
         entity.goalsExtratimeAway = fixtureResponse.score.extratime?.away
         entity.goalsPenaltyHome = fixtureResponse.score.penalty?.home
         entity.goalsPenaltyAway = fixtureResponse.score.penalty?.away
+
+        val status = fixtureResponse.fixture.status?.short?.value ?: "TBD"
+        val stateChange = if (status != entity.status) {
+            if (entity.endDate == null
+                    && FixtureState.getByCode(entity.status)?.period != FixtureStatePeriod.PAST
+                    && FixtureState.getByCode(status)?.period == FixtureStatePeriod.PAST) {
+                entity.endDate = LocalDateTime.now()
+            }
+            processStateChange(status, entity)
+        }
+        else {
+            null
+        }
+        entity.status = status
 
         val eventsCount = max(fixtureResponse.events?.size ?: entity.eventsProcessed, entity.eventsProcessed)
         val newEvents = if (eventsCount > entity.eventsProcessed) {
@@ -197,7 +197,16 @@ class DataImportService : Logging {
         return ImportFixtureResult(entity, newEvents, stateChange)
     }
 
-    private fun processStateChange(newState: String): String? = FixtureState.getByCode(newState)?.description
+    private fun processStateChange(newState: String, entity: Fixture): String? {
+        val fixtureState = FixtureState.getByCode(newState) ?: return null
+        val description = fixtureState.description ?: return null
+
+        if (fixtureState.appendScore) {
+            val score = MatchTitleService.instance.formatMatchScore(entity)
+            return "$description; Spielstand: $score"
+        }
+        return description
+    }
 
     private fun processEvent(fixtureResponse: FixtureResponseResponse, entity: Fixture, event: FixtureResponseEvents): String? {
         return if (event.type == "Goal") {
