@@ -11,6 +11,7 @@ import org.ktorm.dsl.*
 import org.ktorm.entity.*
 import java.time.LocalDateTime
 import java.time.ZoneId
+import kotlin.math.max
 
 val Database.fixtures get() = this.sequenceOf(Fixtures)
 val Database.venues get() = this.sequenceOf(Venues)
@@ -177,7 +178,7 @@ class DataImportService : Logging {
         entity.goalsPenaltyHome = fixtureResponse.score.penalty?.home
         entity.goalsPenaltyAway = fixtureResponse.score.penalty?.away
 
-        val eventsCount = fixtureResponse.events?.size ?: entity.eventsProcessed
+        val eventsCount = max(fixtureResponse.events?.size ?: entity.eventsProcessed, entity.eventsProcessed)
         val newEvents = if (eventsCount > entity.eventsProcessed) {
             fixtureResponse
                 .events!!
