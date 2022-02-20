@@ -180,21 +180,37 @@ class DataImportService : Logging {
 
         val eventsCount = max(fixtureResponse.events?.size ?: entity.eventsProcessed, entity.eventsProcessed)
         val newEvents = if (eventsCount > entity.eventsProcessed) {
-            fixtureResponse
+            val unprocessedEvents = fixtureResponse
                 .events!!
                 .subList(entity.eventsProcessed, fixtureResponse.events.size)
-                .mapNotNull { processEvent(fixtureResponse, entity, it) }
+            if (unprocessedEvents.any { !isEventProcessable(fixtureResponse, it)} ) {
+                emptyList()
+            }
+            else {
+                unprocessedEvents
+                    .mapNotNull { processEvent(fixtureResponse, entity, it) }
+            }
         }
         else {
             emptyList()
         }
-        entity.eventsProcessed = eventsCount
+
+        if (newEvents.isNotEmpty()) {
+            entity.eventsProcessed = eventsCount
+        }
 
         entity.venue = getVenue(database, fixtureResponse)
 
         entity.flushChanges()
 
         return ImportFixtureResult(entity, newEvents, stateChange)
+    }
+
+    private fun isEventProcessable(fixtureResponse: FixtureResponseResponse, event: FixtureResponseEvents): Boolean {
+        if (event.type == "Goal") {
+            findPlayer(fixtureResponse, event) ?: return false
+        }
+        return true
     }
 
     private fun processStateChange(newState: String, entity: Fixture): String? {
@@ -218,7 +234,7 @@ class DataImportService : Logging {
                 else -> event.detail
             }
             val team = TeamMapper.instance.mapTeamName(event.team?.name ?: "unbekannt")
-            val player = findPlayer(fixtureResponse, event.team?.id, event.player?.id, event.player?.name)
+            val player = findPlayer(fixtureResponse, event)
             val score = MatchTitleService.instance.formatMatchScore(entity)
 
             if (player != null) {
@@ -233,9 +249,10 @@ class DataImportService : Logging {
         }
     }
 
-    private fun findPlayer(fixtureResponse: FixtureResponseResponse, teamId: Long?, playerId: Long?, fallbackName: String?): String? {
-        playerId ?: return fallbackName
-        teamId ?: return fallbackName
+    private fun findPlayer(fixtureResponse: FixtureResponseResponse, event: FixtureResponseEvents): String? {
+        val fallbackName = event.player?.name
+        val playerId = event.player?.id ?: return fallbackName
+        val teamId = event.team?.id ?: return fallbackName
         fixtureResponse.players ?: return fallbackName
 
         return fixtureResponse
