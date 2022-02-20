@@ -5,11 +5,7 @@ import at.rueckgr.kotlin.rocketbot.database.Venue
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class MatchTitleService {
-    companion object {
-        val instance = MatchTitleService()
-    }
-
+object MatchTitleService {
     private val zwnbsp = "\ufeff"
 
     fun formatMatchTitle(fixture: Fixture): String {
@@ -17,8 +13,8 @@ class MatchTitleService {
         val venue = formatVenue(fixture.venue!!)
         val score = formatMatchScore(fixture)
 
-        val teamHome = TeamMapper.instance.mapTeamName(fixture.teamHome)
-        val teamAway = TeamMapper.instance.mapTeamName(fixture.teamAway)
+        val teamHome = TeamMapper.mapTeamName(fixture.teamHome)
+        val teamAway = TeamMapper.mapTeamName(fixture.teamAway)
 
         return if (score == null) {
             "$time: *$teamHome\u00a0-\u00a0$teamAway* ($venue)"

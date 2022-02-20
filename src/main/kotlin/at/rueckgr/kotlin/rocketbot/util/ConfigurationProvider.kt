@@ -9,12 +9,8 @@ import java.io.IOException
 import java.nio.file.FileSystems
 import java.nio.file.StandardWatchEventKinds
 
-class ConfigurationProvider : Logging {
+object ConfigurationProvider : Logging {
     private var config: UserConfiguration? = null
-
-    companion object {
-        val instance = ConfigurationProvider()
-    }
 
     fun loadConfiguration(configurationFile: String): UserConfiguration {
         this.config = this.reloadConfiguration(configurationFile)

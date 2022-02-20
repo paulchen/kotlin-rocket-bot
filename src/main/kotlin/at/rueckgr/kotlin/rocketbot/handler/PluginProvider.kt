@@ -3,14 +3,10 @@ package at.rueckgr.kotlin.rocketbot.handler
 import at.rueckgr.kotlin.rocketbot.plugins.AbstractPlugin
 import org.reflections.Reflections
 
-class PluginProvider {
+object PluginProvider {
     private val commandPlugins = HashMap<String, MutableList<AbstractPlugin>>()
     private val generalPlugins = ArrayList<AbstractPlugin>()
     private val allPlugins = ArrayList<AbstractPlugin>()
-
-    companion object {
-        val instance = PluginProvider()
-    }
 
     init {
         val pluginInstances = Reflections(AbstractPlugin::class.java.packageName)

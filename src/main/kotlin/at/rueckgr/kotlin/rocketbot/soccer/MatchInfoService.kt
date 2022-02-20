@@ -19,7 +19,6 @@ class MatchInfoService {
     }
 
     private fun getMatches(connection: Database, period: FixtureStatePeriod, matchesCount: Int): List<String> {
-        val matchTitleService = MatchTitleService.instance
         val list = connection
             .from(Fixtures)
             .joinReferencesAndSelect()
@@ -40,7 +39,7 @@ class MatchInfoService {
         }
         else {
             list
-        }.map { match -> matchTitleService.formatMatchTitle(match) }
+        }.map { match -> MatchTitleService.formatMatchTitle(match) }
     }
 }
 

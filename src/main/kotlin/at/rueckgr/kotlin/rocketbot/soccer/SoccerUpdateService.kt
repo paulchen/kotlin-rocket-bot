@@ -43,7 +43,7 @@ class SoccerUpdateService : Logging {
     }
 
     private fun runLiveUpdate() {
-        val soccerConfiguration = ConfigurationProvider.instance.getSoccerConfiguration()
+        val soccerConfiguration = ConfigurationProvider.getSoccerConfiguration()
         val username = soccerConfiguration.username
         val notificationChannels = soccerConfiguration.notificationChannels
 
@@ -78,10 +78,10 @@ class SoccerUpdateService : Logging {
         }
 
         val matches = filteredResults
-            .map { MatchTitleService.instance.formatMatchTitle(it.fixture) }
+            .map { MatchTitleService.formatMatchTitle(it.fixture) }
             .joinToString("\n") { " - $it" }
         val message = when (filteredResults
-            .map { MatchTitleService.instance.formatMatchTitle(it.fixture) }.size) {
+            .map { MatchTitleService.formatMatchTitle(it.fixture) }.size) {
             1 -> "*Demnächst stattfindendes Spiel:*\n\n$matches"
             else -> "*Demnächst stattfindende Spiele:*\n\n$matches"
         }
@@ -110,8 +110,8 @@ class SoccerUpdateService : Logging {
     }
 
     private fun createMessage(fixture: Fixture, roomName: String, message: String, username: String?): WebserviceMessage {
-        val teamHome = TeamMapper.instance.mapTeamName(fixture.teamHome)
-        val teamAway = TeamMapper.instance.mapTeamName(fixture.teamAway)
+        val teamHome = TeamMapper.mapTeamName(fixture.teamHome)
+        val teamAway = TeamMapper.mapTeamName(fixture.teamAway)
 
         val formattedMessage = ":mega: *$teamHome\u00a0-\u00a0$teamAway*: $message"
 

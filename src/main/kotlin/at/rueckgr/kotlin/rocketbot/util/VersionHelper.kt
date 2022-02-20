@@ -3,11 +3,7 @@ package at.rueckgr.kotlin.rocketbot.util
 import java.io.InputStream
 import java.util.*
 
-class VersionHelper {
-    companion object {
-        val instance = VersionHelper()
-    }
-
+object VersionHelper {
     fun getVersion(): VersionInfo {
         return when (val resource = VersionHelper::class.java.getResourceAsStream("/git-revision")) {
             null -> VersionInfo("unknown", "unknown")

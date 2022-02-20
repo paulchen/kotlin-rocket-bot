@@ -26,7 +26,7 @@ class SimpleReplyPlugin : AbstractPlugin(), Logging {
         }
     }
 
-    private fun getReplies() = ConfigurationProvider.instance.getConfiguration().plugins?.simpleReply?.replies
+    private fun getReplies() = ConfigurationProvider.getConfiguration().plugins?.simpleReply?.replies
 
     private fun activatePlugin(probability: Int): Boolean =(0..99).random() < probability
 

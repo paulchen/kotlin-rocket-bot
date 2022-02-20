@@ -17,20 +17,16 @@ import java.nio.charset.StandardCharsets
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class FootballApiService : Logging {
-    companion object {
-        val instance = FootballApiService()
-    }
-
+object FootballApiService : Logging {
     init {
-        val soccerConfiguration = ConfigurationProvider.instance.getSoccerConfiguration()
+        val soccerConfiguration = ConfigurationProvider.getSoccerConfiguration()
         ApiClient.apiKey["x-apisports-key"] = soccerConfiguration.apiKey!!
         ApiClient.builder.addInterceptor(HttpLoggingInterceptor { logger().debug(it) }.setLevel(HttpLoggingInterceptor.Level.BODY))
         ApiClient.builder.addInterceptor(JsonDumpInterceptor())
     }
 
     fun getAllFixtures(): FixtureResponse {
-        val soccerConfiguration = ConfigurationProvider.instance.getSoccerConfiguration()
+        val soccerConfiguration = ConfigurationProvider.getSoccerConfiguration()
 
         logger().debug("Calling getFixtures() with parameters: leagueId={}, season={}", soccerConfiguration.leagueId, soccerConfiguration.season)
 

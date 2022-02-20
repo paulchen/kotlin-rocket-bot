@@ -15,7 +15,7 @@ class BotHealthChecker : HealthChecker {
         }
 
         problems.addAll(
-            PluginProvider.instance
+            PluginProvider
                 .getAllPlugins()
                 .flatMap {
                     it.getProblems()

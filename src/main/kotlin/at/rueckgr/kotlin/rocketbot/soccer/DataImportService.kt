@@ -28,7 +28,7 @@ class DataImportService : Logging {
 
         val existingVenues = findExistingVenues(database)
 
-        val result = FootballApiService.instance
+        val result = FootballApiService
             .getAllFixtures()
             .response
             .map { importFixture(database, it); }
@@ -55,7 +55,7 @@ class DataImportService : Logging {
 
         val result = liveFixtures
             .map {
-                importFixture(database, FootballApiService.instance.getFixture(it.id).response[0])
+                importFixture(database, FootballApiService.getFixture(it.id).response[0])
             }
             .toList()
 
@@ -101,7 +101,7 @@ class DataImportService : Logging {
     }
 
     private fun updateVenue(entity: Venue) {
-        val venue = FootballApiService().getVenue(entity.id)
+        val venue = FootballApiService.getVenue(entity.id)
 
         entity.name = venue.name
         entity.city = venue.city
@@ -231,7 +231,7 @@ class DataImportService : Logging {
         val description = fixtureState.description ?: return null
 
         if (fixtureState.appendScore) {
-            val score = MatchTitleService.instance.formatMatchScore(entity)
+            val score = MatchTitleService.formatMatchScore(entity)
             return "$description; Spielstand: $score"
         }
         return description
@@ -246,9 +246,9 @@ class DataImportService : Logging {
                 "Missed Penalty" -> "Vergebener Elfmeter"
                 else -> event.detail
             }
-            val team = TeamMapper.instance.mapTeamName(event.team?.name ?: "unbekannt")
+            val team = TeamMapper.mapTeamName(event.team?.name ?: "unbekannt")
             val player = findPlayer(fixtureResponse, event)
-            val score = MatchTitleService.instance.formatMatchScore(entity)
+            val score = MatchTitleService.formatMatchScore(entity)
 
             if (player != null) {
                 "$type für $team durch $player; Spielstand: $score"
@@ -278,7 +278,7 @@ class DataImportService : Logging {
     }
 
     private fun removeUnlistedFixtures(database: Database, importedFixtures: List<Long>) {
-        val configuration = ConfigurationProvider.instance.getConfiguration()
+        val configuration = ConfigurationProvider.getConfiguration()
         val soccerConfiguration = configuration.plugins?.soccer!!
 
         val leagueId = soccerConfiguration.leagueId!!

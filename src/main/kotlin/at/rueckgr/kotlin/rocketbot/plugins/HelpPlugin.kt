@@ -22,7 +22,7 @@ class HelpPlugin : AbstractPlugin() {
 
     private fun generalHelp(): List<String> = listOf(
         "Available commands: "
-            + PluginProvider.instance
+            + PluginProvider
                 .getCommands()
                 .sorted()
                 .joinToString(", ") { "`$it`" }
@@ -30,7 +30,7 @@ class HelpPlugin : AbstractPlugin() {
     )
 
     private fun detailedHelp(command: String): List<String> = listOf(
-        PluginProvider.instance
+        PluginProvider
             .getByCommand(command)
             .flatMap { it.getHelp(command) }
             .joinToString("\n")

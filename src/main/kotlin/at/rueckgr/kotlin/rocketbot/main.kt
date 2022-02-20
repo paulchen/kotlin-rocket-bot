@@ -15,7 +15,7 @@ fun main() {
     val configurationFile = "/config/kotlin-rocket-bot.yaml"
 
     val config = try {
-        ConfigurationProvider.instance.loadConfiguration(configurationFile)
+        ConfigurationProvider.loadConfiguration(configurationFile)
     }
     catch (e: ConfigurationException) {
         println(e.message)
@@ -26,7 +26,7 @@ fun main() {
     runBlocking {
         launch {
             withContext(Dispatchers.IO) {
-                ConfigurationProvider.instance.checkForConfigurationUpdates(configurationFile)
+                ConfigurationProvider.checkForConfigurationUpdates(configurationFile)
             }
         }
         launch {
@@ -49,7 +49,6 @@ class Handler : RoomMessageHandler, Logging {
         if (!messageWithoutQuote.startsWith("!")) {
             logger().debug("Message contains no command, applying general plugins")
             return PluginProvider
-                .instance
                 .getGeneralPlugins()
                 .flatMap { it.handle(messageWithoutQuote) }
         }
@@ -57,7 +56,6 @@ class Handler : RoomMessageHandler, Logging {
         val command = messageWithoutQuote.split(" ")[0].substring(1)
         logger().debug("Message contains command: {}", command)
         return PluginProvider
-            .instance
             .getByCommand(command)
             .flatMap { it.handle(messageWithoutQuote) }
     }

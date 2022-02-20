@@ -6,7 +6,7 @@ class Db {
     val connection: Database;
 
     init {
-        val databaseConfiguration = ConfigurationProvider.instance.getConfiguration().database
+        val databaseConfiguration = ConfigurationProvider.getConfiguration().database
         connection = Database.connect(
             url = "jdbc:postgresql://${databaseConfiguration!!.host}/${databaseConfiguration.database}",
             user = databaseConfiguration.username,

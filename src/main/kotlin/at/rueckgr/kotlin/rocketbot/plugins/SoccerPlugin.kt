@@ -10,7 +10,7 @@ class SoccerPlugin : AbstractPlugin() {
     override fun getCommands() = listOf("cl")
 
     override fun handle(message: String): List<OutgoingMessage> {
-        val configuration = ConfigurationProvider.instance.getSoccerConfiguration()
+        val configuration = ConfigurationProvider.getSoccerConfiguration()
         val matchesToShow = configuration.matchesToShow ?: 3
         val (pastMatches, liveMatches, futureMatches) = MatchInfoService().getMatchInfo(matchesToShow)
 

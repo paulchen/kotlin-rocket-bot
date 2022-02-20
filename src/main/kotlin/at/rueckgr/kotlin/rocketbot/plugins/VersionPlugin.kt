@@ -6,7 +6,7 @@ import at.rueckgr.kotlin.rocketbot.util.LibraryVersion
 import at.rueckgr.kotlin.rocketbot.util.VersionHelper
 
 class VersionPlugin : AbstractPlugin() {
-    private val botRevision = VersionHelper.instance.getVersion()
+    private val botRevision = VersionHelper.getVersion()
     private val libraryRevision = LibraryVersion.instance.getVersion()
 
     override fun getCommands(): List<String> = listOf("version")
