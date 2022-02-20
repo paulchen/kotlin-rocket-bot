@@ -70,6 +70,8 @@ class JsonDumpInterceptor : Interceptor, Logging {
             val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"))
             val filename = "/cache/soccer/$query-$timestamp.json"
 
+            logger().debug("Dumping REST response to file: {}", filename)
+
             try {
                 File("/cache/soccer/").mkdir()
 
