@@ -78,6 +78,7 @@ class DataImportService : Logging {
             .where {
                 (Fixtures.status inList liveStates) or ((Fixtures.date greater oneHourAgo) and (Fixtures.date less inOneHour)) or (Fixtures.endDate greater oneHourAgo)
             }
+            .orderBy(Fixtures.date.asc(), Fixtures.id.asc())
             .map { row -> Fixtures.createEntity(row) }
             .toList()
     }
