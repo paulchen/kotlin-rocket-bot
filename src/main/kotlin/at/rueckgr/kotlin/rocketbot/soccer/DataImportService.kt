@@ -310,6 +310,16 @@ class DataImportService : Logging {
 
         return -1L
     }
+
+    fun setFixturesToAnnounced(fixtures: List<Fixture>) {
+        val database = Db().connection
+
+        fixtures.forEach { fixture ->
+            val entity = database.fixtures.find { it.id eq fixture.id }
+            entity?.announced = true
+            entity?.flushChanges()
+        }
+    }
 }
 
 data class ImportFixtureResult(

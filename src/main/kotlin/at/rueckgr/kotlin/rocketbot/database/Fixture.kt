@@ -26,6 +26,7 @@ interface Fixture : Entity<Fixture> {
     var eventsProcessed: Int
     var venue: Venue?
     var endDate: LocalDateTime?
+    var announced: Boolean
 }
 
 object Fixtures : Table<Fixture>("fixture") {

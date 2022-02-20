@@ -66,6 +66,34 @@ class SoccerUpdateService : Logging {
             return
         }
 
+        announceGames(notificationChannels, username, liveUpdateResult)
+        sendNotifications(notificationChannels, username, liveUpdateResult)
+    }
+
+    private fun announceGames(notificationChannels: List<String>, username: String?, liveUpdateResult: List<ImportFixtureResult>) {
+        val filteredResults = liveUpdateResult
+            .filter { !it.fixture.announced }
+        if (filteredResults.isEmpty()) {
+            return
+        }
+
+        val matches = filteredResults
+            .map { MatchTitleService.instance.formatMatchTitle(it.fixture) }
+            .joinToString("\n") { " - $it" }
+        val message = when (filteredResults
+            .map { MatchTitleService.instance.formatMatchTitle(it.fixture) }.size) {
+            1 -> "*Demnächst stattfindendes Spiel:*\n\n$matches"
+            else -> "*Demnächst stattfindende Spiele:*\n\n$matches"
+        }
+
+        notificationChannels.forEach { roomName ->
+            Bot.webserviceMessageQueue.add(WebserviceMessage(Bot.knownChannelNamesToIds[roomName], null, message, ":soccer:", username))
+        }
+
+        DataImportService().setFixturesToAnnounced(filteredResults.map { it.fixture })
+    }
+
+    private fun sendNotifications(notificationChannels: List<String>, username: String?, liveUpdateResult: List<ImportFixtureResult>) {
         liveUpdateResult.forEach {
             if (it.stateChange != null) {
                 notificationChannels.forEach { roomName ->
