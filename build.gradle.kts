@@ -53,7 +53,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("at.favre.lib:bcrypt:0.9.0")
 
-    implementation("org.postgresql:postgresql:42.3.1")
+    implementation("org.postgresql:postgresql:42.3.3")
     implementation("org.ktorm:ktorm-core:3.4.1")
     implementation("org.ktorm:ktorm-support-postgresql:3.4.1")
 
@@ -66,7 +66,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.10")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.codehaus.groovy:groovy-all:3.0.9")
-    testImplementation("org.spockframework:spock-core:2.0-groovy-3.0")
+    testImplementation("org.spockframework:spock-core:2.1-groovy-3.0")
 }
 
 tasks.test {
