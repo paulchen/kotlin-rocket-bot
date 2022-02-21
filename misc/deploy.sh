@@ -25,6 +25,8 @@ cd ../kotlin-rocket-bot
 
 git pull || exit 3
 
+docker pull openjdk:17-jdk-slim || exit 3
+
 ./gradlew docker || exit 3
 
 sudo systemctl restart kotlin-rocket-bot || exit 3
