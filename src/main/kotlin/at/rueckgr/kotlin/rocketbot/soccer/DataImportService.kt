@@ -159,6 +159,8 @@ class DataImportService : Logging {
 
         val status = fixtureResponse.fixture.status?.short?.value ?: "TBD"
 
+        val oldHashCode = entity.hashCode()
+
         entity.goalsHalftimeHome = fixtureResponse.score.halftime?.home
         entity.goalsHalftimeAway = fixtureResponse.score.halftime?.away
         if (status == FixtureState.SECOND_HALF.code) {
@@ -180,6 +182,8 @@ class DataImportService : Logging {
         entity.goalsPenaltyHome = fixtureResponse.score.penalty?.home
         entity.goalsPenaltyAway = fixtureResponse.score.penalty?.away
 
+        val goalsChanged = entity.hashCode() != oldHashCode
+
         val stateChange = if (status != entity.status) {
             if (entity.endDate == null
                     && FixtureState.getByCode(entity.status)?.period != FixtureStatePeriod.PAST
@@ -198,7 +202,7 @@ class DataImportService : Logging {
             val unprocessedEvents = fixtureResponse
                 .events!!
                 .subList(entity.eventsProcessed, fixtureResponse.events.size)
-            if (unprocessedEvents.any { !isEventProcessable(fixtureResponse, it)} ) {
+            if (unprocessedEvents.any { !isEventProcessable(fixtureResponse, goalsChanged, it)} ) {
                 emptyList()
             }
             else {
@@ -221,9 +225,10 @@ class DataImportService : Logging {
         return ImportFixtureResult(entity, newEvents, stateChange)
     }
 
-    private fun isEventProcessable(fixtureResponse: FixtureResponseResponse, event: FixtureResponseEvents): Boolean {
+    private fun isEventProcessable(fixtureResponse: FixtureResponseResponse, goalsChanged: Boolean, event: FixtureResponseEvents): Boolean {
         if (event.type == "Goal") {
             findPlayer(fixtureResponse, event) ?: return false
+            return goalsChanged
         }
         return true
     }
