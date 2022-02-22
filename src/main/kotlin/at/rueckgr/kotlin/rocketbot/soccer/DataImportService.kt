@@ -228,7 +228,7 @@ class DataImportService : Logging {
     private fun isEventProcessable(fixtureResponse: FixtureResponseResponse, goalsChanged: Boolean, event: FixtureResponseEvents): Boolean {
         if (event.type == "Goal") {
             findPlayer(fixtureResponse, event) ?: return false
-            return goalsChanged
+            return goalsChanged || event.detail == "Missed Penalty"
         }
         return true
     }
