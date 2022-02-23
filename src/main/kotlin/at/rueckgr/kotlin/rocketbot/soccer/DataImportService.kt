@@ -272,14 +272,12 @@ class DataImportService : Logging {
     private fun findPlayer(fixtureResponse: FixtureResponseResponse, event: FixtureResponseEvents): String? {
         val fallbackName = event.player?.name
         val playerId = event.player?.id ?: return fallbackName
-        val teamId = event.team?.id ?: return fallbackName
         fixtureResponse.players ?: return fallbackName
 
         return fixtureResponse
             .players
-            .firstOrNull { it.team?.id == teamId }
-            ?.players
-            ?.firstOrNull { it.player?.id == playerId }
+            .flatMap { it.players ?: emptyList() }
+            .firstOrNull { it.player?.id == playerId }
             ?.player
             ?.name ?: fallbackName
     }
