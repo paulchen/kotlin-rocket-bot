@@ -16,6 +16,7 @@ CREATE TABLE fixture (
     team_home VARCHAR(255) NOT NULL,
     team_away VARCHAR(255) NOT NULL,
     status VARCHAR(10) NOT NULL,
+    elapsed INT,
     goals_halftime_home INT,
     goals_halftime_away INT,
     goals_fulltime_home INT,

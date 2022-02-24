@@ -15,6 +15,7 @@ interface Fixture : Entity<Fixture> {
     var teamHome: String
     var teamAway: String
     var status: String
+    var elapsed: Int?
     var goalsHalftimeHome: Int?
     var goalsHalftimeAway: Int?
     var goalsFullftimeHome: Int?
@@ -38,6 +39,7 @@ object Fixtures : Table<Fixture>("fixture") {
     var teamHome = varchar("team_home").bindTo { it.teamHome }
     var teamAway = varchar("team_away").bindTo { it.teamAway }
     var status = varchar("status").bindTo { it.status }
+    var elapsed = int("elapsed").bindTo { it.elapsed }
     var goalsHalftimeHome = int("goals_halftime_home").bindTo { it.goalsHalftimeHome }
     var goalsHalftimeAway = int("goals_halftime_away").bindTo { it.goalsHalftimeAway }
     var goalsFulltimeHome = int("goals_fulltime_home").bindTo { it.goalsFullftimeHome }

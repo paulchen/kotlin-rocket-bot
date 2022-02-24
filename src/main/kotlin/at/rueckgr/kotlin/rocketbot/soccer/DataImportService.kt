@@ -133,6 +133,7 @@ class DataImportService : Logging {
             teamHome = fixtureResponse.teams.home?.name ?: "unknown"
             teamAway = fixtureResponse.teams.away?.name ?: "unknown"
             status = fixtureResponse.fixture.status?.short?.value!!
+            elapsed = fixtureResponse.fixture.status.elapsed
             goalsHalftimeHome = fixtureResponse.score.halftime?.home
             goalsHalftimeAway = fixtureResponse.score.halftime?.away
             goalsFullftimeHome = fixtureResponse.score.fulltime?.home
@@ -196,6 +197,7 @@ class DataImportService : Logging {
             null
         }
         entity.status = status
+        entity.elapsed = fixtureResponse.fixture.status?.elapsed ?: entity.elapsed
 
         val eventsCount = max(fixtureResponse.events?.size ?: entity.eventsProcessed, entity.eventsProcessed)
         val newEvents = if (eventsCount > entity.eventsProcessed) {
@@ -253,16 +255,18 @@ class DataImportService : Logging {
                 "Missed Penalty" -> "Vergebener Elfmeter"
                 else -> event.detail
             }
+            val time = when (val elapsed = event.time?.elapsed) {
+                null -> ""
+                else -> " in Spielminute $elapsed"
+            }
             val team = TeamMapper.mapTeamName(event.team?.name ?: "unbekannt")
-            val player = findPlayer(fixtureResponse, event)
+            val player = when (val playerName = findPlayer(fixtureResponse, event)) {
+                null -> ""
+                else -> " durch $playerName"
+            }
             val score = MatchTitleService.formatMatchScore(entity)
 
-            if (player != null) {
-                "$type für $team durch $player; Spielstand: $score"
-            }
-            else {
-                "$type für $team; Spielstand: $score"
-            }
+            "$type$time für $team$player; Spielstand: $score"
         }
         else {
             null

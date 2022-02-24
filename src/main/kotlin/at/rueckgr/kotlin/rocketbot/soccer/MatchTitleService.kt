@@ -1,6 +1,8 @@
 package at.rueckgr.kotlin.rocketbot.soccer
 
 import at.rueckgr.kotlin.rocketbot.database.Fixture
+import at.rueckgr.kotlin.rocketbot.database.FixtureState
+import at.rueckgr.kotlin.rocketbot.database.FixtureStatePeriod
 import at.rueckgr.kotlin.rocketbot.database.Venue
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -16,11 +18,21 @@ object MatchTitleService {
         val teamHome = TeamMapper.mapTeamName(fixture.teamHome)
         val teamAway = TeamMapper.mapTeamName(fixture.teamAway)
 
+        val fixtureState = FixtureState.getByCode(fixture.status)
+        val state = when (fixtureState?.period) {
+            FixtureStatePeriod.LIVE -> "${fixtureState.description}, "
+            else -> ""
+        }
+        val elapsed = when (fixture.elapsed) {
+            null -> ""
+            else -> "${fixture.elapsed}. Spielminute, "
+        }
+
         return if (score == null) {
             "$time: *$teamHome\u00a0-\u00a0$teamAway* ($venue)"
         }
         else {
-            "$time: *$teamHome\u00a0-\u00a0$teamAway* ($venue): $score"
+            "$time: *$teamHome\u00a0-\u00a0$teamAway* ($venue): $state$elapsed$score"
 
         }
     }
