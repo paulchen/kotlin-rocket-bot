@@ -23,9 +23,11 @@ object MatchTitleService {
             FixtureStatePeriod.LIVE -> "${fixtureState.description}, "
             else -> ""
         }
-        val elapsed = when (fixture.elapsed) {
-            null -> ""
-            else -> "${fixture.elapsed}. Spielminute, "
+        val elapsed = if (fixture.elapsed != null && fixtureState?.period == FixtureStatePeriod.LIVE) {
+            "${fixture.elapsed}. Spielminute, "
+        }
+        else {
+            ""
         }
 
         return if (score == null) {
