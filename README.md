@@ -48,6 +48,8 @@ ExecStart=/usr/bin/docker run \
     --net=rocketchat_default \
     -p 127.0.0.1:8081:8082 \
     --add-host=host.docker.internal:host-gateway \
+    --log-driver=journald \
+    --log-opt tag={{.ImageName}} \
     kotlin-rocket-bot:latest
 
 ExecStop=-/usr/bin/docker stop kotlin-rocket-bot
