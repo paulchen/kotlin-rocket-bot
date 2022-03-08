@@ -29,4 +29,11 @@ else:
     return_code = 3
 
 print(message)
+if len(j['problems']) == 0:
+    print('No problems detected')
+else:
+    print('%s problems detected:' % (len(j['problems'])))
+    for problem in j['problems']:
+        print('%s/%s: %s' % (problem['category'], problem['subcategory'], problem['description']))
+
 sys.exit(return_code)
