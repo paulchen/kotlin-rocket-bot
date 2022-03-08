@@ -108,3 +108,23 @@ A cURL request might look like this:
 curl -v -d '{"roomId": "GENERAL", "message": "Just some spam to annoy users", "emoji": ":soccer:"}' -H "Content-Type: application/json" -u "username:password" http://
 localhost:8081/message`
 ```
+
+The backend opens a port for a debugger to connect on port `5005`.
+This port is not exposed in the above configuration.
+To expose it to the host, add an additional `-p` argument to the call
+to `docker run` in the systemd unit file, e.g.
+
+```
+-p 127.0.0.1:5005:5005
+```
+
+This is intended to be used in combination with SSH's port forwarding feature
+when connecting from your local machine to the Docker host:
+
+```
+ssh -L 5005:127.0.0.1:5005 <host>
+```
+
+You can then connect your debugger to `localhost:5005` to debug the running bot instance remotely.
+
+
