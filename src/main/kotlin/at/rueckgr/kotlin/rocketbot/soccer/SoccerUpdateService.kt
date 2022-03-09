@@ -30,7 +30,7 @@ class SoccerUpdateService : Logging {
             DataImportService().runDailyUpdate()
         }
         catch (e: Throwable) {
-            logger().error(e)
+            logger().error("Exception occurred while running daily update", e)
             emptyList()
         }
 
@@ -47,15 +47,17 @@ class SoccerUpdateService : Logging {
         val username = soccerConfiguration.username
         val notificationChannels = soccerConfiguration.notificationChannels
 
+        var error = false
         val liveUpdateResult = try {
             DataImportService().runLiveUpdate()
         }
         catch (e: Throwable) {
-            logger().error(e)
+            logger().error("Exception occurred while running live update", e)
+            error = true
             emptyList()
         }
 
-        if (liveUpdateResult.isEmpty()) {
+        if (!error && liveUpdateResult.isEmpty()) {
             scheduleLiveOrDailyUpdate()
         }
         else {
