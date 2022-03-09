@@ -201,7 +201,7 @@ class DataImportService : Logging {
                     && FixtureState.getByCode(status)?.period == FixtureStatePeriod.PAST) {
                 entity.endDate = LocalDateTime.now()
             }
-            processStateChange(status, entity)
+            processStateChange(entity.status, status, entity)
         }
         else {
             null
@@ -252,15 +252,28 @@ class DataImportService : Logging {
         return true
     }
 
-    private fun processStateChange(newState: String, entity: Fixture): String? {
-        val fixtureState = FixtureState.getByCode(newState) ?: return null
-        val description = fixtureState.description ?: return null
+    private fun processStateChange(oldState: String, newState: String, entity: Fixture): String? {
+        val transition = findMatchingTransition(oldState, newState) ?: return null
+        val description = transition.description ?: return null
 
-        if (fixtureState.appendScore) {
+        if (transition.appendScore) {
             val score = MatchTitleService.formatMatchScore(entity)
             return "$description; Spielstand: $score"
         }
         return description
+    }
+
+    private fun findMatchingTransition(oldState: String, newState: String): FixtureStateTransition? {
+        val oldFixtureState = FixtureState.getByCode(oldState)
+        val newFixtureState = FixtureState.getByCode(newState)
+
+        return FixtureStateTransition
+            .values()
+            .firstOrNull {
+                (it.oldState == oldFixtureState && it.newState == newFixtureState)
+                        || (it.oldState == null && it.newState == newFixtureState)
+                        || (it.oldState == oldFixtureState && it.newState == null)
+            }
     }
 
     private fun processEvent(fixtureResponse: FixtureResponseResponse, entity: Fixture, event: FixtureResponseEvents): String? {
