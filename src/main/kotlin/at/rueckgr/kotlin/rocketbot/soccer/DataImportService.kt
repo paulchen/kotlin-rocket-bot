@@ -209,15 +209,25 @@ class DataImportService : Logging {
         entity.status = status
         entity.elapsed = fixtureResponse.fixture.status?.elapsed ?: entity.elapsed
 
+        logger().debug("Number of events in database: {}, in API response: {}",
+            entity.eventsProcessed, fixtureResponse.events?.size ?: 0)
         val eventsCount = max(fixtureResponse.events?.size ?: entity.eventsProcessed, entity.eventsProcessed)
         val newEvents = if (eventsCount > entity.eventsProcessed) {
             val unprocessedEvents = fixtureResponse
                 .events!!
                 .subList(entity.eventsProcessed, fixtureResponse.events.size)
-            if (unprocessedEvents.any { !isEventProcessable(fixtureResponse, goalsChanged, it)} ) {
+            logger().debug("Identified {} unprocessed events: {}", unprocessedEvents.size, unprocessedEvents)
+            val hasUnprocessableEvents = unprocessedEvents.any {
+                val eventProcessable = isEventProcessable(fixtureResponse, goalsChanged, it)
+                logger().debug("Checked event {} whether it is processable; result: {}", it, eventProcessable)
+                !eventProcessable
+            }
+            if (hasUnprocessableEvents) {
+                logger().debug("Not processing any events as there is at least one that is currently not processable")
                 emptyList()
             }
             else {
+                logger().debug("Processing all unprocessed events")
                 unprocessedEvents
                     .mapNotNull { processEvent(fixtureResponse, entity, it) }
             }
@@ -277,7 +287,9 @@ class DataImportService : Logging {
     }
 
     private fun processEvent(fixtureResponse: FixtureResponseResponse, entity: Fixture, event: FixtureResponseEvents): String? {
-        return if (event.type == "Goal") {
+        logger().debug("Processing event: {}", event)
+
+        val message = if (event.type == "Goal") {
             val type = when (event.detail) {
                 "Normal Goal" -> "Tor"
                 "Own Goal" -> "Eigentor"
@@ -301,6 +313,9 @@ class DataImportService : Logging {
         else {
             null
         }
+
+        logger().debug("Message created from event: {}", message)
+        return message
     }
 
     private fun findPlayer(fixtureResponse: FixtureResponseResponse, event: FixtureResponseEvents): String? {
