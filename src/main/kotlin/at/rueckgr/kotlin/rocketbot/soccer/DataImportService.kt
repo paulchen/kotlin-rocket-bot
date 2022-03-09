@@ -16,6 +16,9 @@ import kotlin.math.max
 val Database.fixtures get() = this.sequenceOf(Fixtures)
 val Database.venues get() = this.sequenceOf(Venues)
 
+data class Score(val home: Int?, val away: Int?)
+data class GoalData(val halftime: Score, val fulltime: Score, val extratime: Score, val penalty: Score)
+
 class DataImportService : Logging {
     companion object {
         var lastUpdate: LocalDateTime? = null
@@ -160,7 +163,7 @@ class DataImportService : Logging {
 
         val status = fixtureResponse.fixture.status?.short?.value ?: "TBD"
 
-        val oldHashCode = entity.hashCode()
+        val oldGoalData = createGoalData(entity)
 
         entity.goalsHalftimeHome = fixtureResponse.score.halftime?.home
         entity.goalsHalftimeAway = fixtureResponse.score.halftime?.away
@@ -183,7 +186,14 @@ class DataImportService : Logging {
         entity.goalsPenaltyHome = fixtureResponse.score.penalty?.home
         entity.goalsPenaltyAway = fixtureResponse.score.penalty?.away
 
-        val goalsChanged = entity.hashCode() != oldHashCode
+        val newGoalData = createGoalData(entity)
+
+        logger().debug("Old goal data: {}", oldGoalData)
+        logger().debug("New goal data: {}", newGoalData)
+
+        val goalsChanged = oldGoalData != newGoalData
+
+        logger().debug("Goals changed: {}", goalsChanged)
 
         val stateChange = if (status != entity.status) {
             if (entity.endDate == null
@@ -226,6 +236,13 @@ class DataImportService : Logging {
 
         return ImportFixtureResult(entity, newEvents, stateChange)
     }
+
+    private fun createGoalData(entity: Fixture): GoalData = GoalData(
+        Score(entity.goalsHalftimeHome, entity.goalsHalftimeAway),
+        Score(entity.goalsFullftimeHome, entity.goalsFulltimeAway),
+        Score(entity.goalsExtratimeHome, entity.goalsExtratimeAway),
+        Score(entity.goalsPenaltyHome, entity.goalsPenaltyAway)
+    )
 
     private fun isEventProcessable(fixtureResponse: FixtureResponseResponse, goalsChanged: Boolean, event: FixtureResponseEvents): Boolean {
         if (event.type == "Goal") {
