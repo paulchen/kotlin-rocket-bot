@@ -1,9 +1,6 @@
 package at.rueckgr.kotlin.rocketbot.soccer
 
-import at.rueckgr.kotlin.rocketbot.database.Fixture
-import at.rueckgr.kotlin.rocketbot.database.FixtureState
-import at.rueckgr.kotlin.rocketbot.database.FixtureStatePeriod
-import at.rueckgr.kotlin.rocketbot.database.Venue
+import at.rueckgr.kotlin.rocketbot.database.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -20,7 +17,7 @@ object MatchTitleService {
 
         val fixtureState = FixtureState.getByCode(fixture.status)
         val state = when (fixtureState?.period) {
-            FixtureStatePeriod.LIVE -> "${fixtureState.description}, "
+            FixtureStatePeriod.LIVE -> getDescription(fixtureState) + ", "
             else -> ""
         }
         val elapsed = if (fixture.elapsed != null && fixtureState?.period == FixtureStatePeriod.LIVE) {
@@ -38,6 +35,11 @@ object MatchTitleService {
 
         }
     }
+
+    private fun getDescription(state: FixtureState) = FixtureStateTransition
+            .values()
+            .first { it.oldState == null && it.newState == state }
+            .description ?: ""
 
     private fun formatTime(date: LocalDateTime): String {
         return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
