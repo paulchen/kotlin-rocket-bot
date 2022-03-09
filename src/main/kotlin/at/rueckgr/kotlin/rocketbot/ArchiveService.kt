@@ -26,7 +26,7 @@ class ArchiveService : Logging {
                 getClient().get("http://backend:8081/user/$encodedUsername")
             }
             catch (e: ClientRequestException) {
-                logger().error(e)
+                logger().error("Exception occurred", e)
                 null
             }
         }
@@ -47,7 +47,7 @@ class ArchiveService : Logging {
                 versionDetails.version
             }
             catch (e: Exception) {
-                logger().error(e)
+                logger().error("Exception occurred", e)
                 VersionInfo("unknown", "unknown")
             }
         }
