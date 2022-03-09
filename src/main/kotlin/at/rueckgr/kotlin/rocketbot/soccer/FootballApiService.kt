@@ -68,7 +68,10 @@ class JsonDumpInterceptor : Interceptor, Logging {
         if (response.body != null) {
             val query = request.url.pathSegments.joinToString("_")
             val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"))
-            val filename = "/cache/soccer/$query-$timestamp.json"
+            val filename = when (val id = request.url.queryParameter("id")) {
+                null -> "/cache/soccer/$query-$timestamp.json"
+                else -> "/cache/soccer/$query-$id-$timestamp.json"
+            }
 
             logger().debug("Dumping REST response to file: {}", filename)
 
