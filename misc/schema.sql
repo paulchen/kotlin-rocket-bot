@@ -29,6 +29,7 @@ CREATE TABLE fixture (
     venue_id INT,
     end_date TIMESTAMP WITH TIME ZONE,
     announced BOOLEAN NOT NULL,
+    pending_score_change BOOLEAN NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (venue_id) REFERENCES venue (id)
 );

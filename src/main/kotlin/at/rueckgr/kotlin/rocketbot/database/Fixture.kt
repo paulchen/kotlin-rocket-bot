@@ -28,6 +28,7 @@ interface Fixture : Entity<Fixture> {
     var venue: Venue?
     var endDate: LocalDateTime?
     var announced: Boolean
+    var pendingScoreChange: Boolean
 }
 
 object Fixtures : Table<Fixture>("fixture") {
@@ -52,4 +53,5 @@ object Fixtures : Table<Fixture>("fixture") {
     var venueId = int("venue_id").references(Venues) { it.venue }
     var endDate = datetime("end_date").bindTo { it.endDate }
     var announced = boolean("announced").bindTo { it.announced }
+    var pendingScoreChange = boolean("pending_score_change").bindTo { it.pendingScoreChange }
 }

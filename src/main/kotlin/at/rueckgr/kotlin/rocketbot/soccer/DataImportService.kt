@@ -148,6 +148,7 @@ class DataImportService : Logging {
             eventsProcessed = 0
             venue = getVenue(database, fixtureResponse)
             announced = false
+            pendingScoreChange = false
         }
         database.fixtures.add(entity)
         return entity
@@ -195,6 +196,14 @@ class DataImportService : Logging {
 
         logger().debug("Goals changed: {}", goalsChanged)
 
+        // We need to persist the value of goalsChanged because a Goal event might not be processed
+        // at the same time as the score changes; this happens when a Goal event appears without
+        // player data. Player data will be updated at a later time and then the Goal event
+        // will be processed.
+        logger().debug("Old value of pendingScoreChange: {}", entity.pendingScoreChange)
+        entity.pendingScoreChange = entity.pendingScoreChange || goalsChanged
+        logger().debug("New value of pendingScoreChange: {}", entity.pendingScoreChange)
+
         val stateChange = if (status != entity.status) {
             if (entity.endDate == null
                     && FixtureState.getByCode(entity.status)?.period != FixtureStatePeriod.PAST
@@ -218,7 +227,7 @@ class DataImportService : Logging {
                 .subList(entity.eventsProcessed, fixtureResponse.events.size)
             logger().debug("Identified {} unprocessed events: {}", unprocessedEvents.size, unprocessedEvents)
             val hasUnprocessableEvents = unprocessedEvents.any {
-                val eventProcessable = isEventProcessable(fixtureResponse, goalsChanged, it)
+                val eventProcessable = isEventProcessable(fixtureResponse, entity.pendingScoreChange, it)
                 logger().debug("Checked event {} whether it is processable; result: {}", it, eventProcessable)
                 !eventProcessable
             }
@@ -238,6 +247,7 @@ class DataImportService : Logging {
 
         if (newEvents.isNotEmpty()) {
             entity.eventsProcessed = eventsCount
+            entity.pendingScoreChange = false
         }
 
         entity.venue = getVenue(database, fixtureResponse)
