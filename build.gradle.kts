@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.6.0"
 val ktorVersion = "1.6.7"
-val jacksonVersion = "2.13.1"
+val jacksonVersion = "2.13.2"
 
 plugins {
     kotlin("jvm") version "1.6.10"
@@ -65,7 +65,7 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.10")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.codehaus.groovy:groovy-all:3.0.9")
+    testImplementation("org.codehaus.groovy:groovy-all:3.0.10")
     testImplementation("org.spockframework:spock-core:2.1-groovy-3.0")
 }
 
