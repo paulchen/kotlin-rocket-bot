@@ -12,6 +12,8 @@ import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
 import org.ktorm.dsl.*
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -154,9 +156,9 @@ class SoccerUpdateService : Logging {
         }
     }
 
-    private fun getNextDailyUpdate(): LocalDateTime {
-        val today4am = LocalDateTime.now().withHour(4).withMinute(0)
-        return if(LocalDateTime.now().isBefore(today4am)) {
+    private fun getNextDailyUpdate(): ZonedDateTime {
+        val today4am = ZonedDateTime.now().withHour(4).withMinute(0)
+        return if(ZonedDateTime.now().isBefore(today4am)) {
             today4am
         }
         else {
@@ -164,7 +166,7 @@ class SoccerUpdateService : Logging {
         }
     }
 
-    private fun getNextLiveUpdate(): LocalDateTime? = Db().connection
+    private fun getNextLiveUpdate() = ZonedDateTime.of(Db().connection
             .from(Fixtures)
             .select(Fixtures.date)
             .where { Fixtures.date greater LocalDateTime.now() }
@@ -172,7 +174,7 @@ class SoccerUpdateService : Logging {
             .limit(1)
             .map { it[Fixtures.date] }
             .firstOrNull()
-            ?.minusHours(1)
+            ?.minusHours(1), ZoneId.systemDefault())
 
-    private fun getSeconds(time: LocalDateTime) = max(30, ChronoUnit.SECONDS.between(LocalDateTime.now(), time))
+    private fun getSeconds(time: ZonedDateTime) = max(30, ChronoUnit.SECONDS.between(ZonedDateTime.now(), time))
 }
