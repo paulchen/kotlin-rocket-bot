@@ -47,6 +47,9 @@ dependencies {
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
+    // CVE-2020-36518 - remove when updating to 2.13.3 or 2.14.0
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2.1")
+    implementation(platform("com.fasterxml.jackson:jackson-bom:2.13.2.20220324"))
 
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("org.apache.commons:commons-text:1.9")
