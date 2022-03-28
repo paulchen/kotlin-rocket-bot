@@ -3,15 +3,15 @@ import java.io.ByteArrayOutputStream
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.6.0"
-val ktorVersion = "1.6.7"
+val ktorVersion = "1.6.8"
 val jacksonVersion = "2.13.2"
 
 plugins {
     kotlin("jvm") version "1.6.10"
     application
-    id("com.palantir.docker") version "0.31.0"
+    id("com.palantir.docker") version "0.32.0"
     groovy
-    id("org.openapi.generator") version "5.3.0"
+    id("org.openapi.generator") version "5.4.0"
     id("com.github.ben-manes.versions") version "0.42.0"
 }
 
@@ -99,7 +99,7 @@ application {
 
 distributions {
     main {
-        version = ""
+        version = "latest"
     }
 }
 

@@ -1,6 +1,6 @@
 FROM openjdk:17-jdk-slim
 RUN mkdir /app
-ADD kotlin-rocket-bot.tar /app
+ADD kotlin-rocket-bot-latest.tar /app
 
 RUN addgroup --gid 1024 mygroup
 RUN adduser --disabled-password --ingroup mygroup myuser
