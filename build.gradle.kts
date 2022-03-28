@@ -12,6 +12,7 @@ plugins {
     id("com.palantir.docker") version "0.31.0"
     groovy
     id("org.openapi.generator") version "5.3.0"
+    id("com.github.ben-manes.versions") version "0.42.0"
 }
 
 group = "at.rueckgr.kotlin.rocketbot"
