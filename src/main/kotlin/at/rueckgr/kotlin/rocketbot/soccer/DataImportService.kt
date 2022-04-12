@@ -140,7 +140,7 @@ class DataImportService : Logging {
             elapsed = fixtureResponse.fixture.status.elapsed
             goalsHalftimeHome = fixtureResponse.score.halftime?.home
             goalsHalftimeAway = fixtureResponse.score.halftime?.away
-            goalsFullftimeHome = fixtureResponse.score.fulltime?.home
+            goalsFulltimeHome = fixtureResponse.score.fulltime?.home
             goalsFulltimeAway = fixtureResponse.score.fulltime?.away
             goalsExtratimeHome = fixtureResponse.score.extratime?.home
             goalsExtratimeAway = fixtureResponse.score.extratime?.away
@@ -170,21 +170,15 @@ class DataImportService : Logging {
         entity.goalsHalftimeHome = fixtureResponse.score.halftime?.home
         entity.goalsHalftimeAway = fixtureResponse.score.halftime?.away
         if (status == FixtureState.SECOND_HALF.code || status == FixtureState.BREAK_TIME.code) {
-            entity.goalsFullftimeHome = fixtureResponse.goals.home
+            entity.goalsFulltimeHome = fixtureResponse.goals.home
             entity.goalsFulltimeAway = fixtureResponse.goals.away
         }
         else {
-            entity.goalsFullftimeHome = fixtureResponse.score.fulltime?.home
+            entity.goalsFulltimeHome = fixtureResponse.score.fulltime?.home
             entity.goalsFulltimeAway = fixtureResponse.score.fulltime?.away
         }
-        if (status == FixtureState.EXTRA_TIME.code) {
-            entity.goalsExtratimeHome = fixtureResponse.goals.home
-            entity.goalsExtratimeAway = fixtureResponse.goals.away
-        }
-        else {
-            entity.goalsExtratimeHome = fixtureResponse.score.extratime?.home
-            entity.goalsExtratimeAway = fixtureResponse.score.extratime?.away
-        }
+        entity.goalsExtratimeHome = add(fixtureResponse.score.fulltime?.home, fixtureResponse.score.extratime?.home)
+        entity.goalsExtratimeAway = add(fixtureResponse.score.fulltime?.away, fixtureResponse.score.extratime?.away)
         entity.goalsPenaltyHome = fixtureResponse.score.penalty?.home
         entity.goalsPenaltyAway = fixtureResponse.score.penalty?.away
 
@@ -266,6 +260,13 @@ class DataImportService : Logging {
         return ImportFixtureResult(entity, Collections.unmodifiableList(newEvents), stateChange)
     }
 
+    private fun add(a: Int?, b: Int?): Int? {
+        if (a == null || b == null) {
+            return null
+        }
+        return a + b
+    }
+
     private fun areGoalsReset(oldGoalData: GoalData, newGoalData: GoalData): Boolean {
         return ((oldGoalData.halftime.home ?: 0) > (newGoalData.halftime.home ?: 0)) ||
                 ((oldGoalData.halftime.away ?: 0) > (newGoalData.halftime.away ?: 0)) ||
@@ -279,7 +280,7 @@ class DataImportService : Logging {
 
     private fun createGoalData(entity: Fixture): GoalData = GoalData(
         Score(entity.goalsHalftimeHome, entity.goalsHalftimeAway),
-        Score(entity.goalsFullftimeHome, entity.goalsFulltimeAway),
+        Score(entity.goalsFulltimeHome, entity.goalsFulltimeAway),
         Score(entity.goalsExtratimeHome, entity.goalsExtratimeAway),
         Score(entity.goalsPenaltyHome, entity.goalsPenaltyAway)
     )

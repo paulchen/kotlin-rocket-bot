@@ -18,7 +18,7 @@ interface Fixture : Entity<Fixture> {
     var elapsed: Int?
     var goalsHalftimeHome: Int?
     var goalsHalftimeAway: Int?
-    var goalsFullftimeHome: Int?
+    var goalsFulltimeHome: Int?
     var goalsFulltimeAway: Int?
     var goalsExtratimeHome: Int?
     var goalsExtratimeAway: Int?
@@ -43,7 +43,7 @@ object Fixtures : Table<Fixture>("fixture") {
     var elapsed = int("elapsed").bindTo { it.elapsed }
     var goalsHalftimeHome = int("goals_halftime_home").bindTo { it.goalsHalftimeHome }
     var goalsHalftimeAway = int("goals_halftime_away").bindTo { it.goalsHalftimeAway }
-    var goalsFulltimeHome = int("goals_fulltime_home").bindTo { it.goalsFullftimeHome }
+    var goalsFulltimeHome = int("goals_fulltime_home").bindTo { it.goalsFulltimeHome }
     var goalsFulltimeAway = int("goals_fulltime_away").bindTo { it.goalsFulltimeAway }
     var goalsExtratimeHome = int("goals_extratime_home").bindTo { it.goalsExtratimeHome }
     var goalsExtratimeAway = int("goals_extratime_away").bindTo { it.goalsExtratimeAway }

@@ -15,7 +15,7 @@ class FixtureImpl(
     override var elapsed: Int?,
     override var goalsHalftimeHome: Int?,
     override var goalsHalftimeAway: Int?,
-    override var goalsFullftimeHome: Int?,
+    override var goalsFulltimeHome: Int?,
     override var goalsFulltimeAway: Int?,
     override var goalsExtratimeHome: Int?,
     override var goalsExtratimeAway: Int?,

@@ -59,7 +59,7 @@ object MatchTitleService {
     fun formatMatchScore(fixture: Fixture): String? {
         val htHome = fixture.goalsHalftimeHome
         val htAway = fixture.goalsHalftimeAway
-        val ftHome = fixture.goalsFullftimeHome
+        val ftHome = fixture.goalsFulltimeHome
         val ftAway = fixture.goalsFulltimeAway
         val etHome = fixture.goalsExtratimeHome
         val etAway = fixture.goalsExtratimeAway
