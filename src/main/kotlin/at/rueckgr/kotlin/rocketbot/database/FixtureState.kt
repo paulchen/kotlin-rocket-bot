@@ -6,7 +6,7 @@ enum class FixtureState(val code: String, val period: FixtureStatePeriod) {
     FIRST_HALF("1H", FixtureStatePeriod.LIVE),
     HALF_TIME("HT", FixtureStatePeriod.LIVE),
     SECOND_HALF("2H", FixtureStatePeriod.LIVE),
-    EXTRA_TIME("EXTRA_TIME", FixtureStatePeriod.LIVE),
+    EXTRA_TIME("ET", FixtureStatePeriod.LIVE),
     PENALTY("PENALTY", FixtureStatePeriod.LIVE),
     MATCH_FINISHED("FT", FixtureStatePeriod.PAST),
     MATCH_FINISHED_AFTER_EXTRATIME("AET", FixtureStatePeriod.PAST),
