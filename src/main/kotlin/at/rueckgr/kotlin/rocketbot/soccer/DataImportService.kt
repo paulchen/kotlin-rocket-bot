@@ -169,7 +169,7 @@ class DataImportService : Logging {
 
         entity.goalsHalftimeHome = fixtureResponse.score.halftime?.home
         entity.goalsHalftimeAway = fixtureResponse.score.halftime?.away
-        if (status == FixtureState.SECOND_HALF.code) {
+        if (status == FixtureState.SECOND_HALF.code || status == FixtureState.BREAK_TIME.code) {
             entity.goalsFullftimeHome = fixtureResponse.goals.home
             entity.goalsFulltimeAway = fixtureResponse.goals.away
         }
