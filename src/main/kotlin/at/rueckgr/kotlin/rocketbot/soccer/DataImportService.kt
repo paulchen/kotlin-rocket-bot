@@ -11,6 +11,7 @@ import org.ktorm.dsl.*
 import org.ktorm.entity.*
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.Collections
 import kotlin.math.max
 
 val Database.fixtures get() = this.sequenceOf(Fixtures)
@@ -193,8 +194,10 @@ class DataImportService : Logging {
         logger().debug("New goal data: {}", newGoalData)
 
         val goalsChanged = oldGoalData != newGoalData
+        val goalsReset = areGoalsReset(oldGoalData, newGoalData)
 
         logger().debug("Goals changed: {}", goalsChanged)
+        logger().debug("Goals reset: {}", goalsReset)
 
         // We need to persist the value of goalsChanged because a Goal event might not be processed
         // at the same time as the score changes; this happens when a Goal event appears without
@@ -233,16 +236,17 @@ class DataImportService : Logging {
             }
             if (hasUnprocessableEvents) {
                 logger().debug("Not processing any events as there is at least one that is currently not processable")
-                emptyList()
+                emptyList<String>().toMutableList()
             }
             else {
                 logger().debug("Processing all unprocessed events")
                 unprocessedEvents
                     .mapNotNull { processEvent(fixtureResponse, entity, it) }
+                    .toMutableList()
             }
         }
         else {
-            emptyList()
+            emptyList<String>().toMutableList()
         }
 
         if (newEvents.isNotEmpty()) {
@@ -250,11 +254,27 @@ class DataImportService : Logging {
             entity.pendingScoreChange = false
         }
 
+        if (goalsReset) {
+            newEvents.add(createGoalsResetEvent(entity))
+            entity.pendingScoreChange = false
+        }
+
         entity.venue = getVenue(database, fixtureResponse)
 
         entity.flushChanges()
 
-        return ImportFixtureResult(entity, newEvents, stateChange)
+        return ImportFixtureResult(entity, Collections.unmodifiableList(newEvents), stateChange)
+    }
+
+    private fun areGoalsReset(oldGoalData: GoalData, newGoalData: GoalData): Boolean {
+        return ((oldGoalData.halftime.home ?: 0) > (newGoalData.halftime.home ?: 0)) ||
+                ((oldGoalData.halftime.away ?: 0) > (newGoalData.halftime.away ?: 0)) ||
+                ((oldGoalData.fulltime.home ?: 0) > (newGoalData.fulltime.home ?: 0)) ||
+                ((oldGoalData.fulltime.away ?: 0) > (newGoalData.fulltime.away ?: 0)) ||
+                ((oldGoalData.extratime.home ?: 0) > (newGoalData.extratime.home ?: 0)) ||
+                ((oldGoalData.extratime.away ?: 0) > (newGoalData.extratime.away ?: 0)) ||
+                ((oldGoalData.penalty.home ?: 0) > (newGoalData.penalty.home ?: 0)) ||
+                ((oldGoalData.penalty.away ?: 0) > (newGoalData.penalty.away ?: 0))
     }
 
     private fun createGoalData(entity: Fixture): GoalData = GoalData(
@@ -325,6 +345,14 @@ class DataImportService : Logging {
         }
 
         logger().debug("Message created from event: {}", message)
+        return message
+    }
+
+    private fun createGoalsResetEvent(entity: Fixture): String {
+        val score = MatchTitleService.formatMatchScore(entity)
+        val message = "Spielstand wurde korrigiert; neuer Spielstand: $score"
+
+        logger().debug("Created new message: {}", message)
         return message
     }
 
