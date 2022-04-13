@@ -5,7 +5,9 @@ import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import at.rueckgr.kotlin.rocketbot.util.Db
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
-import com.api_football.model.*
+import com.api_football.models.FixtureResponseEvents
+import com.api_football.models.FixtureResponseFixtureVenue
+import com.api_football.models.FixtureResponseResponse
 import org.ktorm.database.Database
 import org.ktorm.dsl.*
 import org.ktorm.entity.*
