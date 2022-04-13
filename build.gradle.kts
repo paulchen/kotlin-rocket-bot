@@ -7,9 +7,9 @@ val ktorVersion = "1.6.8"
 val jacksonVersion = "2.13.2"
 
 plugins {
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version "1.6.20"
     application
-    id("com.palantir.docker") version "0.32.0"
+    id("com.palantir.docker") version "0.33.0"
     groovy
     id("org.openapi.generator") version "5.4.0"
     id("com.github.ben-manes.versions") version "0.42.0"
@@ -66,7 +66,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.10")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.20")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.codehaus.groovy:groovy-all:3.0.10")
     testImplementation("org.spockframework:spock-core:2.1-groovy-3.0")
