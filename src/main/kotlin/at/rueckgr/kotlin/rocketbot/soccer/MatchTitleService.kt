@@ -66,6 +66,13 @@ object MatchTitleService {
         val pHome = fixture.goalsPenaltyHome
         val pAway = fixture.goalsPenaltyAway
 
+        val extratime = if (isLiveMatch(fixture)) {
+            "i.V."
+        }
+        else {
+            "n.V."
+        }
+
         return if (htHome == null) {
             null
         }
@@ -79,18 +86,21 @@ object MatchTitleService {
             "$ftHome$zwnbsp:$zwnbsp$ftAway ($htHome$zwnbsp:$zwnbsp$htAway)" + formatPenalty(pHome, pAway)
         }
         else if (etHome == 0 && etAway == 0) {
-            "0$zwnbsp:${zwnbsp}0 n.V. (0$zwnbsp:${zwnbsp}0)" + formatPenalty(pHome, pAway)
+            "0$zwnbsp:${zwnbsp}0 $extratime (0$zwnbsp:${zwnbsp}0)" + formatPenalty(pHome, pAway)
         }
         else if (etHome > 0 && ftHome == 0 && ftAway == 0) {
-            "$etHome$zwnbsp:$zwnbsp$etAway n.V. (0$zwnbsp:${zwnbsp}0)" + formatPenalty(pHome, pAway)
+            "$etHome$zwnbsp:$zwnbsp$etAway $extratime (0$zwnbsp:${zwnbsp}0)" + formatPenalty(pHome, pAway)
         }
         else if (etHome > 0) {
-            "$etHome$zwnbsp:$zwnbsp$etAway n.V. ($ftHome$zwnbsp:$zwnbsp$ftAway, $htHome$zwnbsp:$zwnbsp$htAway)" + formatPenalty(pHome, pAway)
+            "$etHome$zwnbsp:$zwnbsp$etAway $extratime ($ftHome$zwnbsp:$zwnbsp$ftAway, $htHome$zwnbsp:$zwnbsp$htAway)" + formatPenalty(pHome, pAway)
         }
         else {
             null
         }
     }
+
+    private fun isLiveMatch(fixture: Fixture): Boolean =
+        FixtureState.getByCode(fixture.status)?.period == FixtureStatePeriod.LIVE
 
     private fun formatPenalty(pHome: Int?, pAway: Int?): String {
         return if (pHome == null) {
