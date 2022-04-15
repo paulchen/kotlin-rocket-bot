@@ -144,6 +144,9 @@ class SoccerUpdateService : Logging {
         val nextDailyUpdate = getNextDailyUpdate()
         val nextLiveUpdate = getNextLiveUpdate()
 
+        logger().debug("Next live update would be at {}", nextLiveUpdate)
+        logger().debug("Next daily update would be at {}", nextDailyUpdate)
+
         if (nextLiveUpdate == null || nextDailyUpdate.isBefore(nextLiveUpdate)) {
             val seconds = getSeconds(nextDailyUpdate)
             logger().debug("Scheduling next daily update for {} (in {} seconds)", nextDailyUpdate, seconds)
