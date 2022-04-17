@@ -5,7 +5,9 @@ import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import at.rueckgr.kotlin.rocketbot.util.Db
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
-import com.api_football.model.*
+import com.api_football.models.FixtureResponseEvents
+import com.api_football.models.FixtureResponseFixtureVenue
+import com.api_football.models.FixtureResponseResponse
 import org.ktorm.database.Database
 import org.ktorm.dsl.*
 import org.ktorm.entity.*
@@ -217,7 +219,12 @@ class DataImportService : Logging {
             null
         }
         entity.status = status
-        entity.elapsed = fixtureResponse.fixture.status?.elapsed ?: entity.elapsed
+        entity.elapsed = if (extraTimeHalfTimeFix(fixtureResponse)) {
+            105
+        }
+        else {
+            fixtureResponse.fixture.status?.elapsed ?: entity.elapsed
+        }
 
         logger().debug("Number of events in database: {}, in API response: {}",
             entity.eventsProcessed, fixtureResponse.events?.size ?: 0)
@@ -263,6 +270,11 @@ class DataImportService : Logging {
 
         return ImportFixtureResult(entity, Collections.unmodifiableList(newEvents), stateChange)
     }
+
+    // Football API reports the break during with status HT and elapsed time 45
+    private fun extraTimeHalfTimeFix(fixtureResponse: FixtureResponseResponse): Boolean =
+        (fixtureResponse.score.extratime?.home != null || fixtureResponse.score.extratime?.away != null) &&
+                fixtureResponse.fixture.status?.short?.value == FixtureState.HALF_TIME.code
 
     private fun add(a: Int?, b: Int?): Int? {
         if (a == null || b == null) {

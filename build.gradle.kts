@@ -9,7 +9,7 @@ val jacksonVersion = "2.13.2"
 plugins {
     kotlin("jvm") version "1.6.20"
     application
-    id("com.palantir.docker") version "0.32.0"
+    id("com.palantir.docker") version "0.33.0"
     groovy
     id("org.openapi.generator") version "5.4.0"
     id("com.github.ben-manes.versions") version "0.42.0"
@@ -150,9 +150,7 @@ openApiGenerate {
     validateSpec.set(true)
     logToStderr.set(true)
     outputDir.set("$buildDir/generated/openapi")
-    apiPackage.set("com.api_football.api")
-    invokerPackage.set("com.api_football.invoker")
-    modelPackage.set("com.api_football.model")
+    packageName.set("com.api_football")
     configOptions.put("dateLibrary", "java8")
     globalProperties.put("modelDocs", "false")
     typeMappings.put("datetime", "DateTime")

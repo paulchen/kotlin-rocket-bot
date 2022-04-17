@@ -3,13 +3,13 @@ package at.rueckgr.kotlin.rocketbot.soccer
 import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
-import com.api_football.api.FootballApi
-import com.api_football.model.FixtureResponse
-import com.api_football.model.VenueResponseResponse
+import com.api_football.apis.FootballApi
+import com.api_football.infrastructure.ApiClient
+import com.api_football.models.FixtureResponse
+import com.api_football.models.VenueResponseResponse
 import okhttp3.Interceptor
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
-import org.openapitools.client.infrastructure.ApiClient
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
