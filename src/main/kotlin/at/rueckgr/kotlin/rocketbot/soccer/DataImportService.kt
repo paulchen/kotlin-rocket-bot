@@ -59,7 +59,11 @@ class DataImportService : Logging {
 
         val result = liveFixtures
             .map {
-                importFixture(database, FootballApiService.getFixture(it.id).response[0])
+                val fixture = FootballApiService.getFixture(it.id)
+                if (fixture.response.isEmpty()) {
+                    throw ImportException("No data returned by API for fixture ${it.id}")
+                }
+                importFixture(database, fixture.response[0])
             }
             .toList()
 
@@ -444,6 +448,8 @@ class DataImportService : Logging {
         }
     }
 }
+
+class ImportException(message: String) : Exception(message)
 
 data class ImportFixtureResult(
     val fixture: Fixture,
