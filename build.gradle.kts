@@ -8,6 +8,7 @@ val jacksonVersion = "2.13.2"
 
 plugins {
     kotlin("jvm") version "1.6.20"
+    kotlin("plugin.serialization") version "1.6.20"
     application
     id("com.palantir.docker") version "0.33.0"
     groovy

@@ -3,6 +3,7 @@ package at.rueckgr.kotlin.rocketbot
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.VersionInfo
 import at.rueckgr.kotlin.rocketbot.util.logger
+import at.rueckgr.kotlin.rocketbot.util.time.KZonedDateTimeSerializer
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
@@ -11,13 +12,21 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.Serializable
 import java.net.URLEncoder
 import java.time.ZonedDateTime
 
+@Serializable
 data class UserDetails(val user: User)
 
-data class User(val username: String, val timestamp: ZonedDateTime?)
+@Serializable
+data class User(
+    val username: String,
+    @Serializable(KZonedDateTimeSerializer::class)
+    val timestamp: ZonedDateTime?
+)
 
+@Serializable
 data class VersionDetails(val version: VersionInfo)
 
 class ArchiveService : Logging {
