@@ -4,10 +4,12 @@ import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.VersionInfo
 import at.rueckgr.kotlin.rocketbot.util.logger
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
-import io.ktor.client.features.*
-import io.ktor.client.features.json.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import java.net.URLEncoder
 import java.time.ZonedDateTime
@@ -23,7 +25,7 @@ class ArchiveService : Logging {
         val encodedUsername = URLEncoder.encode(username, "utf-8")
         return runBlocking {
             try {
-                getClient().get("http://backend:8081/user/$encodedUsername")
+                getClient().get("http://backend:8081/user/$encodedUsername").body<UserDetails>()
             }
             catch (e: ClientRequestException) {
                 logger().error("Exception occurred", e)
@@ -33,17 +35,15 @@ class ArchiveService : Logging {
     }
 
     private fun getClient() = HttpClient(CIO) {
-        install(JsonFeature) {
-            serializer = JacksonSerializer {
-                findAndRegisterModules()
-            }
+        install(ContentNegotiation) {
+            json()
         }
     }
 
     fun getVersion(): VersionInfo {
         return runBlocking {
             try {
-                val versionDetails: VersionDetails = getClient().get("http://backend:8081/version")
+                val versionDetails: VersionDetails = getClient().get("http://backend:8081/version").body()
                 versionDetails.version
             }
             catch (e: Exception) {
