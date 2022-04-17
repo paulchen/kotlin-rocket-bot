@@ -125,9 +125,11 @@ class SoccerUpdateService : Logging {
     private fun hasLiveFixtures(updateResult: List<ImportFixtureResult>): Boolean {
         val inOneHour = LocalDateTime.now().plusHours(1)
         val oneHourAgo = LocalDateTime.now().minusHours(1)
+        val oneDayAgo = LocalDateTime.now().minusDays(1)
 
         return updateResult
             .map { it.fixture }
+            .filter { it.date.isAfter(oneDayAgo) }
             .any {
                 (FixtureState.getByCode(it.status)?.period == FixtureStatePeriod.LIVE)
                     || (it.date.isAfter(oneHourAgo) && it.date.isBefore(inOneHour))
