@@ -25,7 +25,7 @@ cd ../kotlin-rocket-bot
 
 git pull || exit 3
 
-docker pull openjdk:17-jdk-slim || exit 3
+docker pull eclipse-temurin:17-jdk || exit 3
 
 ./gradlew docker || exit 3
 

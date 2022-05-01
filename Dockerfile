@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk
 RUN mkdir /app
 ADD kotlin-rocket-bot-latest.tar /app
 
