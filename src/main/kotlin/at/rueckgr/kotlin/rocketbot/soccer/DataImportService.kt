@@ -213,12 +213,14 @@ class DataImportService : Logging {
                     && FixtureState.getByCode(status)?.period == FixtureStatePeriod.PAST) {
                 entity.endDate = LocalDateTime.now()
             }
-            processStateChange(entity.status, status, entity)
+            val oldStatus = entity.status
+            // ensure that MatchTitleService.formatMatchScore has the current fixture state
+            entity.status = status
+            processStateChange(oldStatus, status, entity)
         }
         else {
             null
         }
-        entity.status = status
         entity.elapsed = if (extraTimeHalfTimeFix(fixtureResponse)) {
             105
         }

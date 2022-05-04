@@ -66,7 +66,8 @@ object MatchTitleService {
         val pHome = fixture.goalsPenaltyHome
         val pAway = fixture.goalsPenaltyAway
 
-        val extratime = if (isLiveMatch(fixture)) {
+        val status = FixtureState.getByCode(fixture.status)
+        val extratime = if (isLiveMatch(fixture) && status != FixtureState.BREAK_TIME && status != FixtureState.PENALTY) {
             "i.V."
         }
         else {
