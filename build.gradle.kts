@@ -2,13 +2,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
 val reflectionsVersion = "0.10.2"
-val coroutinesVersion = "1.6.0"
-val ktorVersion = "2.0.0"
+val coroutinesVersion = "1.6.1"
+val ktorVersion = "2.0.1"
 val jacksonVersion = "2.13.2"
 
 plugins {
-    kotlin("jvm") version "1.6.20"
-    kotlin("plugin.serialization") version "1.6.20"
+    kotlin("jvm") version "1.6.21"
+    kotlin("plugin.serialization") version "1.6.21"
     application
     id("com.palantir.docker") version "0.33.0"
     groovy
@@ -59,7 +59,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("at.favre.lib:bcrypt:0.9.0")
 
-    implementation("org.postgresql:postgresql:42.3.3")
+    implementation("org.postgresql:postgresql:42.3.5")
     implementation("org.ktorm:ktorm-core:3.4.1")
     implementation("org.ktorm:ktorm-support-postgresql:3.4.1")
 
@@ -69,10 +69,10 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.20")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.21")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.codehaus.groovy:groovy-all:3.0.10")
-    testImplementation("org.spockframework:spock-core:2.1-groovy-3.0")
+    testImplementation("org.apache.groovy:groovy-all:4.0.2")
+    testImplementation("org.spockframework:spock-core:2.2-M1-groovy-4.0")
 }
 
 tasks.test {
