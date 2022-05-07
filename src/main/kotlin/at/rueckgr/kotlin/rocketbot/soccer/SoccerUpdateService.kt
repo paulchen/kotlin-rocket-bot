@@ -186,7 +186,8 @@ class SoccerUpdateService : Logging {
         }
     }
 
-    private fun getNextLiveUpdate() = ZonedDateTime.of(Db().connection
+    private fun getNextLiveUpdate(): ZonedDateTime? {
+        val nextFixture = Db().connection
             .from(Fixtures)
             .select(Fixtures.date)
             .where { Fixtures.date greater LocalDateTime.now() }
@@ -194,7 +195,9 @@ class SoccerUpdateService : Logging {
             .limit(1)
             .map { it[Fixtures.date] }
             .firstOrNull()
-            ?.minusHours(1), ZoneId.systemDefault())
+            ?.minusHours(1) ?: return null
+        return ZonedDateTime.of(nextFixture, ZoneId.systemDefault())
+    }
 
     private fun getSeconds(time: ZonedDateTime) = max(30, ChronoUnit.SECONDS.between(ZonedDateTime.now(), time))
 }
