@@ -23,8 +23,7 @@ class SoccerUpdateService : Logging {
     private val executorService = Executors.newScheduledThreadPool(1)
 
     fun scheduleImmediateDailyUpdate() {
-        logger().debug("Scheduling next daily update for {} (in 1 seconds)", LocalDateTime.now().plusSeconds(1))
-        executorService.schedule( { runDailyUpdate() }, 1, TimeUnit.SECONDS)
+        scheduleDailyUpdate(1)
     }
 
     private fun runDailyUpdate() {
@@ -138,8 +137,7 @@ class SoccerUpdateService : Logging {
     }
 
     private fun scheduleQuickLiveUpdate() {
-        logger().debug("Scheduling next live update for {} (in 30 seconds)", LocalDateTime.now().plusSeconds(30))
-        executorService.schedule( { runLiveUpdate() }, 30, TimeUnit.SECONDS)
+        scheduleLiveUpdate(30)
     }
 
     private fun scheduleLiveOrDailyUpdate() {
@@ -150,14 +148,31 @@ class SoccerUpdateService : Logging {
         logger().debug("Next daily update would be at {}", nextDailyUpdate)
 
         if (nextLiveUpdate == null || nextDailyUpdate.isBefore(nextLiveUpdate)) {
-            val seconds = getSeconds(nextDailyUpdate)
-            logger().debug("Scheduling next daily update for {} (in {} seconds)", nextDailyUpdate, seconds)
-            executorService.schedule( { runDailyUpdate() }, seconds, TimeUnit.SECONDS)
+            scheduleDailyUpdate(getSeconds(nextDailyUpdate))
         }
         else {
-            val seconds = getSeconds(nextLiveUpdate)
-            logger().debug("Scheduling next live update for {} (in {} seconds)", nextLiveUpdate, seconds)
-            executorService.schedule( { runLiveUpdate() }, seconds, TimeUnit.SECONDS)
+            scheduleLiveUpdate(getSeconds(nextLiveUpdate))
+        }
+    }
+
+    private fun scheduleDailyUpdate(seconds: Long) {
+        val nextDailyUpdate = LocalDateTime.now().plusSeconds(seconds)
+        logger().debug("Scheduling next daily update for {} (in {} seconds)", nextDailyUpdate, seconds)
+        executorService.schedule( { handleExceptions { runDailyUpdate() } }, seconds, TimeUnit.SECONDS)
+    }
+
+    private fun scheduleLiveUpdate(seconds: Long) {
+        val nextLiveUpdate = LocalDateTime.now().plusSeconds(seconds)
+        logger().debug("Scheduling next live update for {} (in {} seconds)", nextLiveUpdate, seconds)
+        executorService.schedule( { handleExceptions { runLiveUpdate() } }, seconds, TimeUnit.SECONDS)
+    }
+
+    private fun handleExceptions(function: () -> Unit) {
+        try {
+            function.invoke()
+        }
+        catch (e: Throwable) {
+            logger().error("Exception occurred: ", e)
         }
     }
 
