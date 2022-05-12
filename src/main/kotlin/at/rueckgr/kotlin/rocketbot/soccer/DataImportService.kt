@@ -25,6 +25,7 @@ data class GoalData(val halftime: Score, val fulltime: Score, val extratime: Sco
 class DataImportService : Logging {
     companion object {
         var lastUpdate: LocalDateTime? = null
+        var lastUpdateFailed = false
     }
 
     fun runDailyUpdate(): List<ImportFixtureResult> {
@@ -45,6 +46,7 @@ class DataImportService : Logging {
         processNewVenues(database, existingVenues)
 
         lastUpdate = LocalDateTime.now()
+        lastUpdateFailed = false
 
         logger().info("Daily update complete")
 
@@ -70,6 +72,7 @@ class DataImportService : Logging {
             .toList()
 
         lastUpdate = LocalDateTime.now()
+        lastUpdateFailed = false
 
         logger().info("Live update complete")
 

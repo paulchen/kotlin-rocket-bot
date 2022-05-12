@@ -32,6 +32,7 @@ class SoccerUpdateService : Logging {
         }
         catch (e: Throwable) {
             logger().error("Exception occurred while running daily update", e)
+            DataImportService.lastUpdateFailed = true
             emptyList()
         }
 
@@ -54,6 +55,7 @@ class SoccerUpdateService : Logging {
         }
         catch (e: Throwable) {
             logger().error("Exception occurred while running live update", e)
+            DataImportService.lastUpdateFailed = true
             error = true
             emptyList()
         }
@@ -177,10 +179,8 @@ class SoccerUpdateService : Logging {
     }
 
     private fun getNextDailyUpdate(): ZonedDateTime {
-        val lastUpdate = DataImportService.lastUpdate
-        return if (lastUpdate == null || lastUpdate.isBefore(LocalDateTime.now().minusDays(1))) {
-            // if there was no successful update within the last 24 hours
-            // (i.e. the update that should have taken place failed for some reason),
+        return if (DataImportService.lastUpdateFailed) {
+            // if the last update failed,
             // schedule an update to the next full hour
             ZonedDateTime.now().withMinute(0).plusHours(1)
         }
