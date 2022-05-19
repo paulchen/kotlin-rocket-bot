@@ -44,20 +44,22 @@ fun main() {
 }
 
 class Handler : RoomMessageHandler, Logging {
-    override fun handle(username: String, message: String): List<OutgoingMessage> {
+    override fun handle(username: String, message: String, botMessage: Boolean): List<OutgoingMessage> {
         val messageWithoutQuote = removeQuote(message)
         if (!messageWithoutQuote.startsWith("!")) {
             logger().debug("Message contains no command, applying general plugins")
             return PluginProvider
                 .getGeneralPlugins()
-                .flatMap { it.handle(messageWithoutQuote) }
+                .filter { !botMessage || it.handleBotMessages() }
+                .flatMap { it.handle(messageWithoutQuote, botMessage) }
         }
 
         val command = messageWithoutQuote.split(" ")[0].substring(1)
         logger().debug("Message contains command: {}", command)
         return PluginProvider
             .getByCommand(command)
-            .flatMap { it.handle(messageWithoutQuote) }
+            .filter { !botMessage || it.handleBotMessages() }
+            .flatMap { it.handle(messageWithoutQuote, botMessage) }
     }
 
     private fun removeQuote(message: String): String {

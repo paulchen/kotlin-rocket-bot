@@ -7,6 +7,8 @@ abstract class AbstractPlugin {
 
     abstract fun handle(message: String): List<OutgoingMessage>
 
+    open fun handle(message: String, botMessage: Boolean) = handle(message)
+
     abstract fun getHelp(command: String): List<String>
 
     fun stripCommand(message: String): String? {
@@ -18,4 +20,6 @@ abstract class AbstractPlugin {
     }
 
     abstract fun getProblems(): List<String>
+
+    fun handleBotMessages(): Boolean = false
 }
