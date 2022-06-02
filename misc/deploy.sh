@@ -25,6 +25,7 @@ cd ../kotlin-rocket-bot
 
 git pull || exit 3
 
+docker pull debian:bullseye-slim || exit 3
 docker pull eclipse-temurin:17-jdk || exit 3
 
 ./gradlew docker || exit 3

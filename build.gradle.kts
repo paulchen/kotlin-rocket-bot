@@ -111,6 +111,7 @@ distributions {
 docker {
     name = "${project.name}:latest"
     files("build/distributions")
+    noCache(true)
 }
 
 tasks.create("createVersionFile") {
