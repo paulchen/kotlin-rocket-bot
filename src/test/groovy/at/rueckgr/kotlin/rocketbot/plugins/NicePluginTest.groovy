@@ -38,5 +38,6 @@ class NicePluginTest extends Specification {
             "1 2"                | false
             "abc1def2ghi"        | false
             "abc16def27ghi26jkl" | true
+            "69"                 | false
     }
 }

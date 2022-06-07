@@ -14,7 +14,10 @@ class NicePlugin : AbstractPlugin(), Logging {
             false -> emptyList()
         }
 
-    fun containsNiceNumbers(message: String): Boolean = extractNumbers(message).sum() == 69
+    fun containsNiceNumbers(message: String): Boolean {
+        val numbers = extractNumbers(message)
+        return numbers.size > 1 && numbers.sum() == 69
+    }
 
     fun extractNumbers(message: String): List<Int> {
         val m = Pattern.compile("\\d+").matcher(message)
