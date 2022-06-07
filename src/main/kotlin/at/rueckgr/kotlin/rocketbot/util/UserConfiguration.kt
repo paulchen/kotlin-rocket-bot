@@ -28,7 +28,8 @@ data class SimpleReply(
     val regex: String?,
     val reply: String?,
     val probability: Int,
-    val replyToBots: Boolean
+    val replyToBots: Boolean,
+    val stopProcessing: Boolean
 )
 
 data class SoccerPluginConfiguration(

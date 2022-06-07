@@ -17,13 +17,18 @@ class SimpleReplyPlugin : AbstractPlugin(), Logging {
             return emptyList()
         }
 
+        var stopProcessing = false
         return replies.flatMap {
-            when(it.regex != null &&
+            when(!stopProcessing &&
+                    it.regex != null &&
                     it.reply != null &&
                     (it.replyToBots || !botMessage) &&
                     activatePlugin(it.probability) &&
                     message.matches(it.regex.toRegex())) {
-                true -> listOf(OutgoingMessage(it.reply))
+                true -> {
+                    stopProcessing = it.stopProcessing
+                    listOf(OutgoingMessage(it.reply))
+                }
                 false -> emptyList()
             }
         }
