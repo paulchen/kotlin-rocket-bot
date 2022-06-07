@@ -3,6 +3,7 @@ package at.rueckgr.kotlin.rocketbot.plugins
 import at.rueckgr.kotlin.rocketbot.util.time.DateTimeDifferenceCalculator
 import at.rueckgr.kotlin.rocketbot.util.time.DateTimeDifferenceCalculator.TimeUnit
 import at.rueckgr.kotlin.rocketbot.OutgoingMessage
+import at.rueckgr.kotlin.rocketbot.RoomMessageHandler
 import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import at.rueckgr.kotlin.rocketbot.util.time.DateTimeParser
 import at.rueckgr.kotlin.rocketbot.util.Logging
@@ -59,9 +60,10 @@ class TimePlugin : AbstractPlugin(), Logging {
         return listOf("t", "wm", "oldyear", "newyear", "pizza")
     }
 
-    override fun handle(username: String, message: String, botMessage: Boolean): List<OutgoingMessage> {
-        if (message.contains(" ")) {
-            val dateString = message.substring(message.indexOf(" ") + 1)
+    override fun handle(channel: RoomMessageHandler.Channel, user: RoomMessageHandler.User, message: RoomMessageHandler.Message): List<OutgoingMessage> {
+        val messageText = message.message
+        if (messageText.contains(" ")) {
+            val dateString = messageText.substring(messageText.indexOf(" ") + 1)
 
             try {
                 for (format in Format.values()) {
@@ -74,20 +76,20 @@ class TimePlugin : AbstractPlugin(), Logging {
                 logger().error(e.message, e)
             }
         } else {
-            if (message == "!pizza") {
+            if (messageText == "!pizza") {
                 val difference = DateTimeDifferenceCalculator()
                     .formatTimeDifference(LocalDateTime.now(), pizzaDate, listOf(TimeUnit.YEAR, TimeUnit.MONTH))
                     .replace(" ago", "")
                 return listOf(OutgoingMessage("enri owes us pizza for $difference"))
             }
-            val date: LocalDateTime = when (message) {
+            val date: LocalDateTime = when (messageText) {
                 "!wm" -> wmDate
                 "!oldyear" -> getBeginOfCurrentYear()
                 "!newyear" -> getBeginOfCurrentYear().plusYears(1)
                 else -> return emptyList()
             }
 
-            val (emoji, username) = when (message) {
+            val (emoji, username) = when (messageText) {
                 "!wm" -> listOf(":soccer:", ConfigurationProvider.getSoccerConfiguration().username)
                 else -> listOf(null, null)
             }

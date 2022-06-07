@@ -12,8 +12,8 @@ import java.time.ZoneId
 class SeenPlugin : AbstractPlugin() {
     override fun getCommands(): List<String> = listOf("seen")
 
-    override fun handle(username: String, message: String, botMessage: Boolean): List<OutgoingMessage> {
-        val rawUsername = stripCommand(message) ?: return emptyList()
+    override fun handle(channel: RoomMessageHandler.Channel, user: RoomMessageHandler.User, message: RoomMessageHandler.Message): List<OutgoingMessage> {
+        val rawUsername = stripCommand(message.message) ?: return emptyList()
         val seenUsername = if (rawUsername.startsWith("@")) {
             rawUsername.substring(1)
         }

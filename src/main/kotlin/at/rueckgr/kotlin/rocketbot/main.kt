@@ -44,31 +44,31 @@ fun main() {
 }
 
 class Handler : RoomMessageHandler, Logging {
-    override fun handle(username: String, message: String, botMessage: Boolean): List<OutgoingMessage> {
-        val messageWithoutQuote = removeQuote(message)
-        if (!messageWithoutQuote.startsWith("!")) {
+    override fun handle(channel: RoomMessageHandler.Channel, user: RoomMessageHandler.User, message: RoomMessageHandler.Message): List<OutgoingMessage> {
+        val messageWithoutQuote = RoomMessageHandler.Message(removeQuote(message.message), message.botMessage)
+        if (!messageWithoutQuote.message.startsWith("!")) {
             logger().debug("Message contains no command, applying general plugins")
-            return applyGeneralPlugins(username, messageWithoutQuote, botMessage)
+            return applyGeneralPlugins(channel, user, messageWithoutQuote)
         }
 
-        val command = messageWithoutQuote.split(" ")[0].substring(1)
+        val command = messageWithoutQuote.message.split(" ")[0].substring(1)
         logger().debug("Message contains command: {}", command)
 
         val commandPlugins = PluginProvider.getByCommand(command)
         if (commandPlugins.isNotEmpty()) {
             return commandPlugins
-                .filter { !botMessage || it.handleBotMessages() }
-                .flatMap { it.handle(username, messageWithoutQuote, botMessage) }
+                .filter { !message.botMessage || it.handleBotMessages() }
+                .flatMap { it.handle(channel, user, messageWithoutQuote) }
         }
 
         logger().debug("No handler for command {} found, applying general plugins", command)
-        return applyGeneralPlugins(username, messageWithoutQuote, botMessage)
+        return applyGeneralPlugins(channel, user, messageWithoutQuote)
     }
 
-    private fun applyGeneralPlugins(username: String, messageWithoutQuote: String, botMessage: Boolean) = PluginProvider
+    private fun applyGeneralPlugins(channel: RoomMessageHandler.Channel, user: RoomMessageHandler.User, message: RoomMessageHandler.Message) = PluginProvider
             .getGeneralPlugins()
-            .filter { !botMessage || it.handleBotMessages() }
-            .flatMap { it.handle(username, messageWithoutQuote, botMessage) }
+            .filter { !message.botMessage || it.handleBotMessages() }
+            .flatMap { it.handle(channel, user, message) }
 
     private fun removeQuote(message: String): String {
         return message.replace("""^\[[^]]*]\([^)]*\)""".toRegex(), "").trim()
