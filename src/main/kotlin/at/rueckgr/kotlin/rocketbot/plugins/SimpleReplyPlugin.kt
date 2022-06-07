@@ -38,10 +38,10 @@ class SimpleReplyPlugin : AbstractPlugin(), Logging {
 
     private fun activatePlugin(probability: Int): Boolean =(0..99).random() < probability
 
-    override fun getHelp(command: String): List<String> = when (getReplies()) {
+    override fun getHelp(command: String): List<String> = emptyList()
+
+    override fun getProblems(): List<String> = when (getReplies()) {
         null -> listOf("Configuration of SimpleReplyPlugin missing")
         else -> emptyList()
     }
-
-    override fun getProblems(): List<String> = emptyList()
 }
