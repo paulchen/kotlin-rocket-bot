@@ -59,7 +59,12 @@ object ConfigurationProvider : Logging {
 
             Thread.sleep(1000)
 
-            reloadConfiguration(configurationFile)
+            try {
+                reloadConfiguration(configurationFile)
+            }
+            catch (e: Throwable) {
+                logger().error("Exception while trying to reload configuration", e)
+            }
 
             pathKey.cancel()
         }
