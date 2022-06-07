@@ -1,5 +1,6 @@
 package at.rueckgr.kotlin.rocketbot.plugins
 
+import at.rueckgr.kotlin.rocketbot.Bot
 import at.rueckgr.kotlin.rocketbot.OutgoingMessage
 import at.rueckgr.kotlin.rocketbot.RoomMessageHandler
 import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
@@ -7,6 +8,7 @@ import at.rueckgr.kotlin.rocketbot.util.Logging
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
+import java.text.SimpleDateFormat
 
 class AdminPlugin : AbstractPlugin(), Logging {
     override fun getCommands(): List<String> = emptyList()
@@ -28,7 +30,15 @@ class AdminPlugin : AbstractPlugin(), Logging {
         }
     }
 
-    private fun getStatus(): String = "" // TODO
+    private fun getStatus(): String {
+        val status = Bot.statusService.getStatus()
+        val json = ObjectMapper()
+            .findAndRegisterModules()
+            .setDateFormat(SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS"))
+            .writerWithDefaultPrettyPrinter()
+            .writeValueAsString(status)
+        return "```\n$json\n```"
+    }
 
     private fun getConfig(): String {
         val tree: JsonNode = ObjectMapper()
