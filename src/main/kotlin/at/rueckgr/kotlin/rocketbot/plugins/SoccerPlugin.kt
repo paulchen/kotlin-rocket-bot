@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 class SoccerPlugin : AbstractPlugin() {
     override fun getCommands() = listOf("cl")
 
-    override fun handle(message: String): List<OutgoingMessage> {
+    override fun handle(username: String, message: String, botMessage: Boolean): List<OutgoingMessage> {
         val configuration = ConfigurationProvider.getSoccerConfiguration()
         val matchesToShow = configuration.matchesToShow ?: 3
         val (pastMatches, liveMatches, futureMatches) = MatchInfoService().getMatchInfo(matchesToShow)

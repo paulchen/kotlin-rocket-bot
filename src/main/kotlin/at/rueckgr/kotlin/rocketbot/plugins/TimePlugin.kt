@@ -59,7 +59,7 @@ class TimePlugin : AbstractPlugin(), Logging {
         return listOf("t", "wm", "oldyear", "newyear", "pizza")
     }
 
-    override fun handle(message: String): List<OutgoingMessage> {
+    override fun handle(username: String, message: String, botMessage: Boolean): List<OutgoingMessage> {
         if (message.contains(" ")) {
             val dateString = message.substring(message.indexOf(" ") + 1)
 

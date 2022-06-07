@@ -8,9 +8,7 @@ import at.rueckgr.kotlin.rocketbot.util.logger
 class SimpleReplyPlugin : AbstractPlugin(), Logging {
     override fun getCommands(): List<String> = emptyList()
 
-    override fun handle(message: String) = handle(message, false)
-
-    override fun handle(message: String, botMessage: Boolean): List<OutgoingMessage> {
+    override fun handle(username: String, message: String, botMessage: Boolean): List<OutgoingMessage> {
         val replies = getReplies()
         if (replies == null) {
             logger().debug("Plugin configuration missing")

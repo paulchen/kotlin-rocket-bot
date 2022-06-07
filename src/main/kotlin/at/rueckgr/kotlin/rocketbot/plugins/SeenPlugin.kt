@@ -12,19 +12,19 @@ import java.time.ZoneId
 class SeenPlugin : AbstractPlugin() {
     override fun getCommands(): List<String> = listOf("seen")
 
-    override fun handle(message: String): List<OutgoingMessage> {
+    override fun handle(username: String, message: String, botMessage: Boolean): List<OutgoingMessage> {
         val rawUsername = stripCommand(message) ?: return emptyList()
-        val username = if (rawUsername.startsWith("@")) {
+        val seenUsername = if (rawUsername.startsWith("@")) {
             rawUsername.substring(1)
         }
         else {
             rawUsername
         }
 
-        val userDetails: UserDetails? = ArchiveService().getUserDetails(username)
+        val userDetails: UserDetails? = ArchiveService().getUserDetails(seenUsername)
 
         val response = if (userDetails == null) {
-            "Sorry, I don't know about *${formatUsername(username)}*."
+            "Sorry, I don't know about *${formatUsername(seenUsername)}*."
         }
         else if (userDetails.user.timestamp == null) {
             "*${formatUsername(userDetails.user.username)}* has never been active."

@@ -11,7 +11,7 @@ class InsultPlugin : AbstractPlugin() {
 
     override fun getCommands() = listOf("insult")
 
-    override fun handle(message: String): List<OutgoingMessage> {
+    override fun handle(username: String, message: String, botMessage: Boolean): List<OutgoingMessage> {
         val name = stripCommand(message) ?: return emptyList()
         val insult = insults.random()
         return listOf(OutgoingMessage("$name: $insult"))

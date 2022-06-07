@@ -13,7 +13,7 @@ import org.apache.commons.text.StringEscapeUtils
 class SloganPlugin : AbstractPlugin() {
     override fun getCommands() = listOf("slogan")
 
-    override fun handle(message: String): List<OutgoingMessage> {
+    override fun handle(username: String, message: String, botMessage: Boolean): List<OutgoingMessage> {
         val name = stripCommand(message) ?: return emptyList()
         val formattedName = formatUsername(name)
 

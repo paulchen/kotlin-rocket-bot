@@ -5,9 +5,7 @@ import at.rueckgr.kotlin.rocketbot.OutgoingMessage
 abstract class AbstractPlugin {
     abstract fun getCommands(): List<String>
 
-    abstract fun handle(message: String): List<OutgoingMessage>
-
-    open fun handle(message: String, botMessage: Boolean) = handle(message)
+    abstract fun handle(username: String, message: String, botMessage: Boolean): List<OutgoingMessage>
 
     abstract fun getHelp(command: String): List<String>
 

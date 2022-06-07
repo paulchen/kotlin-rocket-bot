@@ -11,7 +11,7 @@ class VersionPlugin : AbstractPlugin() {
 
     override fun getCommands(): List<String> = listOf("version")
 
-    override fun handle(message: String): List<OutgoingMessage> {
+    override fun handle(username: String, message: String, botMessage: Boolean): List<OutgoingMessage> {
         val archiveRevision = ArchiveService().getVersion()
 
         val builder = StringBuilder()
