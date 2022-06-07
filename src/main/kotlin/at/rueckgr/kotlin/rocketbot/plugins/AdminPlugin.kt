@@ -4,6 +4,9 @@ import at.rueckgr.kotlin.rocketbot.OutgoingMessage
 import at.rueckgr.kotlin.rocketbot.RoomMessageHandler
 import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import at.rueckgr.kotlin.rocketbot.util.Logging
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
 
 class AdminPlugin : AbstractPlugin(), Logging {
     override fun getCommands(): List<String> = emptyList()
@@ -27,8 +30,21 @@ class AdminPlugin : AbstractPlugin(), Logging {
 
     private fun getStatus(): String = "" // TODO
 
-    private fun getConfig(): String = "" // TODO
+    private fun getConfig(): String {
+        val tree: JsonNode = ObjectMapper()
+            .valueToTree(ConfigurationProvider.getConfiguration())
+        filterPasswords(tree)
 
+        val json = tree.toPrettyString()
+        return "```\n$json\n```"
+    }
+
+    private fun filterPasswords(node: JsonNode) {
+        if (node is ObjectNode && node.has("password")) {
+            node.put("password", "********")
+        }
+        node.elements().forEach { filterPasswords(it) }
+    }
     override fun getHelp(command: String): List<String> = emptyList()
 
     override fun getProblems(): List<String> = emptyList()
