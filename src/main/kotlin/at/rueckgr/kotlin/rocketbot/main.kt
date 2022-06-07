@@ -48,19 +48,27 @@ class Handler : RoomMessageHandler, Logging {
         val messageWithoutQuote = removeQuote(message)
         if (!messageWithoutQuote.startsWith("!")) {
             logger().debug("Message contains no command, applying general plugins")
-            return PluginProvider
-                .getGeneralPlugins()
-                .filter { !botMessage || it.handleBotMessages() }
-                .flatMap { it.handle(messageWithoutQuote, botMessage) }
+            return applyGeneralPlugins(messageWithoutQuote, botMessage)
         }
 
         val command = messageWithoutQuote.split(" ")[0].substring(1)
         logger().debug("Message contains command: {}", command)
-        return PluginProvider
-            .getByCommand(command)
+
+        val commandPlugins = PluginProvider.getByCommand(command)
+        if (commandPlugins.isNotEmpty()) {
+            return commandPlugins
+                .filter { !botMessage || it.handleBotMessages() }
+                .flatMap { it.handle(messageWithoutQuote, botMessage) }
+        }
+
+        logger().debug("No handler for command {} found, applying general plugins", command)
+        return applyGeneralPlugins(messageWithoutQuote, botMessage)
+    }
+
+    private fun applyGeneralPlugins(messageWithoutQuote: String, botMessage: Boolean) = PluginProvider
+            .getGeneralPlugins()
             .filter { !botMessage || it.handleBotMessages() }
             .flatMap { it.handle(messageWithoutQuote, botMessage) }
-    }
 
     private fun removeQuote(message: String): String {
         return message.replace("""^\[[^]]*]\([^)]*\)""".toRegex(), "").trim()
