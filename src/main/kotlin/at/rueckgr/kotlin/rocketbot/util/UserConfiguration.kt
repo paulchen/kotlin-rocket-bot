@@ -17,11 +17,16 @@ data class GeneralConfiguration(
 
 data class PluginsConfiguration(
     val simpleReply: SimpleReplyPluginConfiguration?,
+    val admin: AdminPluginConfiguration?,
     val soccer: SoccerPluginConfiguration?
 )
 
 data class SimpleReplyPluginConfiguration(
     val replies: List<SimpleReply>?
+)
+
+data class AdminPluginConfiguration(
+    val admins: List<String>
 )
 
 data class SimpleReply(
