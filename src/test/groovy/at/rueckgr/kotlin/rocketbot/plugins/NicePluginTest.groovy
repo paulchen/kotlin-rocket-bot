@@ -19,6 +19,10 @@ class NicePluginTest extends Specification {
             "1"           | [ 1 ]
             "1 2"         | [ 1, 2 ]
             "abc1def2ghi" | [ 1, 2 ]
+            "-1"          | [ -1 ]
+            "1-1"         | [ 1, 1 ]
+            "68 -1"       | [ 68, -1 ]
+            "70 -1"       | [ 70, -1 ]
     }
 
     def "containsNiceNumbers"() {
@@ -39,5 +43,8 @@ class NicePluginTest extends Specification {
             "abc1def2ghi"        | false
             "abc16def27ghi26jkl" | true
             "69"                 | false
+            "-69"                | false
+            "68 -1"              | false
+            "70 -1"              | true
     }
 }

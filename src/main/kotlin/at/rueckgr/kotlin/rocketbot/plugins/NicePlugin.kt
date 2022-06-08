@@ -20,10 +20,10 @@ class NicePlugin : AbstractPlugin(), Logging {
     }
 
     fun extractNumbers(message: String): List<Int> {
-        val m = Pattern.compile("\\d+").matcher(message)
+        val m = Pattern.compile("(^-| -)?\\d+").matcher(message)
         val list = ArrayList<Int>()
         while (m.find()) {
-            list.add(m.group().toInt())
+            list.add(m.group().trim().toInt())
         }
         return list
     }
