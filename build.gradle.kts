@@ -12,7 +12,7 @@ plugins {
     application
     id("com.palantir.docker") version "0.34.0"
     groovy
-    id("org.openapi.generator") version "5.4.0"
+    id("org.openapi.generator") version "6.0.0"
     id("com.github.ben-manes.versions") version "0.42.0"
 }
 
