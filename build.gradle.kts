@@ -3,7 +3,7 @@ import java.io.ByteArrayOutputStream
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.6.3"
-val ktorVersion = "2.0.2"
+val ktorVersion = "2.0.1"
 val jacksonVersion = "2.13.2"
 
 plugins {
