@@ -3,16 +3,16 @@ import java.io.ByteArrayOutputStream
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.6.3"
-val ktorVersion = "2.0.1"
-val jacksonVersion = "2.13.2"
+val ktorVersion = "2.1.0"
+val jacksonVersion = "2.13.3"
 
 plugins {
-    kotlin("jvm") version "1.7.0"
-    kotlin("plugin.serialization") version "1.7.0"
+    kotlin("jvm") version "1.7.10"
+    kotlin("plugin.serialization") version "1.7.10"
     application
     id("com.palantir.docker") version "0.34.0"
     groovy
-    id("org.openapi.generator") version "6.0.0"
+    id("org.openapi.generator") version "6.0.1"
     id("com.github.ben-manes.versions") version "0.42.0"
 }
 
@@ -50,8 +50,6 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
-    // CVE-2020-36518 - remove when updating to 2.13.3 or 2.14.0
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2.2")
 
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("org.apache.commons:commons-text:1.9")
@@ -59,7 +57,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("at.favre.lib:bcrypt:0.9.0")
 
-    implementation("org.postgresql:postgresql:42.4.0")
+    implementation("org.postgresql:postgresql:42.5.0")
     implementation("org.ktorm:ktorm-core:3.5.0")
     implementation("org.ktorm:ktorm-support-postgresql:3.5.0")
 
@@ -69,10 +67,10 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.0")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.10")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.apache.groovy:groovy-all:4.0.3")
-    testImplementation("org.spockframework:spock-core:2.2-M1-groovy-4.0")
+    testImplementation("org.apache.groovy:groovy-all:4.0.4")
+    testImplementation("org.spockframework:spock-core:2.2-M3-groovy-4.0")
 }
 
 tasks.test {
