@@ -46,5 +46,8 @@ class NicePluginTest extends Specification {
             "-69"                | false
             "68 -1"              | false
             "70 -1"              | true
+            "69 0"               | false
+            "68.1"               | false
+            "69.0"               | false
     }
 }
