@@ -2,17 +2,17 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
 val reflectionsVersion = "0.10.2"
-val coroutinesVersion = "1.6.3"
-val ktorVersion = "2.1.0"
-val jacksonVersion = "2.13.3"
+val coroutinesVersion = "1.6.4"
+val ktorVersion = "2.1.2"
+val jacksonVersion = "2.13.4"
 
 plugins {
-    kotlin("jvm") version "1.7.10"
-    kotlin("plugin.serialization") version "1.7.10"
+    kotlin("jvm") version "1.7.20"
+    kotlin("plugin.serialization") version "1.7.20"
     application
     id("com.palantir.docker") version "0.34.0"
     groovy
-    id("org.openapi.generator") version "6.0.1"
+    id("org.openapi.generator") version "6.2.0"
     id("com.github.ben-manes.versions") version "0.42.0"
 }
 
@@ -52,7 +52,7 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
 
     implementation("org.apache.commons:commons-lang3:3.12.0")
-    implementation("org.apache.commons:commons-text:1.9")
+    implementation("org.apache.commons:commons-text:1.10.0")
     implementation("org.reflections:reflections:$reflectionsVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("at.favre.lib:bcrypt:0.9.0")
@@ -62,15 +62,15 @@ dependencies {
     implementation("org.ktorm:ktorm-support-postgresql:3.5.0")
 
     // dependencies for generated OpenAPI client
-    implementation("com.squareup.moshi:moshi-kotlin:1.13.0")
-    implementation("com.squareup.moshi:moshi-adapters:1.13.0")
+    implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
+    implementation("com.squareup.moshi:moshi-adapters:1.14.0")
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.10")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.20")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.apache.groovy:groovy-all:4.0.4")
-    testImplementation("org.spockframework:spock-core:2.2-M3-groovy-4.0")
+    testImplementation("org.apache.groovy:groovy-all:4.0.5")
+    testImplementation("org.spockframework:spock-core:2.3-groovy-4.0")
 }
 
 tasks.test {
