@@ -57,7 +57,8 @@ class TimePlugin : AbstractPlugin(), Logging {
     private val wmDate = LocalDateTime.of(LocalDate.of(2022, 11, 21), LocalTime.of(11, 0, 0))
 
     override fun getCommands(): List<String> {
-        return listOf("t", "wm", "oldyear", "newyear", "pizza")
+//        return listOf("t", "wm", "oldyear", "newyear", "pizza")
+        return listOf("t", "oldyear", "newyear", "pizza")
     }
 
     override fun handle(channel: RoomMessageHandler.Channel, user: RoomMessageHandler.User, message: RoomMessageHandler.Message): List<OutgoingMessage> {
@@ -83,17 +84,18 @@ class TimePlugin : AbstractPlugin(), Logging {
                 return listOf(OutgoingMessage("enri owes us pizza for $difference"))
             }
             val date: LocalDateTime = when (messageText) {
-                "!wm" -> wmDate
+//                "!wm" -> wmDate
                 "!oldyear" -> getBeginOfCurrentYear()
                 "!newyear" -> getBeginOfCurrentYear().plusYears(1)
                 else -> return emptyList()
             }
 
-            val (emoji, username) = when (messageText) {
-                "!wm" -> listOf(":soccer:", ConfigurationProvider.getSoccerConfiguration().username)
-                else -> listOf(null, null)
-            }
-            return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date), emoji, username))
+//            val (emoji, username) = when (messageText) {
+//                "!wm" -> listOf(":soccer:", ConfigurationProvider.getSoccerConfiguration().username)
+//                else -> listOf(null, null)
+//            }
+//            return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date), emoji, username))
+            return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date)))
         }
 
         return emptyList()
