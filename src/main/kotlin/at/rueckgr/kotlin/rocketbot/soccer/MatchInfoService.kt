@@ -8,21 +8,25 @@ import org.ktorm.database.Database
 import org.ktorm.dsl.*
 
 class MatchInfoService {
-    fun getMatchInfo(matchesCount: Int): MatchInfo {
+    fun getMatchInfo(matchesCount: Int, leagueId: Long, season: Int): MatchInfo {
         val connection = Db().connection
 
         return MatchInfo(
-            getMatches(connection, FixtureStatePeriod.PAST, matchesCount),
-            getMatches(connection, FixtureStatePeriod.LIVE, matchesCount),
-            getMatches(connection, FixtureStatePeriod.FUTURE, matchesCount)
+            getMatches(connection, FixtureStatePeriod.PAST, matchesCount, leagueId, season),
+            getMatches(connection, FixtureStatePeriod.LIVE, matchesCount, leagueId, season),
+            getMatches(connection, FixtureStatePeriod.FUTURE, matchesCount, leagueId, season)
         )
     }
 
-    private fun getMatches(connection: Database, period: FixtureStatePeriod, matchesCount: Int): List<String> {
+    private fun getMatches(connection: Database, period: FixtureStatePeriod, matchesCount: Int, leagueId: Long, season: Int): List<String> {
         val list = connection
             .from(Fixtures)
             .joinReferencesAndSelect()
-            .where { Fixtures.status inList FixtureState.getByPeriod(period) }
+            .whereWithConditions {
+                it += Fixtures.status inList FixtureState.getByPeriod(period)
+                it += Fixtures.leagueId eq leagueId
+                it += Fixtures.season eq season
+            }
             .orderBy(when (period) {
                 FixtureStatePeriod.PAST -> Fixtures.date.desc()
                 else -> Fixtures.date.asc()
