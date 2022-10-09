@@ -37,7 +37,7 @@ object MatchTitleService {
         }
 
         return if (score == null) {
-            "$time: $flagHome$homeSeparator*$teamHome*\u00a0-\u00a0$flagAway$awaySeparator*$teamAway* ($venue)"
+            "$time: $flagHome$zwnbsp$homeSeparator*$teamHome*\u00a0-\u00a0$flagAway$awaySeparator*$teamAway* ($venue)"
         }
         else {
             "$time: $flagHome$homeSeparator*$teamHome*\u00a0-\u00a0$flagAway$awaySeparator*$teamAway* ($venue): $state$elapsed$score"
@@ -51,7 +51,7 @@ object MatchTitleService {
             .description ?: ""
 
     private fun formatTime(date: LocalDateTime): String {
-        return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
+        return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH$zwnbsp:${zwnbsp}mm"))
     }
 
     private fun formatVenue(venue: Venue): String {
