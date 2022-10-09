@@ -37,7 +37,7 @@ object MatchTitleService {
         }
 
         return if (score == null) {
-            "$time: $flagHome$zwnbsp$homeSeparator*$teamHome*\u00a0-\u00a0$flagAway$awaySeparator*$teamAway* ($venue)"
+            "$time: $flagHome$homeSeparator*$teamHome*\u00a0-\u00a0$flagAway$awaySeparator*$teamAway* ($venue)"
         }
         else {
             "$time: $flagHome$homeSeparator*$teamHome*\u00a0-\u00a0$flagAway$awaySeparator*$teamAway* ($venue): $state$elapsed$score"
