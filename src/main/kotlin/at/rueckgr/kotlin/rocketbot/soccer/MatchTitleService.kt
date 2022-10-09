@@ -12,8 +12,8 @@ object MatchTitleService {
         val venue = formatVenue(fixture.venue!!)
         val score = formatMatchScore(fixture)
 
-        val teamHome = TeamMapper.mapTeamName(fixture.teamHome)
-        val teamAway = TeamMapper.mapTeamName(fixture.teamAway)
+        val (teamHome, flagHome) = TeamMapper.mapTeamName(fixture.teamHome)
+        val (teamAway, flagAway) = TeamMapper.mapTeamName(fixture.teamAway)
 
         val fixtureState = FixtureState.getByCode(fixture.status)
         val state = when (fixtureState?.period) {
@@ -27,11 +27,20 @@ object MatchTitleService {
             ""
         }
 
+        val homeSeparator = when (flagHome) {
+            "" -> ""
+            else -> "\u00a0"
+        }
+        val awaySeparator = when (flagAway) {
+            "" -> ""
+            else -> "\u00a0"
+        }
+
         return if (score == null) {
-            "$time: *$teamHome\u00a0-\u00a0$teamAway* ($venue)"
+            "$time: $flagHome$homeSeparator*$teamHome*\u00a0-\u00a0$flagAway$awaySeparator*$teamAway* ($venue)"
         }
         else {
-            "$time: *$teamHome\u00a0-\u00a0$teamAway* ($venue): $state$elapsed$score"
+            "$time: $flagHome$homeSeparator*$teamHome*\u00a0-\u00a0$flagAway$awaySeparator*$teamAway* ($venue): $state$elapsed$score"
 
         }
     }
