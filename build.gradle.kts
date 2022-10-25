@@ -13,7 +13,7 @@ plugins {
     id("com.palantir.docker") version "0.34.0"
     groovy
     id("org.openapi.generator") version "6.2.0"
-    id("com.github.ben-manes.versions") version "0.42.0"
+    id("com.github.ben-manes.versions") version "0.43.0"
 }
 
 group = "at.rueckgr.kotlin.rocketbot"
@@ -69,7 +69,7 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.20")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.apache.groovy:groovy-all:4.0.5")
+    testImplementation("org.apache.groovy:groovy-all:4.0.6")
     testImplementation("org.spockframework:spock-core:2.3-groovy-4.0")
 }
 
