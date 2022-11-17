@@ -7,15 +7,15 @@ import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
 import kotlinx.coroutines.*
+import org.apache.commons.lang3.SystemUtils
+import java.io.File
 import kotlin.system.exitProcess
 
 fun main() {
     // TODO store authentication token somewhere
 
-    val configurationFile = "/config/kotlin-rocket-bot.yaml"
-
     val config = try {
-        ConfigurationProvider.loadConfiguration(configurationFile)
+        ConfigurationProvider.loadConfiguration(findConfigurationFile())
     }
     catch (e: ConfigurationException) {
         println(e.message)
@@ -26,7 +26,7 @@ fun main() {
     runBlocking {
         launch {
             withContext(Dispatchers.IO) {
-                ConfigurationProvider.checkForConfigurationUpdates(configurationFile)
+                ConfigurationProvider.checkForConfigurationUpdates()
             }
         }
         launch {
@@ -41,6 +41,23 @@ fun main() {
             SoccerUpdateService().scheduleImmediateDailyUpdate()
         }
     }
+}
+
+private fun findConfigurationFile(): String {
+    val filename = "kotlin-rocket-bot.yaml"
+    val possibleFilenames = listOf(
+        "/config/$filename",
+        System.getProperty("user.home") + File.separator + filename
+    )
+
+    val configurationFileName = possibleFilenames
+        .firstOrNull() { File(it).exists() }
+            ?: throw ConfigurationException(4, "No configuration file found")
+
+    if (!SystemUtils.IS_OS_WINDOWS && File(configurationFileName).canWrite()) {
+        throw ConfigurationException(5, "Configuration file $configurationFileName is writable")
+    }
+    return configurationFileName
 }
 
 class Handler : RoomMessageHandler, Logging {

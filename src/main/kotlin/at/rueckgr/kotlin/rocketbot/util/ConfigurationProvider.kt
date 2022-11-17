@@ -11,13 +11,15 @@ import java.nio.file.StandardWatchEventKinds
 
 object ConfigurationProvider : Logging {
     private var config: UserConfiguration? = null
+    private var configurationFile: String? = null
 
     fun loadConfiguration(configurationFile: String): UserConfiguration {
-        this.config = this.reloadConfiguration(configurationFile)
+        this.configurationFile = configurationFile
+        this.config = this.reloadConfiguration()
         return this.config!!
     }
 
-    private fun reloadConfiguration(configurationFile: String): UserConfiguration {
+    private fun reloadConfiguration(): UserConfiguration {
         val file = File(configurationFile)
         if (!file.exists()) {
             throw ConfigurationException(1, "Configuration file $configurationFile not found")
@@ -47,7 +49,7 @@ object ConfigurationProvider : Logging {
         return config
     }
 
-    fun checkForConfigurationUpdates(configurationFile: String) {
+    fun checkForConfigurationUpdates() {
         val path = File(File(configurationFile).parent).toPath()
         val watchService = FileSystems.getDefault().newWatchService()
 
@@ -60,7 +62,7 @@ object ConfigurationProvider : Logging {
             Thread.sleep(1000)
 
             try {
-                reloadConfiguration(configurationFile)
+                reloadConfiguration()
             }
             catch (e: Throwable) {
                 logger().error("Exception while trying to reload configuration", e)
