@@ -12,7 +12,7 @@ abstract class AbstractPlugin {
 
     open fun getChannelTypes() = RoomMessageHandler.ChannelType.values().toList()
 
-    open fun init() {}
+    open fun init() { /* do nothing by default */ }
 
     fun stripCommand(message: String): String? {
         val pos = message.indexOf(" ")

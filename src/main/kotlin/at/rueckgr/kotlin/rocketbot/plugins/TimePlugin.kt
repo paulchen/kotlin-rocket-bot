@@ -4,7 +4,6 @@ import at.rueckgr.kotlin.rocketbot.util.time.DateTimeDifferenceCalculator
 import at.rueckgr.kotlin.rocketbot.util.time.DateTimeDifferenceCalculator.TimeUnit
 import at.rueckgr.kotlin.rocketbot.OutgoingMessage
 import at.rueckgr.kotlin.rocketbot.RoomMessageHandler
-import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import at.rueckgr.kotlin.rocketbot.util.time.DateTimeParser
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
