@@ -10,6 +10,8 @@ abstract class AbstractPlugin {
 
     abstract fun getHelp(command: String): List<String>
 
+    open fun init() {}
+
     fun stripCommand(message: String): String? {
         val pos = message.indexOf(" ")
         if (pos < 0) {

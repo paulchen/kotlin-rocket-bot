@@ -4,11 +4,16 @@ import at.rueckgr.kotlin.rocketbot.OutgoingMessage
 import at.rueckgr.kotlin.rocketbot.RoomMessageHandler
 import at.rueckgr.kotlin.rocketbot.soccer.DataImportService
 import at.rueckgr.kotlin.rocketbot.soccer.MatchInfoService
+import at.rueckgr.kotlin.rocketbot.soccer.SoccerUpdateService
 import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import java.time.LocalDateTime
 
 class SoccerPlugin : AbstractPlugin() {
     override fun getCommands() = listOf("wm")
+
+    override fun init() {
+        SoccerUpdateService().scheduleImmediateDailyUpdate()
+    }
 
     override fun handle(channel: RoomMessageHandler.Channel, user: RoomMessageHandler.User, message: RoomMessageHandler.Message): List<OutgoingMessage> {
         val configuration = ConfigurationProvider.getSoccerConfiguration()

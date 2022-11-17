@@ -37,9 +37,13 @@ fun main() {
                 BotHealthChecker()
             ).start()
         }
-        launch {
-            SoccerUpdateService().scheduleImmediateDailyUpdate()
-        }
+        PluginProvider
+            .getAllPlugins()
+            .forEach { plugin ->
+                launch {
+                    plugin.init()
+                }
+            }
     }
 }
 
