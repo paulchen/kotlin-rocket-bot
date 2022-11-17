@@ -2,8 +2,10 @@ package at.rueckgr.kotlin.rocketbot
 
 import at.rueckgr.kotlin.rocketbot.handler.PluginProvider
 import at.rueckgr.kotlin.rocketbot.util.Db
+import at.rueckgr.kotlin.rocketbot.util.Logging
+import at.rueckgr.kotlin.rocketbot.util.logger
 
-class BotHealthChecker : HealthChecker {
+class BotHealthChecker : HealthChecker, Logging {
     override fun performHealthCheck(): List<HealthProblem> {
         val problems = ArrayList<HealthProblem>()
 
@@ -11,17 +13,23 @@ class BotHealthChecker : HealthChecker {
             Db().connection.useConnection { c -> c.createStatement().use { it.executeQuery("SELECT 1") } }
         }
         catch (e: Exception) {
+            logger().error("Exception occurred while connecting to the database", e)
             problems.add(HealthProblem("database", "connection", e.message ?: "unable to connect to database"))
         }
 
-        problems.addAll(
-            PluginProvider
-                .getAllPlugins()
-                .flatMap {
+        PluginProvider
+            .getAllPlugins()
+            .flatMap {
+                try {
                     it.getProblems()
-                        .map { problem -> HealthProblem("plugins", it.javaClass.simpleName, problem) }
                 }
-        )
+                catch (e: Throwable) {
+                    logger().error("Exception occurred when checking health status if plugin {}:", it.javaClass.simpleName, e)
+                    listOf("Unable to check health status of plugin: ${e.message}")
+                }
+                    .map { problem -> HealthProblem("plugins", it.javaClass.simpleName, problem) }
+            }
+            .forEach { problems.add(it) }
 
         return problems
     }
