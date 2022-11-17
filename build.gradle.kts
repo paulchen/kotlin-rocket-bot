@@ -3,17 +3,27 @@ import java.io.ByteArrayOutputStream
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.6.4"
-val ktorVersion = "2.1.2"
-val jacksonVersion = "2.13.4"
+val ktorVersion = "2.1.3"
+val jacksonVersion = "2.14.0"
 
 plugins {
-    kotlin("jvm") version "1.7.20"
-    kotlin("plugin.serialization") version "1.7.20"
+    kotlin("jvm") version "1.7.21"
+    kotlin("plugin.serialization") version "1.7.21"
     application
     id("com.palantir.docker") version "0.34.0"
     groovy
-    id("org.openapi.generator") version "6.2.0"
-    id("com.github.ben-manes.versions") version "0.43.0"
+    id("org.openapi.generator") version "6.2.1"
+    id("com.github.ben-manes.versions") version "0.44.0"
+}
+
+tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates").configure {
+    gradleReleaseChannel = "current"
+}
+
+tasks.withType<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask> {
+    rejectVersionIf {
+        candidate.version.toLowerCase().contains("alpha") || candidate.version.toLowerCase().contains("beta")
+    }
 }
 
 group = "at.rueckgr.kotlin.rocketbot"
@@ -67,7 +77,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.20")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.21")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.apache.groovy:groovy-all:4.0.6")
     testImplementation("org.spockframework:spock-core:2.3-groovy-4.0")
