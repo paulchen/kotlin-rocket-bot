@@ -10,6 +10,8 @@ abstract class AbstractPlugin {
 
     abstract fun getHelp(command: String): List<String>
 
+    open fun getChannelTypes() = RoomMessageHandler.ChannelType.values().toList()
+
     open fun init() {}
 
     fun stripCommand(message: String): String? {

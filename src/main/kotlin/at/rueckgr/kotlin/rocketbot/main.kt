@@ -2,7 +2,6 @@ package at.rueckgr.kotlin.rocketbot
 
 import at.rueckgr.kotlin.rocketbot.exception.ConfigurationException
 import at.rueckgr.kotlin.rocketbot.handler.PluginProvider
-import at.rueckgr.kotlin.rocketbot.soccer.SoccerUpdateService
 import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
@@ -79,6 +78,7 @@ class Handler : RoomMessageHandler, Logging {
         if (commandPlugins.isNotEmpty()) {
             return commandPlugins
                 .filter { !message.botMessage || it.handleBotMessages() }
+                .filter { it.getChannelTypes().contains(channel.type) }
                 .flatMap { it.handle(channel, user, messageWithoutQuote) }
         }
 
@@ -89,6 +89,7 @@ class Handler : RoomMessageHandler, Logging {
     private fun applyGeneralPlugins(channel: RoomMessageHandler.Channel, user: RoomMessageHandler.User, message: RoomMessageHandler.Message) = PluginProvider
             .getGeneralPlugins()
             .filter { !message.botMessage || it.handleBotMessages() }
+            .filter { it.getChannelTypes().contains(channel.type) }
             .flatMap { it.handle(channel, user, message) }
 
     private fun removeQuote(message: String): String {

@@ -13,11 +13,9 @@ import java.text.SimpleDateFormat
 class AdminPlugin : AbstractPlugin(), Logging {
     override fun getCommands(): List<String> = emptyList()
 
-    override fun handle(channel: RoomMessageHandler.Channel, user: RoomMessageHandler.User, message: RoomMessageHandler.Message): List<OutgoingMessage> {
-        if (channel.type != RoomMessageHandler.ChannelType.DIRECT) {
-            return emptyList()
-        }
+    override fun getChannelTypes() = listOf(RoomMessageHandler.ChannelType.DIRECT)
 
+    override fun handle(channel: RoomMessageHandler.Channel, user: RoomMessageHandler.User, message: RoomMessageHandler.Message): List<OutgoingMessage> {
         val admins = ConfigurationProvider.getConfiguration().plugins?.admin?.admins ?: emptyList()
         if (!admins.contains(user.id)) {
             return emptyList()
