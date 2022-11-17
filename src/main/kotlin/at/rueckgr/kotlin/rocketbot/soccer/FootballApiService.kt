@@ -6,7 +6,7 @@ import at.rueckgr.kotlin.rocketbot.util.logger
 import com.api_football.apis.FootballApi
 import com.api_football.infrastructure.ApiClient
 import com.api_football.models.FixtureResponse
-import com.api_football.models.VenueResponseResponse
+import com.api_football.models.VenueResponseResponseInner
 import okhttp3.Interceptor
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
@@ -49,7 +49,7 @@ object FootballApiService : Logging {
         return fixtureResponse
     }
 
-    fun getVenue(id: Long): VenueResponseResponse {
+    fun getVenue(id: Long): VenueResponseResponseInner {
         logger().debug("Calling getVenues() with parameters: id={}", id)
 
         val venue = FootballApi().getVenues(id, null, null, null, null)

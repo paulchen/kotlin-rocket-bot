@@ -2,18 +2,18 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
 val reflectionsVersion = "0.10.2"
-val coroutinesVersion = "1.6.1"
-val ktorVersion = "2.0.1"
-val jacksonVersion = "2.13.2"
+val coroutinesVersion = "1.6.4"
+val ktorVersion = "2.1.2"
+val jacksonVersion = "2.13.4"
 
 plugins {
-    kotlin("jvm") version "1.6.21"
-    kotlin("plugin.serialization") version "1.6.21"
+    kotlin("jvm") version "1.7.20"
+    kotlin("plugin.serialization") version "1.7.20"
     application
-    id("com.palantir.docker") version "0.33.0"
+    id("com.palantir.docker") version "0.34.0"
     groovy
-    id("org.openapi.generator") version "5.4.0"
-    id("com.github.ben-manes.versions") version "0.42.0"
+    id("org.openapi.generator") version "6.2.0"
+    id("com.github.ben-manes.versions") version "0.43.0"
 }
 
 group = "at.rueckgr.kotlin.rocketbot"
@@ -50,29 +50,27 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
-    // CVE-2020-36518 - remove when updating to 2.13.3 or 2.14.0
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2.2")
 
     implementation("org.apache.commons:commons-lang3:3.12.0")
-    implementation("org.apache.commons:commons-text:1.9")
+    implementation("org.apache.commons:commons-text:1.10.0")
     implementation("org.reflections:reflections:$reflectionsVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("at.favre.lib:bcrypt:0.9.0")
 
-    implementation("org.postgresql:postgresql:42.3.5")
-    implementation("org.ktorm:ktorm-core:3.4.1")
-    implementation("org.ktorm:ktorm-support-postgresql:3.4.1")
+    implementation("org.postgresql:postgresql:42.5.0")
+    implementation("org.ktorm:ktorm-core:3.5.0")
+    implementation("org.ktorm:ktorm-support-postgresql:3.5.0")
 
     // dependencies for generated OpenAPI client
-    implementation("com.squareup.moshi:moshi-kotlin:1.13.0")
-    implementation("com.squareup.moshi:moshi-adapters:1.13.0")
-    implementation("com.squareup.okhttp3:okhttp:4.9.3")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
+    implementation("com.squareup.moshi:moshi-adapters:1.14.0")
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.21")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.20")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.apache.groovy:groovy-all:4.0.2")
-    testImplementation("org.spockframework:spock-core:2.2-M1-groovy-4.0")
+    testImplementation("org.apache.groovy:groovy-all:4.0.6")
+    testImplementation("org.spockframework:spock-core:2.3-groovy-4.0")
 }
 
 tasks.test {

@@ -30,5 +30,7 @@ docker pull eclipse-temurin:17-jdk || exit 3
 
 ./gradlew docker || exit 3
 
-sudo systemctl restart kotlin-rocket-bot || exit 3
+if [ "$1" != "--no-systemd" ]; then
+	sudo systemctl restart kotlin-rocket-bot || exit 3
+fi
 

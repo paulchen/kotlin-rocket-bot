@@ -16,14 +16,14 @@ class NicePlugin : AbstractPlugin(), Logging {
 
     fun containsNiceNumbers(message: String): Boolean {
         val numbers = extractNumbers(message)
-        return numbers.size > 1 && numbers.sum() == 69
+        return !numbers.contains(0.0) && numbers.size > 1 && numbers.sum() == 69.0
     }
 
-    fun extractNumbers(message: String): List<Int> {
-        val m = Pattern.compile("(^-| -)?\\d+").matcher(message)
-        val list = ArrayList<Int>()
+    fun extractNumbers(message: String): List<Double> {
+        val m = Pattern.compile("(^-| -)?\\d+(\\.\\d+)?").matcher(message) //NOSONAR
+        val list = ArrayList<Double>()
         while (m.find()) {
-            list.add(m.group().trim().toInt())
+            list.add(m.group().trim().toDouble())
         }
         return list
     }

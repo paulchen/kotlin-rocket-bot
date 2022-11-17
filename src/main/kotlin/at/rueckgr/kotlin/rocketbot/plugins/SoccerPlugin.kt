@@ -8,12 +8,12 @@ import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import java.time.LocalDateTime
 
 class SoccerPlugin : AbstractPlugin() {
-    override fun getCommands() = listOf("cl")
+    override fun getCommands() = listOf("wm")
 
     override fun handle(channel: RoomMessageHandler.Channel, user: RoomMessageHandler.User, message: RoomMessageHandler.Message): List<OutgoingMessage> {
         val configuration = ConfigurationProvider.getSoccerConfiguration()
         val matchesToShow = configuration.matchesToShow ?: 3
-        val (pastMatches, liveMatches, futureMatches) = MatchInfoService().getMatchInfo(matchesToShow)
+        val (pastMatches, liveMatches, futureMatches) = MatchInfoService().getMatchInfo(matchesToShow, configuration.leagueId!!, configuration.season!!)
 
         if (pastMatches.isEmpty() && liveMatches.isEmpty() && futureMatches.isEmpty()) {
             return listOf(OutgoingMessage("Keine Spieldaten vorhanden.", ":soccer:", configuration.username))
@@ -38,7 +38,7 @@ class SoccerPlugin : AbstractPlugin() {
     }
 
     override fun getHelp(command: String) = listOf(
-        "`!cl` provides some information about past, current, and future matches within the UEFA Champions League"
+        "`!wm` provides some information about past, current, and future matches within the FIFA World Cup 2022"
     )
 
     override fun getProblems(): List<String> {

@@ -34,7 +34,14 @@ class ArchiveService : Logging {
         val encodedUsername = URLEncoder.encode(username, "utf-8")
         return runBlocking {
             try {
-                getClient().get("http://backend:8081/user/$encodedUsername").body<UserDetails>()
+                val response = getClient().get("http://backend:8081/user/$encodedUsername")
+                if (response.status.value > 299) {
+                    logger().info("Status code received from backend: {}", response.status.value)
+                    null
+                }
+                else {
+                    response.body<UserDetails>()
+                }
             }
             catch (e: ClientRequestException) {
                 logger().error("Exception occurred", e)

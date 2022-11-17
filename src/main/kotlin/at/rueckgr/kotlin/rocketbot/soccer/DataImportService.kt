@@ -5,9 +5,9 @@ import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import at.rueckgr.kotlin.rocketbot.util.Db
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
-import com.api_football.models.FixtureResponseEvents
-import com.api_football.models.FixtureResponseFixtureVenue
-import com.api_football.models.FixtureResponseResponse
+import com.api_football.models.FixtureResponseResponseInner
+import com.api_football.models.FixtureResponseResponseInnerEventsInner
+import com.api_football.models.FixtureResponseResponseInnerFixtureVenue
 import org.ktorm.database.Database
 import org.ktorm.dsl.*
 import org.ktorm.entity.*
@@ -127,7 +127,7 @@ class DataImportService : Logging {
         Thread.sleep(10000)
     }
 
-    private fun importFixture(database: Database, fixtureResponse: FixtureResponseResponse): ImportFixtureResult {
+    private fun importFixture(database: Database, fixtureResponse: FixtureResponseResponseInner): ImportFixtureResult {
         val id = fixtureResponse.fixture.id!!
 
         val entity = database.fixtures.find { it.id eq id }
@@ -136,7 +136,7 @@ class DataImportService : Logging {
         return mapToEntity(database, fixtureResponse, entity)
     }
 
-    private fun createNewFixture(database: Database, fixtureResponse: FixtureResponseResponse): Fixture {
+    private fun createNewFixture(database: Database, fixtureResponse: FixtureResponseResponseInner): Fixture {
         val entity = Fixture {
             id = fixtureResponse.fixture.id!!
             leagueId = fixtureResponse.league.id!!
@@ -164,7 +164,7 @@ class DataImportService : Logging {
         return entity
     }
 
-    private fun mapToEntity(database: Database, fixtureResponse: FixtureResponseResponse, entity: Fixture): ImportFixtureResult {
+    private fun mapToEntity(database: Database, fixtureResponse: FixtureResponseResponseInner, entity: Fixture): ImportFixtureResult {
         entity.leagueId = fixtureResponse.league.id!!
         entity.season = fixtureResponse.league.season!!
         entity.date = fixtureResponse.fixture.date!!.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
@@ -277,7 +277,7 @@ class DataImportService : Logging {
     }
 
     // Football API reports the break during with status HT and elapsed time 45
-    private fun extraTimeHalfTimeFix(fixtureResponse: FixtureResponseResponse): Boolean =
+    private fun extraTimeHalfTimeFix(fixtureResponse: FixtureResponseResponseInner): Boolean =
         (fixtureResponse.score.extratime?.home != null || fixtureResponse.score.extratime?.away != null) &&
                 fixtureResponse.fixture.status?.short?.value == FixtureState.HALF_TIME.code
 
@@ -306,7 +306,7 @@ class DataImportService : Logging {
         Score(entity.goalsPenaltyHome, entity.goalsPenaltyAway)
     )
 
-    private fun isEventProcessable(fixtureResponse: FixtureResponseResponse, goalsChanged: Boolean, event: FixtureResponseEvents): Boolean {
+    private fun isEventProcessable(fixtureResponse: FixtureResponseResponseInner, goalsChanged: Boolean, event: FixtureResponseResponseInnerEventsInner): Boolean {
         if (event.type == "Goal") {
             findPlayer(fixtureResponse, event) ?: return false
             return goalsChanged || event.detail == "Missed Penalty"
@@ -338,7 +338,7 @@ class DataImportService : Logging {
             }
     }
 
-    private fun processEvent(fixtureResponse: FixtureResponseResponse, entity: Fixture, event: FixtureResponseEvents): String? {
+    private fun processEvent(fixtureResponse: FixtureResponseResponseInner, entity: Fixture, event: FixtureResponseResponseInnerEventsInner): String? {
         logger().debug("Processing event: {}", event)
 
         val message = if (event.type == "Goal") {
@@ -378,7 +378,7 @@ class DataImportService : Logging {
         return message
     }
 
-    private fun findPlayer(fixtureResponse: FixtureResponseResponse, event: FixtureResponseEvents): String? {
+    private fun findPlayer(fixtureResponse: FixtureResponseResponseInner, event: FixtureResponseResponseInnerEventsInner): String? {
         val fallbackName = event.player?.name
         val playerId = event.player?.id ?: return fallbackName
         fixtureResponse.players ?: return fallbackName
@@ -410,7 +410,7 @@ class DataImportService : Logging {
         fixturesToBeRemoved.forEach { fixtureId -> database.fixtures.removeIf { it.id eq fixtureId } }
     }
 
-    private fun getVenue(database: Database, fixtureResponse: FixtureResponseResponse): Venue? {
+    private fun getVenue(database: Database, fixtureResponse: FixtureResponseResponseInner): Venue? {
         val venue = fixtureResponse.fixture.venue ?: return null
 
         val entity = if (venue.id == null) {
@@ -425,12 +425,12 @@ class DataImportService : Logging {
         return entity
     }
 
-    private fun mapToEntity(venue: FixtureResponseFixtureVenue, entity: Venue) {
+    private fun mapToEntity(venue: FixtureResponseResponseInnerFixtureVenue, entity: Venue) {
         entity.name = venue.name ?: entity.name
         entity.city = venue.city ?: entity.city
     }
 
-    private fun createNewVenue(database: Database, venue: FixtureResponseFixtureVenue): Venue {
+    private fun createNewVenue(database: Database, venue: FixtureResponseResponseInnerFixtureVenue): Venue {
         val venueId = venue.id ?: createArtificialVenueId(database)
         val entity = Venue {
             id = venueId
