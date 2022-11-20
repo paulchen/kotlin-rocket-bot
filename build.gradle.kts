@@ -173,4 +173,11 @@ tasks.jacocoTestReport {
     reports {
         xml.required.set(true)
     }
+    classDirectories.setFrom(
+        files(classDirectories.files.map {
+            fileTree(it) {
+                exclude("com/api_football/**")
+            }
+        })
+    )
 }
