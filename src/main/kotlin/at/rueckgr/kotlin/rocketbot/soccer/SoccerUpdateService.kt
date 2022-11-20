@@ -114,11 +114,9 @@ class SoccerUpdateService : Logging {
         }
     }
 
-    private fun createMessage(fixture: Fixture, roomName: String, message: String, username: String?): WebserviceMessage {
-        val teamHome = TeamMapper.mapTeamName(fixture.teamHome)
-        val teamAway = TeamMapper.mapTeamName(fixture.teamAway)
-
-        val formattedMessage = ":mega: *$teamHome\u00a0-\u00a0$teamAway*: $message"
+    fun createMessage(fixture: Fixture, roomName: String, message: String, username: String?): WebserviceMessage {
+        val matchTitleShort = MatchTitleService.formatMatchTitleShort(fixture)
+        val formattedMessage = ":mega: $matchTitleShort: $message"
 
         return WebserviceMessage(Bot.knownChannelNamesToIds[roomName], null, formattedMessage, ":soccer:", username)
     }

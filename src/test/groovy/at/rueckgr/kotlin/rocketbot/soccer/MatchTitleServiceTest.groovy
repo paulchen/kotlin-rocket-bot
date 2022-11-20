@@ -1,24 +1,15 @@
 package at.rueckgr.kotlin.rocketbot.soccer
 
 import at.rueckgr.kotlin.rocketbot.database.FixtureImpl
-import at.rueckgr.kotlin.rocketbot.database.VenueImpl
+import at.rueckgr.kotlin.rocketbot.util.FixtureFactory
 import spock.lang.Specification
 
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 class MatchTitleServiceTest extends Specification {
-    private def createFixture(venueName, venueCity, home, away) {
-        def venue = new VenueImpl(0L, venueName, venueCity, null, null)
-        def date = LocalDateTime.of(LocalDate.of(2022, 11, 20), LocalTime.of(17, 0))
-
-        return new FixtureImpl(0L, 0L, 0, date, "", home, away, "", null, null, null, null, null, null, null, null, null, 0, venue, null, false, false)
-    }
-
     def "FormatMatchTitleShort"() {
         given:
-            def fixture = createFixture("Al Bayt Stadium", "Al Khor", "Qatar", "Ecuador")
+            def fixture = FixtureFactory.createFixture("Al Bayt Stadium", "Al Khor", "Qatar", "Ecuador")
 
         when:
             def result = MatchTitleService.INSTANCE.formatMatchTitleShort(fixture)
@@ -29,7 +20,7 @@ class MatchTitleServiceTest extends Specification {
 
     def "FormatMatchTitle"() {
         given:
-            def fixture = createFixture("Al Bayt Stadium", "Al Khor", "Qatar", "Ecuador")
+            def fixture = FixtureFactory.createFixture("Al Bayt Stadium", "Al Khor", "Qatar", "Ecuador")
 
         when:
             def result = MatchTitleService.INSTANCE.formatMatchTitle(fixture)
