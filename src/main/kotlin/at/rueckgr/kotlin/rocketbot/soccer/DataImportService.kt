@@ -338,7 +338,7 @@ class DataImportService : Logging {
             }
     }
 
-    private fun processEvent(fixtureResponse: FixtureResponseResponseInner, entity: Fixture, event: FixtureResponseResponseInnerEventsInner): String? {
+    fun processEvent(fixtureResponse: FixtureResponseResponseInner, entity: Fixture, event: FixtureResponseResponseInnerEventsInner): String? {
         logger().debug("Processing event: {}", event)
 
         val message = if (event.type == "Goal") {
@@ -353,7 +353,7 @@ class DataImportService : Logging {
                 null -> ""
                 else -> " in Spielminute $elapsed"
             }
-            val team = TeamMapper.mapTeamName(event.team?.name ?: "unbekannt")
+            val team = MatchTitleService.formatTeamWithFlag(event.team?.name ?: "unbekannt")
             val player = when (val playerName = findPlayer(fixtureResponse, event)) {
                 null -> ""
                 else -> " durch $playerName"

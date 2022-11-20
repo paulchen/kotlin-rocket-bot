@@ -8,19 +8,18 @@ object MatchTitleService {
     private val zwnbsp = "\ufeff"
 
     fun formatMatchTitleShort(fixture: Fixture): String {
-        val (teamHome, flagHome) = TeamMapper.mapTeamName(fixture.teamHome)
-        val (teamAway, flagAway) = TeamMapper.mapTeamName(fixture.teamAway)
+        val teamHome = formatTeamWithFlag(fixture.teamHome)
+        val teamAway = formatTeamWithFlag(fixture.teamAway)
 
-        val homeSeparator = when (flagHome) {
-            "" -> ""
-            else -> "\u00a0"
-        }
-        val awaySeparator = when (flagAway) {
-            "" -> ""
-            else -> "\u00a0"
-        }
+        return "$teamHome\u00a0-\u00a0$teamAway"
+    }
 
-        return "$flagHome$homeSeparator*$teamHome*\u00a0-\u00a0$flagAway$awaySeparator*$teamAway*"
+    fun formatTeamWithFlag(teamName: String): String {
+        val (team, flag) = TeamMapper.mapTeamName(teamName)
+        return when (flag) {
+            "" -> "*$team*"
+            else -> "$flag\u00a0*$team*"
+        }
     }
 
     fun formatMatchTitle(fixture: Fixture): String {
