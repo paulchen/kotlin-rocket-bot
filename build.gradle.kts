@@ -14,6 +14,8 @@ plugins {
     groovy
     id("org.openapi.generator") version "6.2.1"
     id("com.github.ben-manes.versions") version "0.44.0"
+    id("jacoco")
+    id("org.sonarqube") version "3.5.0.2730"
 }
 
 tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates").configure {
@@ -85,6 +87,7 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    finalizedBy("jacocoTestReport")
 }
 
 tasks.withType<KotlinCompile> {
@@ -164,4 +167,10 @@ openApiGenerate {
     configOptions.put("dateLibrary", "java8")
     globalProperties.put("modelDocs", "false")
     typeMappings.put("datetime", "DateTime")
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required.set(true)
+    }
 }
