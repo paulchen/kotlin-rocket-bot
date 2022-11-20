@@ -7,13 +7,27 @@ import java.time.format.DateTimeFormatter
 object MatchTitleService {
     private val zwnbsp = "\ufeff"
 
+    fun formatMatchTitleShort(fixture: Fixture): String {
+        val (teamHome, flagHome) = TeamMapper.mapTeamName(fixture.teamHome)
+        val (teamAway, flagAway) = TeamMapper.mapTeamName(fixture.teamAway)
+
+        val homeSeparator = when (flagHome) {
+            "" -> ""
+            else -> "\u00a0"
+        }
+        val awaySeparator = when (flagAway) {
+            "" -> ""
+            else -> "\u00a0"
+        }
+
+        return "$flagHome$homeSeparator*$teamHome*\u00a0-\u00a0$flagAway$awaySeparator*$teamAway*"
+    }
+
     fun formatMatchTitle(fixture: Fixture): String {
         val time = formatTime(fixture.date)
         val venue = formatVenue(fixture.venue!!)
         val score = formatMatchScore(fixture)
-
-        val (teamHome, flagHome) = TeamMapper.mapTeamName(fixture.teamHome)
-        val (teamAway, flagAway) = TeamMapper.mapTeamName(fixture.teamAway)
+        val matchTitleShort = formatMatchTitleShort(fixture)
 
         val fixtureState = FixtureState.getByCode(fixture.status)
         val state = when (fixtureState?.period) {
@@ -27,21 +41,11 @@ object MatchTitleService {
             ""
         }
 
-        val homeSeparator = when (flagHome) {
-            "" -> ""
-            else -> "\u00a0"
-        }
-        val awaySeparator = when (flagAway) {
-            "" -> ""
-            else -> "\u00a0"
-        }
-
         return if (score == null) {
-            "$time: $flagHome$homeSeparator*$teamHome*\u00a0-\u00a0$flagAway$awaySeparator*$teamAway* ($venue)"
+            "$time: $matchTitleShort ($venue)"
         }
         else {
-            "$time: $flagHome$homeSeparator*$teamHome*\u00a0-\u00a0$flagAway$awaySeparator*$teamAway* ($venue): $state$elapsed$score"
-
+            "$time: $matchTitleShort ($venue): $state$elapsed$score"
         }
     }
 
