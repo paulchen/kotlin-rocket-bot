@@ -33,4 +33,10 @@ class BotHealthChecker : HealthChecker, Logging {
 
         return problems
     }
+
+    override fun getAdditionalStatusInformation() = PluginProvider
+            .getAllPlugins()
+            .map { it.javaClass.simpleName to it.getAdditionalStatus() }
+            .filter { it.second.isNotEmpty() }
+            .toMap()
 }

@@ -25,4 +25,6 @@ abstract class AbstractPlugin {
     abstract fun getProblems(): List<String>
 
     fun handleBotMessages(): Boolean = false
+
+    open fun getAdditionalStatus(): Map<String, String> = emptyMap()
 }

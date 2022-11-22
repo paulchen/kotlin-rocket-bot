@@ -22,10 +22,16 @@ val Database.venues get() = this.sequenceOf(Venues)
 data class Score(val home: Int, val away: Int)
 data class GoalData(val halftime: Score, val fulltime: Score, val extratime: Score, val penalty: Score)
 
+enum class UpdateType {
+    DAILY, LIVE
+}
+
 class DataImportService : Logging {
     companion object {
         var lastUpdate: LocalDateTime? = null
         var lastUpdateFailed = false
+        var nextUpdate: LocalDateTime? = null
+        var nextUpdateType: UpdateType = UpdateType.DAILY
     }
 
     fun runDailyUpdate(): List<ImportFixtureResult> {
@@ -78,6 +84,10 @@ class DataImportService : Logging {
 
         return result
     }
+
+    fun getLiveFixtures(): List<Pair<String, String>> = findLiveFixtures(Db().connection)
+        .map { it.teamHome to it.teamAway }
+        .toList()
 
     private fun findExistingVenues(database: Database): List<Long> = database.venues.map { it.id }.toList()
 

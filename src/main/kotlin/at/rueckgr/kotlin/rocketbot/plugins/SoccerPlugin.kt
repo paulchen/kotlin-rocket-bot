@@ -58,4 +58,22 @@ class SoccerPlugin : AbstractPlugin() {
             emptyList()
         }
     }
+
+    override fun getAdditionalStatus(): Map<String, String> {
+        val liveFixtures = DataImportService().getLiveFixtures()
+        val liveMatches = when (liveFixtures.size) {
+            0 -> "0"
+            else -> {
+                val matches = liveFixtures.joinToString(", ") { "${it.first}-${it.second}" }
+                "${liveFixtures.size} ($matches)"
+            }
+        }
+
+        return mapOf(
+            "liveMatches" to liveMatches,
+            "lastUpdate" to (DataImportService.lastUpdate?.toString() ?: "unknown"),
+            "nextUpdate" to (DataImportService.nextUpdate?.toString() ?: "unknown"),
+            "nextUpdateType" to DataImportService.nextUpdateType.toString()
+        )
+    }
 }
