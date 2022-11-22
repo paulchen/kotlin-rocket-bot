@@ -19,7 +19,7 @@ import kotlin.math.max
 val Database.fixtures get() = this.sequenceOf(Fixtures)
 val Database.venues get() = this.sequenceOf(Venues)
 
-data class Score(val home: Int?, val away: Int?)
+data class Score(val home: Int, val away: Int)
 data class GoalData(val halftime: Score, val fulltime: Score, val extratime: Score, val penalty: Score)
 
 class DataImportService : Logging {
@@ -289,21 +289,21 @@ class DataImportService : Logging {
     }
 
     private fun areGoalsReset(oldGoalData: GoalData, newGoalData: GoalData): Boolean {
-        return ((oldGoalData.halftime.home ?: 0) > (newGoalData.halftime.home ?: 0)) ||
-                ((oldGoalData.halftime.away ?: 0) > (newGoalData.halftime.away ?: 0)) ||
-                ((oldGoalData.fulltime.home ?: 0) > (newGoalData.fulltime.home ?: 0)) ||
-                ((oldGoalData.fulltime.away ?: 0) > (newGoalData.fulltime.away ?: 0)) ||
-                ((oldGoalData.extratime.home ?: 0) > (newGoalData.extratime.home ?: 0)) ||
-                ((oldGoalData.extratime.away ?: 0) > (newGoalData.extratime.away ?: 0)) ||
-                ((oldGoalData.penalty.home ?: 0) > (newGoalData.penalty.home ?: 0)) ||
-                ((oldGoalData.penalty.away ?: 0) > (newGoalData.penalty.away ?: 0))
+        return (oldGoalData.halftime.home > newGoalData.halftime.home) ||
+                (oldGoalData.halftime.away > newGoalData.halftime.away) ||
+                (oldGoalData.fulltime.home > newGoalData.fulltime.home) ||
+                (oldGoalData.fulltime.away > newGoalData.fulltime.away) ||
+                (oldGoalData.extratime.home > newGoalData.extratime.home) ||
+                (oldGoalData.extratime.away > newGoalData.extratime.away) ||
+                (oldGoalData.penalty.home > newGoalData.penalty.home) ||
+                (oldGoalData.penalty.away > newGoalData.penalty.away)
     }
 
     private fun createGoalData(entity: Fixture): GoalData = GoalData(
-        Score(entity.goalsHalftimeHome, entity.goalsHalftimeAway),
-        Score(entity.goalsFulltimeHome, entity.goalsFulltimeAway),
-        Score(entity.goalsExtratimeHome, entity.goalsExtratimeAway),
-        Score(entity.goalsPenaltyHome, entity.goalsPenaltyAway)
+        Score(entity.goalsHalftimeHome ?: 0, entity.goalsHalftimeAway ?: 0),
+        Score(entity.goalsFulltimeHome ?: 0, entity.goalsFulltimeAway ?: 0),
+        Score(entity.goalsExtratimeHome ?: 0, entity.goalsExtratimeAway ?: 0),
+        Score(entity.goalsPenaltyHome ?: 0, entity.goalsPenaltyAway ?: 0)
     )
 
     private fun isEventProcessable(fixtureResponse: FixtureResponseResponseInner, goalsChanged: Boolean, event: FixtureResponseResponseInnerEventsInner): Boolean {
