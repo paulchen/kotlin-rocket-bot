@@ -84,7 +84,7 @@ class SoccerUpdateService : Logging {
 
         val matches = filteredResults
             .map { MatchTitleService.formatMatchTitle(it.fixture) }
-            .joinToString("\n") { " - $it" }
+            .joinToString("\n") { "- $it" }
         val message = when (filteredResults
             .map { MatchTitleService.formatMatchTitle(it.fixture) }.size) {
             1 -> ":mega: *Demnächst stattfindendes Spiel:*\n\n$matches"
@@ -156,14 +156,16 @@ class SoccerUpdateService : Logging {
     }
 
     private fun scheduleDailyUpdate(seconds: Long) {
-        val nextDailyUpdate = LocalDateTime.now().plusSeconds(seconds)
-        logger().debug("Scheduling next daily update for {} (in {} seconds)", nextDailyUpdate, seconds)
+        DataImportService.nextUpdate = LocalDateTime.now().plusSeconds(seconds)
+        DataImportService.nextUpdateType = UpdateType.DAILY
+        logger().debug("Scheduling next daily update for {} (in {} seconds)", DataImportService.nextUpdate, seconds)
         executorService.schedule( { handleExceptions { runDailyUpdate() } }, seconds, TimeUnit.SECONDS)
     }
 
     private fun scheduleLiveUpdate(seconds: Long) {
-        val nextLiveUpdate = LocalDateTime.now().plusSeconds(seconds)
-        logger().debug("Scheduling next live update for {} (in {} seconds)", nextLiveUpdate, seconds)
+        DataImportService.nextUpdate = LocalDateTime.now().plusSeconds(seconds)
+        DataImportService.nextUpdateType = UpdateType.LIVE
+        logger().debug("Scheduling next live update for {} (in {} seconds)", DataImportService.nextUpdate, seconds)
         executorService.schedule( { handleExceptions { runLiveUpdate() } }, seconds, TimeUnit.SECONDS)
     }
 

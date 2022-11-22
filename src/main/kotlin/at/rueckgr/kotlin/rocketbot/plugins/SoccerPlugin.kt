@@ -34,7 +34,7 @@ class SoccerPlugin : AbstractPlugin() {
     }
 
     private fun processMatches(matches: List<String>, singular: String, plural: String): String {
-        val processedMatches = matches.joinToString("\n") { " - $it" }
+        val processedMatches = matches.joinToString("\n") { "- $it" }
         return when (matches.size) {
             0 -> ""
             1 -> "*$singular:*\n\n$processedMatches"
