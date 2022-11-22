@@ -15,7 +15,7 @@ class MatchTitleServiceTest extends Specification {
             def result = MatchTitleService.INSTANCE.formatMatchTitleShort(fixture)
 
         then:
-            result == ":qa:\u00a0*Katar*\u00a0-\u00a0:ec:\u00a0*Ecuador*"
+            result == ":flag_qa:\u00a0*Katar*\u00a0-\u00a0:flag_ec:\u00a0*Ecuador*"
     }
 
     def "FormatMatchTitle"() {
@@ -26,7 +26,7 @@ class MatchTitleServiceTest extends Specification {
             def result = MatchTitleService.INSTANCE.formatMatchTitle(fixture)
 
         then:
-            result == "20.11.2022 17\ufeff:\ufeff00: :qa:\u00a0*Katar*\u00a0-\u00a0:ec:\u00a0*Ecuador* (Al Bayt Stadium, Al Khor)"
+            result == "20.11.2022 17\ufeff:\ufeff00: :flag_qa:\u00a0*Katar*\u00a0-\u00a0:flag_ec:\u00a0*Ecuador* (Al Bayt Stadium, Al Khor)"
     }
 
     def "FormatGameScore"(htHome, htAway, ftHome, ftAway, etHome, etAway, pHome, pAway, expectedResult) {

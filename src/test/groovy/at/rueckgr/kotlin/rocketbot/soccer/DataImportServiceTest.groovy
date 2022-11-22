@@ -45,6 +45,6 @@ class DataImportServiceTest extends Specification {
             def message = service.processEvent(fixtureResponse, fixture, event)
 
         then:
-            message == "Elfmetertreffer in Spielminute 16 für :ec:\u00a0*Ecuador* durch Enner Valencia; Spielstand: 0\ufeff:\ufeff1"
+            message == "Elfmetertreffer in Spielminute 16 für :flag_ec:\u00a0*Ecuador* durch Enner Valencia; Spielstand: 0\ufeff:\ufeff1"
     }
 }

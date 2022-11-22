@@ -18,7 +18,7 @@ class SoccerUpdateServiceTest extends Specification {
         then:
             result.roomId == "roomId"
             result.roomName == null
-            result.message == ":mega: :qa:\u00a0*Katar*\u00a0-\u00a0:ec:\u00a0*Ecuador*: test message"
+            result.message == ":mega: :flag_qa:\u00a0*Katar*\u00a0-\u00a0:flag_ec:\u00a0*Ecuador*: test message"
             result.emoji == ":soccer:"
             result.username == "user"
     }
