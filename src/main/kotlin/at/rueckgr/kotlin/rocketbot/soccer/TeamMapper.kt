@@ -19,7 +19,7 @@ object TeamMapper {
             }
             return FormattedTeamName(teamName, "")
         }
-        val flag = ":" + locale.country.lowercase() + ":"
+        val flag = ":flag_" + locale.country.lowercase() + ":"
         return FormattedTeamName(LocaleHelper().getLocalizedCountryName(locale), flag)
     }
 }
