@@ -91,6 +91,8 @@ class DataImportService : Logging {
 
     private fun findExistingVenues(database: Database): List<Long> = database.venues.map { it.id }.toList()
 
+    fun findLiveFixtures() = findLiveFixtures(Db().connection)
+
     private fun findLiveFixtures(database: Database): List<Fixture> {
         val liveStates = FixtureState.getByPeriod(FixtureStatePeriod.LIVE)
         val oneHourAgo = LocalDateTime.now().minusHours(1)

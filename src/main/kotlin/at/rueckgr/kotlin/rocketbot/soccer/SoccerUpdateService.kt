@@ -71,22 +71,23 @@ class SoccerUpdateService : Logging {
             return
         }
 
-        announceGames(notificationChannels, username, liveUpdateResult)
+        announceGames(notificationChannels, username)
         sendNotifications(notificationChannels, username, liveUpdateResult)
     }
 
-    private fun announceGames(notificationChannels: List<String>, username: String?, liveUpdateResult: List<ImportFixtureResult>) {
-        val filteredResults = liveUpdateResult
-            .filter { !it.fixture.announced }
+    private fun announceGames(notificationChannels: List<String>, username: String?) {
+        val filteredResults = DataImportService()
+            .findLiveFixtures()
+            .filter { !it.announced }
         if (filteredResults.isEmpty()) {
             return
         }
 
         val matches = filteredResults
-            .map { MatchTitleService.formatMatchTitle(it.fixture) }
+            .map { MatchTitleService.formatMatchTitle(it) }
             .joinToString("\n") { "- $it" }
         val message = when (filteredResults
-            .map { MatchTitleService.formatMatchTitle(it.fixture) }.size) {
+            .map { MatchTitleService.formatMatchTitle(it) }.size) {
             1 -> ":mega: *Demnächst stattfindendes Spiel:*\n\n$matches"
             else -> ":mega: *Demnächst stattfindende Spiele:*\n\n$matches"
         }
@@ -95,7 +96,7 @@ class SoccerUpdateService : Logging {
             Bot.webserviceMessageQueue.add(WebserviceMessage(Bot.knownChannelNamesToIds[roomName], null, message, ":soccer:", username))
         }
 
-        DataImportService().setFixturesToAnnounced(filteredResults.map { it.fixture })
+        DataImportService().setFixturesToAnnounced(filteredResults)
     }
 
     private fun sendNotifications(notificationChannels: List<String>, username: String?, liveUpdateResult: List<ImportFixtureResult>) {
