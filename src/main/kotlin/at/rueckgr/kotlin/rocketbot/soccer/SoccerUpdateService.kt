@@ -88,8 +88,8 @@ class SoccerUpdateService : Logging {
             .joinToString("\n") { "- $it" }
         val message = when (filteredResults
             .map { MatchTitleService.formatMatchTitle(it) }.size) {
-            1 -> ":mega: *Demnächst stattfindendes Spiel:*\n\n$matches"
-            else -> ":mega: *Demnächst stattfindende Spiele:*\n\n$matches"
+            1 -> ":mega: *Demnächst stattfindendes Spiel:*\n$matches"
+            else -> ":mega: *Demnächst stattfindende Spiele:*\n$matches"
         }
 
         notificationChannels.forEach { roomName ->
