@@ -47,15 +47,42 @@ class SoccerPlugin : AbstractPlugin() {
     )
 
     override fun getProblems(): List<String> {
+        val problems = mutableListOf<String>()
+        checkLastUpdate()?.let { problems.add(it) }
+        checkLastUpdateFailed()?.let { problems.add(it) }
+        checkNextUpdate()?.let { problems.add(it) }
+        return problems
+    }
+
+    private fun checkLastUpdate(): String? {
         val lastUpdate = DataImportService.lastUpdate
         return if (lastUpdate == null) {
-            listOf("Soccer data has never been updated")
+            "Soccer data has never been updated"
         }
         else if (lastUpdate.isBefore(LocalDateTime.now().minusDays(1))) {
-            listOf("Last soccer data update is more than one day ago")
+            "Last soccer data update is more than one day ago"
         }
         else {
-            emptyList()
+            null
+        }
+    }
+
+    private fun checkLastUpdateFailed(): String? =
+        when (DataImportService.lastUpdateFailed) {
+            true -> "Last update of soccer data failed"
+            false -> null
+        }
+
+    private fun checkNextUpdate(): String? {
+        val nextUpdate = DataImportService.nextUpdate
+        return if (nextUpdate == null) {
+            "No update of soccer data scheduled"
+        }
+        else if (nextUpdate.isBefore(LocalDateTime.now().minusMinutes(5))) {
+            "Date of next soccer data update is in the past"
+        }
+        else {
+            null
         }
     }
 
