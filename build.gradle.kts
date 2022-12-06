@@ -7,8 +7,8 @@ val ktorVersion = "2.1.3"
 val jacksonVersion = "2.14.0"
 
 plugins {
-    kotlin("jvm") version "1.7.21"
-    kotlin("plugin.serialization") version "1.7.21"
+    kotlin("jvm") version "1.7.22"
+    kotlin("plugin.serialization") version "1.7.22"
     application
     id("com.palantir.docker") version "0.34.0"
     groovy
@@ -69,7 +69,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("at.favre.lib:bcrypt:0.9.0")
 
-    implementation("org.postgresql:postgresql:42.5.0")
+    implementation("org.postgresql:postgresql:42.5.1")
     implementation("org.ktorm:ktorm-core:3.5.0")
     implementation("org.ktorm:ktorm-support-postgresql:3.5.0")
 
@@ -79,10 +79,10 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.21")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.22")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.apache.groovy:groovy-all:4.0.6")
-    testImplementation("org.spockframework:spock-core:2.3-groovy-4.0")
+    testImplementation("org.spockframework:spock-core:2.4-M1-groovy-4.0")
 }
 
 tasks.test {
