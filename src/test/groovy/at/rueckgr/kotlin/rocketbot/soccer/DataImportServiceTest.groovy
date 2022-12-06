@@ -42,9 +42,10 @@ class DataImportServiceTest extends Specification {
                     null, "Goal", "Penalty", null)
 
         when:
-            def message = service.processEvent(fixtureResponse, fixture, event)
+            def result = service.processEvent(fixtureResponse, fixture, event)
 
         then:
-            message == "Elfmetertreffer in Spielminute 16 für :flag_ec:\u00a0*Ecuador* durch Enner Valencia; Spielstand: 0\ufeff:\ufeff1"
+            result.message == "Elfmetertreffer in Spielminute 16 für :flag_ec:\u00a0*Ecuador* durch Enner Valencia; Spielstand: 0\ufeff:\ufeff1"
+            result.changesScore
     }
 }
