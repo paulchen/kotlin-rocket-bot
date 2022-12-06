@@ -356,9 +356,11 @@ class DataImportService : Logging {
         if (event.type == "Goal") {
             val goalType = GoalType.values().toList().firstOrNull { it.apiName == event.detail }
             val typeDescription = goalType?.displayName ?: event.detail
-            val time = when (val elapsed = event.time?.elapsed) {
-                null -> ""
-                else -> " in Spielminute $elapsed"
+            val time = if (event.time?.elapsed != null && entity.status != FixtureState.PENALTY.code) {
+                " in Spielminute ${event.time.elapsed}"
+            }
+            else {
+                ""
             }
             val team = MatchTitleService.formatTeamWithFlag(event.team?.name ?: "unbekannt")
             val player = when (val playerName = findPlayer(fixtureResponse, event)) {
