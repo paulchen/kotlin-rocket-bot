@@ -4,6 +4,7 @@ import at.rueckgr.kotlin.rocketbot.OutgoingMessage
 import at.rueckgr.kotlin.rocketbot.RoomMessageHandler
 import at.rueckgr.kotlin.rocketbot.soccer.DataImportService
 import at.rueckgr.kotlin.rocketbot.soccer.MatchInfoService
+import at.rueckgr.kotlin.rocketbot.soccer.SoccerProblemService
 import at.rueckgr.kotlin.rocketbot.soccer.SoccerUpdateService
 import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import java.time.LocalDateTime
@@ -51,6 +52,9 @@ class SoccerPlugin : AbstractPlugin() {
         checkLastUpdate()?.let { problems.add(it) }
         checkLastUpdateFailed()?.let { problems.add(it) }
         checkNextUpdate()?.let { problems.add(it) }
+
+        problems.addAll(SoccerProblemService.problems.values)
+
         return problems
     }
 

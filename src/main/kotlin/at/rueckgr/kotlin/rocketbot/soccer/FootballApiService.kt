@@ -84,9 +84,13 @@ class JsonDumpInterceptor : Interceptor, Logging {
 
 
                 FileWriter(filename).use { it.write(buffer.clone().readString(StandardCharsets.UTF_8)) }
+
+                SoccerProblemService.problems.remove(SoccerProblem.CACHE_NOT_WRITABLE)
             }
             catch (e: IOException) {
-                logger().error("Unable to write HTTP response body to file $filename")
+                val message = "Unable to write HTTP response body to file $filename - ${e.message}"
+                logger().error(message)
+                SoccerProblemService.problems[SoccerProblem.CACHE_NOT_WRITABLE] = message
             }
         }
         return response
