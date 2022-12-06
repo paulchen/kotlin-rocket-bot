@@ -258,7 +258,7 @@ class DataImportService : Logging {
             }
             if (hasUnprocessableEvents) {
                 logger().debug("Not processing any events as there is at least one that is currently not processable")
-                emptyList<String>().toMutableList()
+                emptyList<Event>().toMutableList()
             }
             else {
                 logger().debug("Processing all unprocessed events")
@@ -268,16 +268,18 @@ class DataImportService : Logging {
             }
         }
         else {
-            emptyList<String>().toMutableList()
+            emptyList<Event>().toMutableList()
         }
 
         if (newEvents.isNotEmpty()) {
             entity.eventsProcessed = eventsCount
+        }
+        if (newEvents.any { it.changesScore }) {
             entity.pendingScoreChange = false
         }
 
         if (goalsReset) {
-            newEvents.add(createGoalsResetEvent(entity))
+            newEvents.add(Event(createGoalsResetEvent(entity), true))
             entity.pendingScoreChange = false
         }
 
@@ -285,7 +287,7 @@ class DataImportService : Logging {
 
         entity.flushChanges()
 
-        return ImportFixtureResult(entity, Collections.unmodifiableList(newEvents), stateChange)
+        return ImportFixtureResult(entity, Collections.unmodifiableList(newEvents.map { it.message }), stateChange)
     }
 
     // Football API reports the break during with status HT and elapsed time 45
@@ -350,17 +352,12 @@ class DataImportService : Logging {
             }
     }
 
-    fun processEvent(fixtureResponse: FixtureResponseResponseInner, entity: Fixture, event: FixtureResponseResponseInnerEventsInner): String? {
+    fun processEvent(fixtureResponse: FixtureResponseResponseInner, entity: Fixture, event: FixtureResponseResponseInnerEventsInner): Event? {
         logger().debug("Processing event: {}", event)
 
-        val message = if (event.type == "Goal") {
-            val type = when (event.detail) {
-                "Normal Goal" -> "Tor"
-                "Own Goal" -> "Eigentor"
-                "Penalty" -> "Elfmetertreffer"
-                "Missed Penalty" -> "Vergebener Elfmeter"
-                else -> event.detail
-            }
+        if (event.type == "Goal") {
+            val goalType = GoalType.values().toList().firstOrNull { it.apiName == event.detail }
+            val typeDescription = goalType?.displayName ?: event.detail
             val time = when (val elapsed = event.time?.elapsed) {
                 null -> ""
                 else -> " in Spielminute $elapsed"
@@ -372,14 +369,12 @@ class DataImportService : Logging {
             }
             val score = MatchTitleService.formatMatchScore(entity)
 
-            "$type$time für $team$player; Spielstand: $score"
-        }
-        else {
-            null
+            val message = "$typeDescription$time für $team$player; Spielstand: $score"
+            logger().debug("Message created from event: {}; goalType: {}", message, goalType)
+            return Event(message, goalType?.changesScore ?: false)
         }
 
-        logger().debug("Message created from event: {}", message)
-        return message
+        return null
     }
 
     private fun createGoalsResetEvent(entity: Fixture): String {
@@ -485,3 +480,12 @@ data class ImportFixtureResult(
     val newEvents: List<String>,
     val stateChange: String?
 )
+
+enum class GoalType(val apiName: String, val displayName: String, val changesScore: Boolean) {
+    NORMAL("Normal Goal", "Tor", true),
+    OWN_GOAL("Own Goal", "Eigentor", true),
+    PENALTY("Penalty", "Elfmetertreffer", true),
+    MISSED_PENALITY("Missed Penalty", "Vergebener Elfmeter", false)
+}
+
+data class Event(val message: String, val changesScore: Boolean)
