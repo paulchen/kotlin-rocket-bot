@@ -91,7 +91,7 @@ class SoccerPlugin : AbstractPlugin() {
         val liveMatches = when (liveFixtures.size) {
             0 -> "0"
             else -> {
-                val matches = liveFixtures.joinToString(", ") { "${it.first}-${it.second}" }
+                val matches = liveFixtures.joinToString(", ") { "${it.id}: ${it.teamHome}-${it.teamAway}" }
                 "${liveFixtures.size} ($matches)"
             }
         }

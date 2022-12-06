@@ -85,9 +85,7 @@ class DataImportService : Logging {
         return result
     }
 
-    fun getLiveFixtures(): List<Pair<String, String>> = findLiveFixtures(Db().connection)
-        .map { it.teamHome to it.teamAway }
-        .toList()
+    fun getLiveFixtures() = findLiveFixtures(Db().connection)
 
     private fun findExistingVenues(database: Database): List<Long> = database.venues.map { it.id }.toList()
 
