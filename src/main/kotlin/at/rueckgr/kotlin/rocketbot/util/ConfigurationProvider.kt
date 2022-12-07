@@ -1,6 +1,7 @@
 package at.rueckgr.kotlin.rocketbot.util
 
 import at.rueckgr.kotlin.rocketbot.exception.ConfigurationException
+import at.rueckgr.kotlin.rocketbot.handler.PluginProvider
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import org.apache.commons.lang3.StringUtils
@@ -63,6 +64,7 @@ object ConfigurationProvider : Logging {
 
             try {
                 reloadConfiguration()
+                PluginProvider.reinit()
             }
             catch (e: Throwable) {
                 logger().error("Exception while trying to reload configuration", e)

@@ -29,6 +29,13 @@ data class User(
 @Serializable
 data class VersionDetails(val version: VersionInfo)
 
+@Serializable
+data class ChannelInfo(
+    val id: String,
+    @Serializable(KZonedDateTimeSerializer::class)
+    val lastActivity: ZonedDateTime?
+)
+
 class ArchiveService : Logging {
     fun getUserDetails(username: String): UserDetails? {
         val encodedUsername = URLEncoder.encode(username, "utf-8")
@@ -65,6 +72,26 @@ class ArchiveService : Logging {
             catch (e: Exception) {
                 logger().error("Exception occurred", e)
                 VersionInfo("unknown", "unknown")
+            }
+        }
+    }
+
+    fun getChannelInfo(channelId: String): ChannelInfo? {
+        val encodedId = URLEncoder.encode(channelId, "utf-8")
+        return runBlocking {
+            try {
+                val response = getClient().get("http://backend:8081/channel/$encodedId")
+                if (response.status.value > 299) {
+                    logger().info("Status code received from backend: {}", response.status.value)
+                    null
+                }
+                else {
+                    response.body<ChannelInfo>()
+                }
+            }
+            catch (e: ClientRequestException) {
+                logger().error("Exception occurred", e)
+                null
             }
         }
     }

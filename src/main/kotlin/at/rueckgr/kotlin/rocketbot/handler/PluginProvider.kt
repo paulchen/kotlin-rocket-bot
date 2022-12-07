@@ -45,4 +45,8 @@ object PluginProvider {
     fun getGeneralPlugins() = generalPlugins.toList()
 
     fun getAllPlugins() = allPlugins.toList()
+
+    fun reinit() {
+        allPlugins.forEach { it.reinit() }
+    }
 }

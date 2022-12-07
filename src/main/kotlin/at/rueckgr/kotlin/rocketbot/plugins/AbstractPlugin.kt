@@ -14,6 +14,8 @@ abstract class AbstractPlugin {
 
     open fun init() { /* do nothing by default */ }
 
+    open fun reinit() { /* do nothing by default */ }
+
     fun stripCommand(message: String): String? {
         val pos = message.indexOf(" ")
         if (pos < 0) {

@@ -1,5 +1,7 @@
 package at.rueckgr.kotlin.rocketbot.util
 
+import java.time.LocalTime
+
 data class UserConfiguration(
     val general: GeneralConfiguration?,
     val plugins: PluginsConfiguration?,
@@ -18,7 +20,8 @@ data class GeneralConfiguration(
 data class PluginsConfiguration(
     val simpleReply: SimpleReplyPluginConfiguration?,
     val admin: AdminPluginConfiguration?,
-    val soccer: SoccerPluginConfiguration?
+    val soccer: SoccerPluginConfiguration?,
+    val tumbleweed: TumbleweedPluginConfiguration?
 )
 
 data class SimpleReplyPluginConfiguration(
@@ -45,6 +48,15 @@ data class SoccerPluginConfiguration(
     val notificationChannels: List<String>?,
     val matchesToShow: Int?,
     val username: String?
+)
+
+data class TumbleweedPluginConfiguration(
+    val tumbleweedChannels: List<String>?,
+    val tumbleweedUrls: List<String>?,
+    val minimumInactivity: Long?,
+    val maximumInactivity: Long?,
+    val dayStart: LocalTime?,
+    val dayEnd: LocalTime?
 )
 
 data class WebserviceConfiguration(

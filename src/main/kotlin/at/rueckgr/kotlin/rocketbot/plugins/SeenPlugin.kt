@@ -3,8 +3,8 @@ package at.rueckgr.kotlin.rocketbot.plugins
 import at.rueckgr.kotlin.rocketbot.*
 import at.rueckgr.kotlin.rocketbot.util.formatUsername
 import at.rueckgr.kotlin.rocketbot.util.time.DateTimeDifferenceCalculator
+import at.rueckgr.kotlin.rocketbot.util.toLocalDateTime
 import java.time.LocalDateTime
-import java.time.ZoneId
 
 
 
@@ -30,7 +30,7 @@ class SeenPlugin : AbstractPlugin() {
             "*${formatUsername(userDetails.user.username)}* has never been active."
         }
         else {
-            val localDateTime = LocalDateTime.ofInstant(userDetails.user.timestamp.toInstant(), ZoneId.systemDefault())
+            val localDateTime = toLocalDateTime(userDetails.user.timestamp)
             val timestamp = TimestampFormatter().formatTimestamp(localDateTime)
             val ago = DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), localDateTime)
             "*${formatUsername(userDetails.user.username)}* wrote their last message at $timestamp ($ago)."
