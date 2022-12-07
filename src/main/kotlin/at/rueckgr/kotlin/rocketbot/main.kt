@@ -45,15 +45,6 @@ class Main: Logging {
                     ).start()
                 }
             }
-            PluginProvider
-                .getAllPlugins()
-                .forEach { plugin ->
-                    launch {
-                        logExceptions {
-                            plugin.init()
-                        }
-                    }
-                }
         }
     }
 

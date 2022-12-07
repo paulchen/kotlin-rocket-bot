@@ -1,13 +1,13 @@
 package at.rueckgr.kotlin.rocketbot.plugins
 
 import at.rueckgr.kotlin.rocketbot.OutgoingMessage
-import at.rueckgr.kotlin.rocketbot.RoomMessageHandler
+import at.rueckgr.kotlin.rocketbot.EventHandler
 import at.rueckgr.kotlin.rocketbot.handler.PluginProvider
 
 class HelpPlugin : AbstractPlugin() {
     override fun getCommands() = listOf("help")
 
-    override fun handle(channel: RoomMessageHandler.Channel, user: RoomMessageHandler.User, message: RoomMessageHandler.Message): List<OutgoingMessage> {
+    override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
         val parts = message.message.split(" ")
         return when(parts.size) {
             1 -> generalHelp()

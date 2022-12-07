@@ -2,7 +2,7 @@ package at.rueckgr.kotlin.rocketbot.plugins
 
 import at.rueckgr.kotlin.rocketbot.ArchiveService
 import at.rueckgr.kotlin.rocketbot.OutgoingMessage
-import at.rueckgr.kotlin.rocketbot.RoomMessageHandler
+import at.rueckgr.kotlin.rocketbot.EventHandler
 import at.rueckgr.kotlin.rocketbot.util.LibraryVersion
 import at.rueckgr.kotlin.rocketbot.util.VersionHelper
 
@@ -12,7 +12,7 @@ class VersionPlugin : AbstractPlugin() {
 
     override fun getCommands(): List<String> = listOf("version")
 
-    override fun handle(channel: RoomMessageHandler.Channel, user: RoomMessageHandler.User, message: RoomMessageHandler.Message): List<OutgoingMessage> {
+    override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
         val archiveRevision = ArchiveService().getVersion()
 
         val builder = StringBuilder()

@@ -1,16 +1,16 @@
 package at.rueckgr.kotlin.rocketbot.plugins
 
 import at.rueckgr.kotlin.rocketbot.OutgoingMessage
-import at.rueckgr.kotlin.rocketbot.RoomMessageHandler
+import at.rueckgr.kotlin.rocketbot.EventHandler
 
 abstract class AbstractPlugin {
     abstract fun getCommands(): List<String>
 
-    abstract fun handle(channel: RoomMessageHandler.Channel, user: RoomMessageHandler.User, message: RoomMessageHandler.Message): List<OutgoingMessage>
+    abstract fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage>
 
     abstract fun getHelp(command: String): List<String>
 
-    open fun getChannelTypes() = RoomMessageHandler.ChannelType.values().toList()
+    open fun getChannelTypes() = EventHandler.ChannelType.values().toList()
 
     open fun init() { /* do nothing by default */ }
 

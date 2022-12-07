@@ -1,7 +1,7 @@
 package at.rueckgr.kotlin.rocketbot.plugins
 
 import at.rueckgr.kotlin.rocketbot.OutgoingMessage
-import at.rueckgr.kotlin.rocketbot.RoomMessageHandler
+import at.rueckgr.kotlin.rocketbot.EventHandler
 import at.rueckgr.kotlin.rocketbot.soccer.DataImportService
 import at.rueckgr.kotlin.rocketbot.soccer.MatchInfoService
 import at.rueckgr.kotlin.rocketbot.soccer.SoccerProblemService
@@ -16,7 +16,7 @@ class SoccerPlugin : AbstractPlugin() {
         SoccerUpdateService().scheduleImmediateDailyUpdate()
     }
 
-    override fun handle(channel: RoomMessageHandler.Channel, user: RoomMessageHandler.User, message: RoomMessageHandler.Message): List<OutgoingMessage> {
+    override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
         val configuration = ConfigurationProvider.getSoccerConfiguration()
         val matchesToShow = configuration.matchesToShow ?: 3
         val (pastMatches, liveMatches, futureMatches) = MatchInfoService().getMatchInfo(matchesToShow, configuration.leagueId!!, configuration.season!!)

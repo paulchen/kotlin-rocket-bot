@@ -25,6 +25,15 @@ plugins:
       - paulchens-bot
     matchesToShow: 3
     username: soccerbot
+  tumbleweed:
+    tumbleweedChannels:
+      - GENERAL
+    tumbleweedUrls:
+      - https://media.tenor.com/Ofev06wBI64AAAAd/tumbleweed-highway.gif
+    minimumInactivity: 10
+    maximumInactivity: 3ß
+    dayStart: 10:00
+    dayEnd: 20:00
 
 webservice:
   users:

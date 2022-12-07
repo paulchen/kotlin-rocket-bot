@@ -2,11 +2,14 @@ package at.rueckgr.kotlin.rocketbot
 
 import at.rueckgr.kotlin.rocketbot.handler.PluginProvider
 import at.rueckgr.kotlin.rocketbot.util.Logging
+import at.rueckgr.kotlin.rocketbot.util.logExceptions
 import at.rueckgr.kotlin.rocketbot.util.logger
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
-class MessageHandler : RoomMessageHandler, Logging {
-    override fun handle(channel: RoomMessageHandler.Channel, user: RoomMessageHandler.User, message: RoomMessageHandler.Message): List<OutgoingMessage> {
-        val messageWithoutQuote = RoomMessageHandler.Message(removeQuote(message.message), message.botMessage)
+class MessageHandler : EventHandler, Logging {
+    override fun handleRoomMessage(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
+        val messageWithoutQuote = EventHandler.Message(removeQuote(message.message), message.botMessage)
         if (!messageWithoutQuote.message.startsWith("!")) {
             logger().debug("Message contains no command, applying general plugins")
             return applyGeneralPlugins(channel, user, messageWithoutQuote)
@@ -27,7 +30,21 @@ class MessageHandler : RoomMessageHandler, Logging {
         return applyGeneralPlugins(channel, user, messageWithoutQuote)
     }
 
-    private fun applyGeneralPlugins(channel: RoomMessageHandler.Channel, user: RoomMessageHandler.User, message: RoomMessageHandler.Message) = PluginProvider.getGeneralPlugins()
+    override fun botInitialized() {
+        runBlocking {
+            PluginProvider
+                .getAllPlugins()
+                .forEach { plugin ->
+                    launch {
+                        logExceptions {
+                            plugin.init()
+                        }
+                    }
+                }
+        }
+    }
+
+    private fun applyGeneralPlugins(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message) = PluginProvider.getGeneralPlugins()
             .filter { !message.botMessage || it.handleBotMessages() }
             .filter { it.getChannelTypes().contains(channel.type) }
             .flatMap { it.handle(channel, user, message) }

@@ -1,7 +1,7 @@
 package at.rueckgr.kotlin.rocketbot.plugins
 
 import at.rueckgr.kotlin.rocketbot.OutgoingMessage
-import at.rueckgr.kotlin.rocketbot.RoomMessageHandler
+import at.rueckgr.kotlin.rocketbot.EventHandler
 import at.rueckgr.kotlin.rocketbot.util.formatUsername
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -14,7 +14,7 @@ import org.apache.commons.text.StringEscapeUtils
 class SloganPlugin : AbstractPlugin() {
     override fun getCommands() = listOf("slogan")
 
-    override fun handle(channel: RoomMessageHandler.Channel, user: RoomMessageHandler.User, message: RoomMessageHandler.Message): List<OutgoingMessage> {
+    override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
         val name = stripCommand(message.message) ?: return emptyList()
         val formattedName = formatUsername(name)
 

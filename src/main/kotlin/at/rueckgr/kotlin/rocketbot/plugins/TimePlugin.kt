@@ -3,7 +3,7 @@ package at.rueckgr.kotlin.rocketbot.plugins
 import at.rueckgr.kotlin.rocketbot.util.time.DateTimeDifferenceCalculator
 import at.rueckgr.kotlin.rocketbot.util.time.DateTimeDifferenceCalculator.TimeUnit
 import at.rueckgr.kotlin.rocketbot.OutgoingMessage
-import at.rueckgr.kotlin.rocketbot.RoomMessageHandler
+import at.rueckgr.kotlin.rocketbot.EventHandler
 import at.rueckgr.kotlin.rocketbot.util.time.DateTimeParser
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
@@ -60,7 +60,7 @@ class TimePlugin : AbstractPlugin(), Logging {
         return listOf("t", "oldyear", "newyear", "pizza")
     }
 
-    override fun handle(channel: RoomMessageHandler.Channel, user: RoomMessageHandler.User, message: RoomMessageHandler.Message): List<OutgoingMessage> {
+    override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
         val messageText = message.message
         if (messageText.contains(" ")) {
             val dateString = messageText.substring(messageText.indexOf(" ") + 1)
