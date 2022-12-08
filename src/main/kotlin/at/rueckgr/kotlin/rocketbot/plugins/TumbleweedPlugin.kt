@@ -61,7 +61,9 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
 
         val lastActivity = lastActivities[roomId] ?: return null
         val timeRange = configuration.maximumInactivity!! - configuration.minimumInactivity!!
-        val secondsFromLastExecution = (0..timeRange).random()
+        val secondsFromLastExecution = (0..timeRange).random() + configuration.minimumInactivity
+        logger().debug("Next execution {} seconds after last activity (range: {} to {} seconds)",
+            secondsFromLastExecution, configuration.minimumInactivity, configuration.maximumInactivity)
         val nextExecution = lastActivity.plusSeconds(secondsFromLastExecution)
 
         val actualNextExecution = if (nextExecution.toLocalTime().isAfter(configuration.dayEnd)) {
