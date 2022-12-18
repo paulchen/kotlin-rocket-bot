@@ -43,4 +43,6 @@ class SimpleReplyPlugin : AbstractPlugin(), Logging {
         null -> listOf("Configuration of SimpleReplyPlugin missing")
         else -> emptyList()
     }
+
+    override fun handleBotMessages() = true
 }
