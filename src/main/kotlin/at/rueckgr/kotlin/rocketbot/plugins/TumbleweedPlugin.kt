@@ -23,9 +23,14 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
         message: EventHandler.Message
     ): List<OutgoingMessage> {
         if (getChannelIds(getConfiguration()?.tumbleweedChannels)?.contains(channel.id) == true) {
-            lastActivities[channel.id] = LocalDateTime.now()
-            cancelExecution(channel.id)
-            scheduleExecution(channel.id)
+            // The bot processes messages asynchronously.
+            // To avoid multiple timers to be started, we need to apply synchronization
+            // to all code that cancels and/or schedules executions.
+            synchronized(this) {
+                lastActivities[channel.id] = LocalDateTime.now()
+                cancelExecution(channel.id)
+                scheduleExecution(channel.id)
+            }
         }
         return emptyList()
     }
@@ -99,18 +104,23 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
             /* don't post tumbleweed */
         }
 
-        lastActivities[roomId] = LocalDateTime.now()
-        scheduleExecution(roomId)
+        synchronized(this) {
+            lastActivities[roomId] = LocalDateTime.now()
+            cancelExecution(roomId)
+            scheduleExecution(roomId)
+        }
     }
 
     override fun getHelp(command: String) = emptyList<String>()
 
     override fun reinit() {
-        HashMap(scheduledFutures).forEach { cancelExecution(it.key) }
-        nextExecutions.clear()
-        lastActivities.clear()
+        synchronized(this) {
+            HashMap(scheduledFutures).forEach { cancelExecution(it.key) }
+            nextExecutions.clear()
+            lastActivities.clear()
 
-        init()
+            init()
+        }
     }
 
     override fun init() {
@@ -121,17 +131,17 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
             return
         }
 
-        getChannelIds(configuration.tumbleweedChannels)
-            ?.forEach {
-                val lastActivity = fetchLastActivity(it)
-                logger().debug("Fetched last activity in room {} from archive: {}", it, lastActivity)
-                if (lastActivity != null) {
-                    lastActivities[it] = toLocalDateTime(lastActivity)
-                    scheduleExecution(it)
+        synchronized(this) {
+            getChannelIds(configuration.tumbleweedChannels)
+                ?.forEach {
+                    val lastActivity = fetchLastActivity(it)
+                    logger().debug("Fetched last activity in room {} from archive: {}", it, lastActivity)
+                    if (lastActivity != null) {
+                        lastActivities[it] = toLocalDateTime(lastActivity)
+                        scheduleExecution(it)
+                    }
                 }
-            }
-
-        super.init()
+        }
     }
 
     private fun getChannelIds(channelNames: List<String>?) = channelNames?.mapNotNull { Bot.knownChannelNamesToIds[it] }
