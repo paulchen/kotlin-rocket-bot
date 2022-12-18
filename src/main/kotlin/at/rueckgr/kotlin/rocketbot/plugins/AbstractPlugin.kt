@@ -8,6 +8,11 @@ abstract class AbstractPlugin {
 
     abstract fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage>
 
+    open fun handleOwnMessage(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
+        /* do nothing by default */
+        return emptyList()
+    }
+
     abstract fun getHelp(command: String): List<String>
 
     open fun getChannelTypes() = EventHandler.ChannelType.values().toList()
@@ -26,7 +31,7 @@ abstract class AbstractPlugin {
 
     abstract fun getProblems(): List<String>
 
-    fun handleBotMessages(): Boolean = false
+    open fun handleBotMessages(): Boolean = false
 
     open fun getAdditionalStatus(): Map<String, String> = emptyMap()
 }

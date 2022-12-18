@@ -30,6 +30,10 @@ class MessageHandler : EventHandler, Logging {
         return applyGeneralPlugins(channel, user, messageWithoutQuote)
     }
 
+    override fun handleOwnMessage(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> = PluginProvider.getAllPlugins()
+            .filter { it.getChannelTypes().contains(channel.type) }
+            .flatMap { it.handleOwnMessage(channel, user, message) }
+
     override fun botInitialized() {
         runBlocking {
             PluginProvider

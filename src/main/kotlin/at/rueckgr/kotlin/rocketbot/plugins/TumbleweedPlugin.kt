@@ -17,11 +17,7 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
 
     override fun getCommands() = emptyList<String>()
 
-    override fun handle(
-        channel: EventHandler.Channel,
-        user: EventHandler.User,
-        message: EventHandler.Message
-    ): List<OutgoingMessage> {
+    override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
         if (getChannelIds(getConfiguration()?.tumbleweedChannels)?.contains(channel.id) == true) {
             // The bot processes messages asynchronously.
             // To avoid multiple timers to be started, we need to apply synchronization
@@ -34,6 +30,8 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
         }
         return emptyList()
     }
+
+    override fun handleOwnMessage(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> = this.handle(channel, user, message)
 
     private fun cancelExecution(roomId: String) {
         logger().debug("Cancelling execution for room {}", roomId)
@@ -98,16 +96,12 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
                 logger().debug("Posting tumbleweed {} to channel {}", url, roomId)
 
                 Bot.webserviceMessageQueue.add(WebserviceMessage(roomId, null, url))
+
+                // the method handleOwnMessage() will be called where the next execution will be scheduled
             }
         }
         catch (e: ConfigurationException) {
             /* don't post tumbleweed */
-        }
-
-        synchronized(this) {
-            lastActivities[roomId] = LocalDateTime.now()
-            cancelExecution(roomId)
-            scheduleExecution(roomId)
         }
     }
 
@@ -166,6 +160,8 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
 
         return problems
     }
+
+    override fun handleBotMessages() = true
 
     private fun validateConfiguration(): TumbleweedPluginConfiguration {
         val configuration = getConfiguration()
