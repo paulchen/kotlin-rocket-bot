@@ -1,0 +1,8 @@
+general:
+  host: chat.rueckgr.at
+  username: username
+  password: password
+  botId: paulchen/kotlin-rocket-bot
+plugins:
+  soccer:
+    apiKey: TODO

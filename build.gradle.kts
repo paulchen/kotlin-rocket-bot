@@ -86,6 +86,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.10.0")
     testImplementation("org.apache.commons:commons-io:1.3.2")
+    testImplementation("org.ktorm:ktorm-support-mysql:3.5.0")
+    testImplementation("com.h2database:h2:2.1.214")
 }
 
 tasks.test {
