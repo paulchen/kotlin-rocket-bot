@@ -88,6 +88,7 @@ dependencies {
     testImplementation("org.apache.commons:commons-io:1.3.2")
     testImplementation("org.ktorm:ktorm-support-mysql:3.5.0")
     testImplementation("com.h2database:h2:2.1.214")
+    testImplementation("org.assertj:assertj-core:3.23.1")
 }
 
 tasks.test {

@@ -9,8 +9,7 @@ import java.io.File
 class FixtureMockServer(private val directory: String) {
     private val mockWebServer = MockWebServer()
 
-    fun start() {
-
+    fun start(): Int {
         val files = File({}.javaClass.getResource(directory)!!.toURI()).listFiles()!!
         files.sort()
         files.forEach {
@@ -21,7 +20,9 @@ class FixtureMockServer(private val directory: String) {
             )
         }
 
-        mockWebServer.start(8080)
+        mockWebServer.start()
+
+        return mockWebServer.port
     }
 
     fun hasMoreResponses() = mockWebServer.dispatcher.peek().getBody() != null
