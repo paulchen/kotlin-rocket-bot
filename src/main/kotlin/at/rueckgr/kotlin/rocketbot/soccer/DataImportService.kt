@@ -68,13 +68,7 @@ class DataImportService : Logging {
         logger().info("Matches currently live: {}", liveFixtures.map { it.id })
 
         val result = liveFixtures
-            .map {
-                val fixture = FootballApiService.getFixture(it.id)
-                if (fixture.response.isEmpty()) {
-                    throw ImportException("No data returned by API for fixture ${it.id}")
-                }
-                importFixture(database, fixture.response[0])
-            }
+            .map { importFixture(database, it.id) }
             .toList()
 
         lastUpdate = LocalDateTime.now()
@@ -83,6 +77,14 @@ class DataImportService : Logging {
         logger().info("Live update complete")
 
         return result
+    }
+
+    fun importFixture(database: Database, fixtureId: Long): ImportFixtureResult {
+        val fixture = FootballApiService.getFixture(fixtureId)
+        if (fixture.response.isEmpty()) {
+            throw ImportException("No data returned by API for fixture $fixtureId")
+        }
+        return importFixture(database, fixture.response[0])
     }
 
     fun getLiveFixtures() = findLiveFixtures(Db().connection)

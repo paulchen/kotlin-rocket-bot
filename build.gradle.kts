@@ -83,6 +83,9 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.apache.groovy:groovy-all:4.0.6")
     testImplementation("org.spockframework:spock-core:2.4-M1-groovy-4.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.10.0")
+    testImplementation("org.apache.commons:commons-io:1.3.2")
 }
 
 tasks.test {
