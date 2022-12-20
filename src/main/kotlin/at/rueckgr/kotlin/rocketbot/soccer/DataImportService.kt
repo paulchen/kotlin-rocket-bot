@@ -185,7 +185,7 @@ class DataImportService : Logging {
         entity.teamAway = fixtureResponse.teams.away?.name ?: "unbekannt"
 
         val reportedStatus = fixtureResponse.fixture.status?.short?.value ?: "TBD"
-        val status = if (reportedStatus != FixtureState.MATCH_FINISHED_AFTER_PENALTY.code) {
+        val status = if (reportedStatus != FixtureState.MATCH_FINISHED_AFTER_PENALTY.code || fixtureResponse.events == null) {
             reportedStatus
         }
         else {
