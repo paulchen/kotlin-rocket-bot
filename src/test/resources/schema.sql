@@ -1,3 +1,6 @@
+DROP TABLE IF EXISTS fixture;
+DROP TABLE IF EXISTS venue;
+
 CREATE TABLE venue (
     id INT NOT NULL,
     name VARCHAR(255),
@@ -30,6 +33,7 @@ CREATE TABLE fixture (
     end_date TIMESTAMP WITH TIME ZONE,
     announced BOOLEAN NOT NULL,
     pending_score_change BOOLEAN NOT NULL,
+    first_penalty_team INT,
     PRIMARY KEY (id),
     FOREIGN KEY (venue_id) REFERENCES venue (id)
 );

@@ -21,7 +21,10 @@ object ConfigurationProvider : Logging {
     }
 
     private fun reloadConfiguration(): UserConfiguration {
-        val file = File(configurationFile)
+        if (configurationFile == null) {
+            throw ConfigurationException(6, "Configuration file not set")
+        }
+        val file = File(configurationFile!!)
         if (!file.exists()) {
             throw ConfigurationException(1, "Configuration file $configurationFile not found")
         }
@@ -51,7 +54,11 @@ object ConfigurationProvider : Logging {
     }
 
     fun checkForConfigurationUpdates() {
-        val path = File(File(configurationFile).parent).toPath()
+        if (configurationFile == null) {
+            logger().error("Configuration file not set, not checking for changes")
+            return
+        }
+        val path = File(File(configurationFile!!).parent).toPath()
         val watchService = FileSystems.getDefault().newWatchService()
 
         while (true) {

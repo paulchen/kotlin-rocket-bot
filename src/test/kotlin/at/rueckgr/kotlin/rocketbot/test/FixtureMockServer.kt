@@ -25,5 +25,7 @@ class FixtureMockServer(private val directory: String) {
         return mockWebServer.port
     }
 
+    fun shutdown() = mockWebServer.shutdown()
+
     fun hasMoreResponses() = mockWebServer.dispatcher.peek().getBody() != null
 }

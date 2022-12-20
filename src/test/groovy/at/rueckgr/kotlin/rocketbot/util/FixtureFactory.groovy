@@ -12,6 +12,6 @@ class FixtureFactory {
         def venue = new VenueImpl(0L, venueName, venueCity, null, null)
         def date = LocalDateTime.of(LocalDate.of(2022, 11, 20), LocalTime.of(17, 0))
 
-        return new FixtureImpl(0L, 0L, 0, date, "", home, away, "", null, null, null, null, null, null, null, null, null, 0, venue, null, false, false)
+        return new FixtureImpl(0L, 0L, 0, date, "", home, away, "", null, null, null, null, null, null, null, null, null, 0, venue, null, false, false, null)
     }
 }

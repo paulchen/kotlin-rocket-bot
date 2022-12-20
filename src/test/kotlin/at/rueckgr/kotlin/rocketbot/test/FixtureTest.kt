@@ -19,8 +19,8 @@ abstract class FixtureTest(
         val mockServer = FixtureMockServer(fixtureDirectory)
         val port = mockServer.start()
 
-        ConfigurationProvider.loadConfiguration({}.javaClass.getResource("/kotlin-rocket-bot.yaml").path)
-        System.setProperty(ApiClient.baseUrlKey, "http://localhost:$port")
+        ConfigurationProvider.loadConfiguration({}.javaClass.getResource("/kotlin-rocket-bot.yaml")!!.path)
+        ConfigurationProvider.getSoccerConfiguration().apiUrl = "http://localhost:$port"
 
         val database = setUpDatabase()
 
@@ -40,7 +40,7 @@ abstract class FixtureTest(
             iteration++
         }
 
-//        assertSame(stateChanges, expectedStateChanges)
+        assertSame(stateChanges, expectedStateChanges)
         assertSame(events, expectedEvents)
     }
 
@@ -56,7 +56,7 @@ abstract class FixtureTest(
             dialect = MySqlDialect()
         )
 
-        val sqlStatements = String({}.javaClass.getResourceAsStream("/schema.sql").readAllBytes()).split(";")
+        val sqlStatements = String({}.javaClass.getResourceAsStream("/schema.sql")!!.readAllBytes()).split(";")
         database.useConnection { conn ->
             val statement = conn.createStatement()
             sqlStatements.forEach { sql ->

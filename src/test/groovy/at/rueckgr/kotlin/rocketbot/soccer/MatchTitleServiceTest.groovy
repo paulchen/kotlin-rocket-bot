@@ -31,7 +31,7 @@ class MatchTitleServiceTest extends Specification {
 
     def "FormatGameScore"(htHome, htAway, ftHome, ftAway, etHome, etAway, pHome, pAway, expectedResult) {
         given:
-            def fixture = new FixtureImpl(0L, 0L, 0, LocalDateTime.now(), "", "", "", "", null, htHome, htAway, ftHome, ftAway, etHome, etAway, pHome, pAway, 0, null, null, false, false)
+            def fixture = new FixtureImpl(0L, 0L, 0, LocalDateTime.now(), "", "", "", "", null, htHome, htAway, ftHome, ftAway, etHome, etAway, pHome, pAway, 0, null, null, false, false, null)
 
         when:
             def result = MatchTitleService.INSTANCE.formatMatchScore(fixture)

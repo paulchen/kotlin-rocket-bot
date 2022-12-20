@@ -29,6 +29,7 @@ interface Fixture : Entity<Fixture> {
     var endDate: LocalDateTime?
     var announced: Boolean
     var pendingScoreChange: Boolean
+    var firstPenaltyTeam: Long?
 }
 
 object Fixtures : Table<Fixture>("fixture") {
@@ -54,4 +55,5 @@ object Fixtures : Table<Fixture>("fixture") {
     var endDate = datetime("end_date").bindTo { it.endDate }
     var announced = boolean("announced").bindTo { it.announced }
     var pendingScoreChange = boolean("pending_score_change").bindTo { it.pendingScoreChange }
+    var firstPenaltyTeam = long("first_penalty_team").bindTo { it.firstPenaltyTeam }
 }

@@ -184,13 +184,32 @@ class DataImportService : Logging {
         entity.teamHome = fixtureResponse.teams.home?.name ?: "unbekannt"
         entity.teamAway = fixtureResponse.teams.away?.name ?: "unbekannt"
 
-        val status = fixtureResponse.fixture.status?.short?.value ?: "TBD"
+        val reportedStatus = fixtureResponse.fixture.status?.short?.value ?: "TBD"
+        val status = if (reportedStatus != FixtureState.MATCH_FINISHED_AFTER_PENALTY.code) {
+            reportedStatus
+        }
+        else {
+            // delay state change from PENALTY to MATCH_FINISHED_AFTER_PENALTY to the time when events for all penalty goals are present
+            val (goalsPenaltyHome, goalsPenaltyAway) = calculatePenaltyScore(entity, fixtureResponse, entity.eventsProcessed)
+            if (goalsPenaltyHome == fixtureResponse.score.penalty?.home && goalsPenaltyAway == fixtureResponse.score.penalty.away) {
+                reportedStatus
+            }
+            else if (FixtureState.getByCode(entity.status)?.period == FixtureStatePeriod.PAST) {
+                // but don't revert to PENALTY if we have already reached an end state
+                reportedStatus
+            }
+            else {
+                FixtureState.PENALTY.code
+            }
+        }
+        val oldStatus = entity.status
+        val penaltyInProgress = status == FixtureState.PENALTY.code
 
         val oldGoalData = createGoalData(entity)
 
         entity.goalsHalftimeHome = fixtureResponse.score.halftime?.home
         entity.goalsHalftimeAway = fixtureResponse.score.halftime?.away
-        if (status == FixtureState.SECOND_HALF.code || status == FixtureState.BREAK_TIME.code) {
+        if (status == FixtureState.SECOND_HALF.code || (status == FixtureState.BREAK_TIME.code && fixtureResponse.score.extratime?.home == null)) {
             entity.goalsFulltimeHome = fixtureResponse.goals.home
             entity.goalsFulltimeAway = fixtureResponse.goals.away
         }
@@ -200,8 +219,13 @@ class DataImportService : Logging {
         }
         entity.goalsExtratimeHome = add(fixtureResponse.score.fulltime?.home, fixtureResponse.score.extratime?.home)
         entity.goalsExtratimeAway = add(fixtureResponse.score.fulltime?.away, fixtureResponse.score.extratime?.away)
-        entity.goalsPenaltyHome = fixtureResponse.score.penalty?.home
-        entity.goalsPenaltyAway = fixtureResponse.score.penalty?.away
+        if (penaltyInProgress) {
+            updatePenaltyScore(entity, fixtureResponse, entity.eventsProcessed)
+        }
+        else {
+            entity.goalsPenaltyHome = fixtureResponse.score.penalty?.home
+            entity.goalsPenaltyAway = fixtureResponse.score.penalty?.away
+        }
 
         val newGoalData = createGoalData(entity)
 
@@ -219,7 +243,7 @@ class DataImportService : Logging {
         // player data. Player data will be updated at a later time and then the Goal event
         // will be processed.
         logger().debug("Old value of pendingScoreChange: {}", entity.pendingScoreChange)
-        entity.pendingScoreChange = entity.pendingScoreChange || goalsChanged
+        entity.pendingScoreChange = !penaltyInProgress && (entity.pendingScoreChange || goalsChanged)
         logger().debug("New value of pendingScoreChange: {}", entity.pendingScoreChange)
 
         val stateChange = if (status != entity.status) {
@@ -228,10 +252,16 @@ class DataImportService : Logging {
                     && FixtureState.getByCode(status)?.period == FixtureStatePeriod.PAST) {
                 entity.endDate = LocalDateTime.now()
             }
-            val oldStatus = entity.status
-            // ensure that MatchTitleService.formatMatchScore has the current fixture state
-            entity.status = status
-            processStateChange(oldStatus, status, entity)
+            // don't revert the state to a start state and don't move away from and end state
+            if (FixtureState.getByCode(oldStatus)?.period != FixtureStatePeriod.PAST &&
+                    FixtureState.getByCode(status)?.period != FixtureStatePeriod.FUTURE) {
+                // ensure that MatchTitleService.formatMatchScore has the current fixture state
+                entity.status = status
+                processStateChange(oldStatus, status, entity)
+            }
+            else {
+                null
+            }
         }
         else {
             null
@@ -247,28 +277,33 @@ class DataImportService : Logging {
             entity.eventsProcessed, fixtureResponse.events?.size ?: 0)
         val eventsCount = max(fixtureResponse.events?.size ?: entity.eventsProcessed, entity.eventsProcessed)
         val newEvents = if (eventsCount > entity.eventsProcessed) {
-            val unprocessedEvents = fixtureResponse
-                .events!!
-                .subList(entity.eventsProcessed, fixtureResponse.events.size)
-            logger().debug("Identified {} unprocessed events: {}", unprocessedEvents.size, unprocessedEvents)
-            val hasUnprocessableEvents = unprocessedEvents.any {
-                val eventProcessable = isEventProcessable(fixtureResponse, entity.pendingScoreChange, it)
-                logger().debug("Checked event {} whether it is processable; result: {}", it, eventProcessable)
-                !eventProcessable
-            }
-            if (hasUnprocessableEvents) {
-                logger().debug("Not processing any events as there is at least one that is currently not processable")
-                emptyList<Event>().toMutableList()
+            if (penaltyInProgress) {
+                createPenaltyEvents(fixtureResponse, entity).toMutableList()
             }
             else {
-                logger().debug("Processing all unprocessed events")
-                unprocessedEvents
-                    .mapNotNull { processEvent(fixtureResponse, entity, it) }
-                    .toMutableList()
+                val unprocessedEvents = fixtureResponse
+                    .events!!
+                    .subList(entity.eventsProcessed, fixtureResponse.events.size)
+                logger().debug("Identified {} unprocessed events: {}", unprocessedEvents.size, unprocessedEvents)
+                val hasUnprocessableEvents = unprocessedEvents.any {
+                    val eventProcessable = isEventProcessable(fixtureResponse, entity.pendingScoreChange, it)
+                    logger().debug("Checked event {} whether it is processable; result: {}", it, eventProcessable)
+                    !eventProcessable
+                }
+                if (hasUnprocessableEvents) {
+                    logger().debug("Not processing any events as there is at least one that is currently not processable")
+                    mutableListOf()
+                }
+                else {
+                    logger().debug("Processing all unprocessed events")
+                    unprocessedEvents
+                        .mapNotNull { processEvent(fixtureResponse, entity, it) }
+                        .toMutableList()
+                }
             }
         }
         else {
-            emptyList<Event>().toMutableList()
+            mutableListOf()
         }
 
         if (newEvents.isNotEmpty()) {
@@ -278,7 +313,7 @@ class DataImportService : Logging {
             entity.pendingScoreChange = false
         }
 
-        if (goalsReset) {
+        if (goalsReset && !penaltyInProgress) {
             newEvents.add(Event(createGoalsResetEvent(entity), true))
             entity.pendingScoreChange = false
         }
@@ -288,6 +323,48 @@ class DataImportService : Logging {
         entity.flushChanges()
 
         return ImportFixtureResult(entity, Collections.unmodifiableList(newEvents.map { it.message }), stateChange)
+    }
+
+    private fun calculatePenaltyScore(entity: Fixture, fixtureResponse: FixtureResponseResponseInner, eventsProcessed: Int): Score {
+        // always calculate the current score of penalty shootout based on the events that have already been processed
+        val processedPenaltyEvents = fixtureResponse.events!!
+            .sortedWith(EventComparator(entity))
+            .subList(0, eventsProcessed)
+            .filter { it.type == "Goal" && it.detail == "Penalty" && it.comments == "Penalty Shootout" }
+
+        val homeTeamId = fixtureResponse.teams.home!!.id
+        val awayTeamId = fixtureResponse.teams.away!!.id
+
+        val goalsPenaltyHome = processedPenaltyEvents.count { it.team!!.id == homeTeamId }
+        val goalsPenaltyAway = processedPenaltyEvents.count { it.team!!.id == awayTeamId }
+
+        return Score(goalsPenaltyHome, goalsPenaltyAway)
+    }
+
+    private fun updatePenaltyScore(entity: Fixture, fixtureResponse: FixtureResponseResponseInner, eventsProcessed: Int) {
+        val (goalsPenaltyHome, goalsPenaltyAway) = calculatePenaltyScore(entity, fixtureResponse, eventsProcessed)
+        entity.goalsPenaltyHome = goalsPenaltyHome
+        entity.goalsPenaltyAway = goalsPenaltyAway
+    }
+
+    private fun createPenaltyEvents(fixtureResponse: FixtureResponseResponseInner, entity: Fixture): List<Event> {
+        var eventsProcessed = entity.eventsProcessed
+        return fixtureResponse.events!!
+            .sortedWith(EventComparator(entity))
+            .subList(eventsProcessed, fixtureResponse.events.size)
+            .mapNotNull {
+                eventsProcessed++
+                if (it.type == "Goal" && it.comments == "Penalty Shootout") {
+                    if (entity.firstPenaltyTeam == null) {
+                        entity.firstPenaltyTeam = it.team?.id
+                    }
+                    updatePenaltyScore(entity, fixtureResponse, eventsProcessed)
+                    processEvent(fixtureResponse, entity, it)
+                }
+                else {
+                    null
+                }
+            }
     }
 
     // Football API reports the break during with status HT and elapsed time 45
@@ -491,3 +568,18 @@ enum class GoalType(val apiName: String, val displayName: String, val changesSco
 }
 
 data class Event(val message: String, val changesScore: Boolean)
+
+private class EventComparator(private val entity: Fixture) : Comparator<FixtureResponseResponseInnerEventsInner> {
+    override fun compare(o1: FixtureResponseResponseInnerEventsInner, o2: FixtureResponseResponseInnerEventsInner): Int {
+        if (o1.time?.elapsed != o2.time?.elapsed) {
+            return if ((o1.time?.elapsed ?: 0) < (o2.time?.elapsed ?: 0)) -1 else 1
+        }
+        if (o1.time?.extra != o2.time?.extra) {
+            return if ((o1.time?.extra ?: 0) < (o2.time?.extra ?: 0)) -1 else 1
+        }
+        if (entity.firstPenaltyTeam != null) {
+            return if (o1.team!!.id == entity.firstPenaltyTeam) -1 else 1
+        }
+        return 0
+    }
+}

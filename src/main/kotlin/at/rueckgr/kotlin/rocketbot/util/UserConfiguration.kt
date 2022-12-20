@@ -44,6 +44,7 @@ data class SoccerPluginConfiguration(
     val leagueId: Long?,
     val season: Int?,
     val rounds: List<String>?,
+    var apiUrl: String?,
     val apiKey: String?,
     val notificationChannels: List<String>?,
     val matchesToShow: Int?,

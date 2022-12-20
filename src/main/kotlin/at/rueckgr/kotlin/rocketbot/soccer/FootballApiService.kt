@@ -30,7 +30,7 @@ object FootballApiService : Logging {
 
         logger().debug("Calling getFixtures() with parameters: leagueId={}, season={}", soccerConfiguration.leagueId, soccerConfiguration.season)
 
-        val fixtureResponse = FootballApi()
+        val fixtureResponse = getFootballApi()
             .getFixtures(null, null, null, soccerConfiguration.leagueId, null, null, null, soccerConfiguration.season, null, null, null, null, null)
 
         logger().debug("Data returned by getFixtures(): {}", fixtureResponse)
@@ -41,7 +41,7 @@ object FootballApiService : Logging {
     fun getFixture(id: Long): FixtureResponse {
         logger().debug("Calling getFixture() with parameter: id={}", id)
 
-        val fixtureResponse = FootballApi()
+        val fixtureResponse = getFootballApi()
             .getFixtures(id, null, null, null, null, null, null, null, null, null, null, null, null)
 
         logger().debug("Data returned by getFixtures(): {}", fixtureResponse)
@@ -52,12 +52,14 @@ object FootballApiService : Logging {
     fun getVenue(id: Long): VenueResponseResponseInner {
         logger().debug("Calling getVenues() with parameters: id={}", id)
 
-        val venue = FootballApi().getVenues(id, null, null, null, null)
+        val venue = getFootballApi().getVenues(id, null, null, null, null)
 
         logger().debug("Data returned by getVenues(): {}", venue)
 
         return venue.response[0]
     }
+
+    private fun getFootballApi() = FootballApi(ConfigurationProvider.getSoccerConfiguration().apiUrl ?: FootballApi.defaultBasePath)
 }
 
 class JsonDumpInterceptor : Interceptor, Logging {

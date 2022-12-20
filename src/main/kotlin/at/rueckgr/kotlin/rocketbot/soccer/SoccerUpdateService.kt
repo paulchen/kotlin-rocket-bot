@@ -101,15 +101,15 @@ class SoccerUpdateService : Logging {
 
     private fun sendNotifications(notificationChannels: List<String>, username: String?, liveUpdateResult: List<ImportFixtureResult>) {
         liveUpdateResult.forEach {
-            if (it.stateChange != null) {
-                notificationChannels.forEach { roomName ->
-                    Bot.webserviceMessageQueue.add(createMessage(it.fixture, roomName, it.stateChange, username))
-                }
-            }
-
             it.newEvents.forEach { event ->
                 notificationChannels.forEach { roomName ->
                     Bot.webserviceMessageQueue.add(createMessage(it.fixture, roomName, event, username))
+                }
+            }
+
+            if (it.stateChange != null) {
+                notificationChannels.forEach { roomName ->
+                    Bot.webserviceMessageQueue.add(createMessage(it.fixture, roomName, it.stateChange, username))
                 }
             }
         }
