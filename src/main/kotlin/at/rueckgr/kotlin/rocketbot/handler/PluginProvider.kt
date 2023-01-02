@@ -1,6 +1,7 @@
 package at.rueckgr.kotlin.rocketbot.handler
 
 import at.rueckgr.kotlin.rocketbot.plugins.AbstractPlugin
+import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import org.reflections.Reflections
 
 object PluginProvider {
@@ -9,8 +10,10 @@ object PluginProvider {
     private val allPlugins = ArrayList<AbstractPlugin>()
 
     init {
+        val mutePlugins = ConfigurationProvider.getConfiguration().plugins?.mutePlugins ?: emptyList()
         val pluginInstances = Reflections(AbstractPlugin::class.java.packageName)
             .getSubTypesOf(AbstractPlugin::class.java)
+            .filter { !mutePlugins.contains(it.simpleName) }
             .map { it.getDeclaredConstructor().newInstance() }
 
         pluginInstances.forEach { plugin ->

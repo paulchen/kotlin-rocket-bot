@@ -7,6 +7,8 @@ general:
     - general
 
 plugins:
+  mutePlugins:
+    - SoccerPlugin
   simpleReply:
     replies:
       - regex: (.*[^0-9a-z_.,\-]|^)69([^0-9.,a-z_\-].*|$)

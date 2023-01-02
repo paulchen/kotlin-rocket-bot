@@ -18,6 +18,7 @@ data class GeneralConfiguration(
 )
 
 data class PluginsConfiguration(
+    val mutePlugins: List<String>,
     val simpleReply: SimpleReplyPluginConfiguration?,
     val admin: AdminPluginConfiguration?,
     val soccer: SoccerPluginConfiguration?,
