@@ -43,7 +43,7 @@ class DateTimeParser {
 
     fun parseDateTimeWithoutYear(pattern: String, referenceTime: LocalDateTime, dateString: String): LocalDateTime {
         val f = createFormatter(pattern)
-        val localDate = LocalDateTime.parse(dateString.replace(" ", LocalDate.now().year.toString() + " "), f)
+        val localDate = LocalDateTime.parse(dateString.replace(" ", referenceTime.year.toString() + " "), f)
         if (referenceTime.isAfter(localDate)) {
             return localDate.plusYears(1)
         }
