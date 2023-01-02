@@ -4,5 +4,6 @@ general:
   password: password
   botId: paulchen/kotlin-rocket-bot
 plugins:
+  mutePlugins: []
   soccer:
     apiKey: TODO
