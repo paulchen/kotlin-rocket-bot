@@ -4,6 +4,7 @@ import at.rueckgr.kotlin.rocketbot.util.time.DateTimeDifferenceCalculator
 import at.rueckgr.kotlin.rocketbot.util.time.DateTimeDifferenceCalculator.TimeUnit
 import at.rueckgr.kotlin.rocketbot.OutgoingMessage
 import at.rueckgr.kotlin.rocketbot.EventHandler
+import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import at.rueckgr.kotlin.rocketbot.util.time.DateTimeParser
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
@@ -53,11 +54,12 @@ class TimePlugin : AbstractPlugin(), Logging {
     }
 
     private val pizzaDate = LocalDateTime.of(LocalDate.of(2016, 11, 19), LocalTime.of(11, 51, 29))
-    private val wmDate = LocalDateTime.of(LocalDate.of(2022, 11, 21), LocalTime.of(11, 0, 0))
+    private val emDate = LocalDateTime.of(LocalDate.of(2024, 6, 14), LocalTime.of(12, 0, 0))
+    private val wmDate = LocalDateTime.of(LocalDate.of(2026, 6, 10), LocalTime.of(12, 0, 0))
 
     override fun getCommands(): List<String> {
-//        return listOf("t", "wm", "oldyear", "newyear", "pizza")
-        return listOf("t", "oldyear", "newyear", "pizza")
+        return listOf("t", "em", "wm", "oldyear", "newyear", "pizza")
+//        return listOf("t", "oldyear", "newyear", "pizza")
     }
 
     override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
@@ -83,18 +85,19 @@ class TimePlugin : AbstractPlugin(), Logging {
                 return listOf(OutgoingMessage("enri owes us pizza for $difference"))
             }
             val date: LocalDateTime = when (messageText) {
-//                "!wm" -> wmDate
+                "!em" -> emDate
+                "!wm" -> wmDate
                 "!oldyear" -> getBeginOfCurrentYear()
                 "!newyear" -> getBeginOfCurrentYear().plusYears(1)
                 else -> return emptyList()
             }
 
-//            val (emoji, username) = when (messageText) {
-//                "!wm" -> listOf(":soccer:", ConfigurationProvider.getSoccerConfiguration().username)
-//                else -> listOf(null, null)
-//            }
-//            return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date), emoji, username))
-            return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date)))
+            val (emoji, username) = when (messageText) {
+                "!em", "!wm" -> listOf(":soccer:", ConfigurationProvider.getSoccerConfiguration().username)
+                else -> listOf(null, null)
+            }
+            return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date), emoji, username))
+//            return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date)))
         }
 
         return emptyList()

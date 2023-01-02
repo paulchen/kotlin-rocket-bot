@@ -10,7 +10,7 @@ import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import java.time.LocalDateTime
 
 class SoccerPlugin : AbstractPlugin() {
-    override fun getCommands() = listOf("wm")
+    override fun getCommands() = emptyList<String>()
 
     override fun init() {
         SoccerUpdateService().scheduleImmediateDailyUpdate()
