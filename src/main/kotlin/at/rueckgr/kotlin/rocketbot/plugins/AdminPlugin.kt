@@ -22,7 +22,7 @@ class AdminPlugin : AbstractPlugin(), Logging {
             return emptyList()
         }
 
-        return when (message.message) {
+        return when (message.message.lowercase()) {
             "!status" -> listOf(OutgoingMessage(getStatus()))
             "!config" -> listOf(OutgoingMessage(getConfig()))
             else -> emptyList()

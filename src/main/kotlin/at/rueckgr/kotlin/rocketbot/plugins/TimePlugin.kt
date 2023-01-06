@@ -63,7 +63,7 @@ class TimePlugin : AbstractPlugin(), Logging {
     }
 
     override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
-        val messageText = message.message
+        val messageText = message.message.lowercase()
         if (messageText.contains(" ")) {
             val dateString = messageText.substring(messageText.indexOf(" ") + 1)
 
