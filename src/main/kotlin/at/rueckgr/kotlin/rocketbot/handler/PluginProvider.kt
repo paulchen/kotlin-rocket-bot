@@ -34,14 +34,14 @@ object PluginProvider {
     private fun addCommandPlugin(plugin: AbstractPlugin, commands: List<String>) {
         commands.forEach { command ->
             if(command !in commandPlugins) {
-                commandPlugins[command] = ArrayList()
+                commandPlugins[command.lowercase()] = ArrayList()
             }
-            commandPlugins[command]?.add(plugin)
+            commandPlugins[command.lowercase()]?.add(plugin)
         }
         allPlugins.add(plugin)
     }
 
-    fun getByCommand(command: String): List<AbstractPlugin> = commandPlugins[command].orEmpty()
+    fun getByCommand(command: String): List<AbstractPlugin> = commandPlugins[command.lowercase()].orEmpty()
 
     fun getCommands() = commandPlugins.keys.toList()
 
