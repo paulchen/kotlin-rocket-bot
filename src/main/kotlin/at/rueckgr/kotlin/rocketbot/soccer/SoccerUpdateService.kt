@@ -93,7 +93,7 @@ class SoccerUpdateService : Logging {
         }
 
         notificationChannels.forEach { roomName ->
-            Bot.webserviceMessageQueue.add(WebserviceMessage(Bot.knownChannelNamesToIds[roomName], null, message, ":soccer:", username))
+            Bot.webserviceMessageQueue.add(WebserviceMessage(null, roomName, message, ":soccer:", username))
         }
 
         DataImportService().setFixturesToAnnounced(filteredResults)
@@ -119,7 +119,7 @@ class SoccerUpdateService : Logging {
         val matchTitleShort = MatchTitleService.formatMatchTitleShort(fixture)
         val formattedMessage = ":mega: $matchTitleShort: $message"
 
-        return WebserviceMessage(Bot.knownChannelNamesToIds[roomName], null, formattedMessage, ":soccer:", username)
+        return WebserviceMessage(null, roomName, formattedMessage, ":soccer:", username)
     }
 
     private fun hasLiveFixtures(updateResult: List<ImportFixtureResult>): Boolean {

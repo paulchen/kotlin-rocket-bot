@@ -138,9 +138,9 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
         }
     }
 
-    private fun getChannelIds(channelNames: List<String>?) = channelNames?.mapNotNull { Bot.knownChannelNamesToIds[it] }
+    private fun getChannelIds(channelNames: List<String>?) = channelNames?.mapNotNull { Bot.subscriptionService.getChannelIdByName(it) }
 
-    private fun getChannelName(channelId: String) = Bot.knownChannelNamesToIds.entries.firstOrNull { it.value == channelId }?.key ?: channelId
+    private fun getChannelName(channelId: String) = Bot.subscriptionService.getChannelNameById(channelId) ?: channelId
 
     private fun fetchLastActivity(roomId: String) = ArchiveService().getChannelInfo(roomId)?.lastActivity
 
