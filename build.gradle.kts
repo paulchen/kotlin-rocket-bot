@@ -3,12 +3,12 @@ import java.io.ByteArrayOutputStream
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.6.4"
-val ktorVersion = "2.1.3"
+val ktorVersion = "2.2.2"
 val jacksonVersion = "2.14.0"
 
 plugins {
-    kotlin("jvm") version "1.7.22"
-    kotlin("plugin.serialization") version "1.7.22"
+    kotlin("jvm") version "1.8.0"
+    kotlin("plugin.serialization") version "1.8.0"
     application
     id("com.palantir.docker") version "0.34.0"
     groovy
@@ -79,16 +79,16 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.22")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.8.0")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.apache.groovy:groovy-all:4.0.6")
+    testImplementation("org.apache.groovy:groovy-all:4.0.7")
     testImplementation("org.spockframework:spock-core:2.4-M1-groovy-4.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.10.0")
     testImplementation("org.apache.commons:commons-io:1.3.2")
     testImplementation("org.ktorm:ktorm-support-mysql:3.5.0")
     testImplementation("com.h2database:h2:2.1.214")
-    testImplementation("org.assertj:assertj-core:3.23.1")
+    testImplementation("org.assertj:assertj-core:3.24.2")
 }
 
 tasks.test {
