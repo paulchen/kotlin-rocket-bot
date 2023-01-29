@@ -15,6 +15,6 @@ RUN addgroup --gid 32001 mygroup
 RUN adduser --disabled-password --ingroup mygroup --uid 32001 myuser
 USER myuser
 
-WORKDIR /app/kotlin-rocket-bot-latest
-CMD ["bin/kotlin-rocket-bot"]
+WORKDIR /app/bot-latest
+CMD ["bin/bot"]
 

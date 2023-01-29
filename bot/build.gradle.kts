@@ -126,7 +126,7 @@ distributions {
 }
 
 docker {
-    name = "${project.name}:latest"
+    name = "${project.parent!!.name}:latest"
     files("build/distributions")
     noCache(true)
 }
