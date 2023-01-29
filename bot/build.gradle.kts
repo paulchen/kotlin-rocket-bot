@@ -133,7 +133,7 @@ docker {
 
 tasks.create("createVersionFile") {
     doLast {
-        val file = File("build/generated/resources/git-revision")
+        val file = File("$projectDir/build/generated/resources/git-revision")
         project.mkdir(file.parentFile.path)
         file.delete()
 
@@ -160,12 +160,12 @@ tasks.dockerPrepare {
 }
 
 openApiValidate {
-    inputSpec.set("$rootDir/src/main/resources/openapi/api-football.yaml")
+    inputSpec.set("$projectDir/src/main/resources/openapi/api-football.yaml")
 }
 
 openApiGenerate {
     generatorName.set("kotlin")
-    inputSpec.set("$rootDir/src/main/resources/openapi/api-football.yaml")
+    inputSpec.set("$projectDir/src/main/resources/openapi/api-football.yaml")
     validateSpec.set(true)
     logToStderr.set(true)
     outputDir.set("$buildDir/generated/openapi")

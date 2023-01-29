@@ -9,7 +9,7 @@ ENV JAVA_HOME=/opt/java/openjdk
 COPY --from=eclipse-temurin:17-jdk $JAVA_HOME $JAVA_HOME
 
 RUN mkdir /app
-ADD kotlin-rocket-bot-latest.tar /app
+ADD bot-latest.tar /app
 
 RUN addgroup --gid 32001 mygroup
 RUN adduser --disabled-password --ingroup mygroup --uid 32001 myuser
