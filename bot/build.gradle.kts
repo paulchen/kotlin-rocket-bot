@@ -7,6 +7,7 @@ val ktorVersion = "2.2.2"
 val jacksonVersion = "2.14.0"
 
 plugins {
+    id("kotlin-rocket-bot.conventions")
     kotlin("jvm") version "1.8.0"
     kotlin("plugin.serialization") version "1.8.0"
     application
@@ -28,14 +29,6 @@ tasks.withType<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
     }
 }
 
-group = "at.rueckgr.kotlin.rocketbot"
-version = "1.0-SNAPSHOT"
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 sourceSets {
     main {
         java {
@@ -51,6 +44,8 @@ sourceSets {
 }
 
 dependencies {
+    implementation(project(":unicode"))
+
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 

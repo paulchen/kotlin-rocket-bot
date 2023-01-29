@@ -1,4 +1,4 @@
 
 rootProject.name = "kotlin-rocket-bot"
 
-include("bot")
+include("unicode", "bot")
