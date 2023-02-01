@@ -139,16 +139,16 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
     override fun getHelp(command: String) = emptyList<String>()
 
     override fun reinit() {
+        init()
+    }
+
+    override fun init() {
         synchronized(this) {
             HashMap(scheduledFutures).forEach { cancelExecution(it.key) }
             nextExecutions.clear()
             lastActivities.clear()
-
-            init()
         }
-    }
 
-    override fun init() {
         val configuration = try {
             validateConfiguration()
         }
