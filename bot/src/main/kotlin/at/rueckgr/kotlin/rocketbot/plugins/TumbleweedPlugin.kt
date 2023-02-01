@@ -3,6 +3,9 @@ package at.rueckgr.kotlin.rocketbot.plugins
 import at.rueckgr.kotlin.rocketbot.*
 import at.rueckgr.kotlin.rocketbot.exception.ConfigurationException
 import at.rueckgr.kotlin.rocketbot.util.*
+import de.focus_shift.HolidayManager
+import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.Executors
@@ -70,19 +73,46 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
         val nextExecution = lastActivity.plusSeconds(secondsFromLastExecution)
 
         val actualNextExecution = if (nextExecution.toLocalTime().isAfter(configuration.dayEnd)) {
-            LocalDateTime.of(nextExecution.toLocalDate().plusDays(1), configuration.dayStart)
-        }
-        else if (nextExecution.toLocalTime().isBefore(configuration.dayStart)) {
-            LocalDateTime.of(nextExecution.toLocalDate(), configuration.dayStart)
+            val day = nextExecution.toLocalDate().plusDays(1)
+            LocalDateTime.of(day, calculcateDayStart(configuration, day))
         }
         else {
-            nextExecution
+            val dayStart = calculcateDayStart(configuration, nextExecution.toLocalDate())
+            if (nextExecution.toLocalTime().isBefore(dayStart)) {
+                LocalDateTime.of(nextExecution.toLocalDate(), dayStart)
+            }
+            else {
+                nextExecution
+            }
         }
         nextExecutions[roomId] = actualNextExecution
 
         logger().debug("Calculated next execution for channel {} at {}", roomId, actualNextExecution)
 
         return ChronoUnit.SECONDS.between(LocalDateTime.now(), actualNextExecution)
+    }
+
+    private fun calculcateDayStart(configuration: TumbleweedPluginConfiguration, day: LocalDate) =
+        if (configuration.dayStartWeekend == null) {
+            configuration.dayStart
+        }
+        else if (day.dayOfWeek == DayOfWeek.SATURDAY || day.dayOfWeek == DayOfWeek.SUNDAY) {
+            configuration.dayStartWeekend
+        }
+        else if (configuration.holidayCountry == null) {
+            configuration.dayStart
+        }
+        else if (isHoliday(configuration.holidayCountry, day)) {
+            configuration.dayStartWeekend
+        }
+        else {
+            configuration.dayStart
+        }
+
+    private fun isHoliday(countryCode: String, day: LocalDate): Boolean {
+        val holiday = HolidayManager.getInstance().isHoliday(day, countryCode)
+        logger().debug("Is {} a holiday in {}? {}", day, countryCode, holiday)
+        return holiday
     }
 
     private fun postTumbleweed(roomId: String) {
@@ -179,6 +209,9 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
         }
         if (configuration.dayStart.isAfter(configuration.dayEnd)) {
             throw ConfigurationException(0, "Configuration contains invalid range for day")
+        }
+        if (configuration.dayStartWeekend != null && configuration.dayStartWeekend.isAfter(configuration.dayEnd)) {
+            throw ConfigurationException(0, "Configuration contains invalid range for weekends")
         }
         return configuration
     }

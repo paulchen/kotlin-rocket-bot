@@ -58,7 +58,9 @@ data class TumbleweedPluginConfiguration(
     val minimumInactivity: Long?,
     val maximumInactivity: Long?,
     val dayStart: LocalTime?,
-    val dayEnd: LocalTime?
+    val dayStartWeekend: LocalTime?,
+    val dayEnd: LocalTime?,
+    val holidayCountry: String?
 )
 
 data class WebserviceConfiguration(

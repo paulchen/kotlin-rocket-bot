@@ -33,9 +33,11 @@ plugins:
     tumbleweedUrls:
       - https://media.tenor.com/Ofev06wBI64AAAAd/tumbleweed-highway.gif
     minimumInactivity: 10
-    maximumInactivity: 3ß
+    maximumInactivity: 30
     dayStart: 10:00
     dayEnd: 20:00
+    dayStartWeekend: 12:00
+    holidayCountry: at
 
 webservice:
   users:

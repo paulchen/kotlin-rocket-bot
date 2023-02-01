@@ -68,6 +68,8 @@ dependencies {
     implementation("org.ktorm:ktorm-core:3.5.0")
     implementation("org.ktorm:ktorm-support-postgresql:3.5.0")
 
+    implementation("de.focus-shift:jollyday-jaxb:0.11.0")
+
     // dependencies for generated OpenAPI client
     implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
     implementation("com.squareup.moshi:moshi-adapters:1.14.0")
