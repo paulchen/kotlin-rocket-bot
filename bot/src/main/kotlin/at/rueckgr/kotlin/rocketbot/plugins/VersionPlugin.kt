@@ -1,9 +1,11 @@
 package at.rueckgr.kotlin.rocketbot.plugins
 
 import at.rueckgr.kotlin.rocketbot.ArchiveService
+import at.rueckgr.kotlin.rocketbot.Bot
 import at.rueckgr.kotlin.rocketbot.OutgoingMessage
 import at.rueckgr.kotlin.rocketbot.EventHandler
 import at.rueckgr.kotlin.rocketbot.util.LibraryVersion
+import at.rueckgr.kotlin.rocketbot.util.RestApiClient
 import at.rueckgr.kotlin.rocketbot.util.VersionHelper
 
 class VersionPlugin : AbstractPlugin() {
@@ -14,9 +16,11 @@ class VersionPlugin : AbstractPlugin() {
 
     override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
         val archiveRevision = ArchiveService().getVersion()
+        val rocketchatVersion = RestApiClient(Bot.host).getInstanceVersion() ?: "unknown"
 
         val builder = StringBuilder()
 
+        builder.append("*Rocket.Chat* version `$rocketchatVersion`\n")
         builder.append("*kotlin-rocket-bot* revision `${botRevision.revision}` ( _${botRevision.commitMessage}_ )\n")
         builder.append("*kotlin-rocket-lib* revision `${libraryRevision.revision}` ( _${libraryRevision.commitMessage}_ )\n")
         builder.append("*rocketchat-archive* revision `${archiveRevision.revision}` ( _${archiveRevision.commitMessage}_ )")
