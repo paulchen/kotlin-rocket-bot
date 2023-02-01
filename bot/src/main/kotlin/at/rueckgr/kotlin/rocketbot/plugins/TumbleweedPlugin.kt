@@ -7,6 +7,7 @@ import de.focus_shift.HolidayManager
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
@@ -158,7 +159,13 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
         synchronized(this) {
             getChannelIds(configuration.tumbleweedChannels)
                 ?.forEach {
-                    val lastActivity = fetchLastActivity(it)
+                    val lastActivity = try {
+                        fetchLastActivity(it)
+                    }
+                    catch (e: Exception) {
+                        logger().info("Error fetching last activity for channel {} from archive, assuming current timestamp", it, e)
+                        ZonedDateTime.now()
+                    }
                     logger().debug("Fetched last activity in room {} from archive: {}", it, lastActivity)
                     if (lastActivity != null) {
                         lastActivities[it] = toLocalDateTime(lastActivity)
