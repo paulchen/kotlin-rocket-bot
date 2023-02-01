@@ -153,6 +153,7 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
             validateConfiguration()
         }
         catch (e: ConfigurationException) {
+            logger().info(e)
             return
         }
 
