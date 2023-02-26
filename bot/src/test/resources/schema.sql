@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS venue;
 
 CREATE TABLE venue (
     id INT NOT NULL,
-    name VARCHAR(255),
+    "name" VARCHAR(255),
     city VARCHAR(255),
     country VARCHAR(255),
     capacity VARCHAR(255),
