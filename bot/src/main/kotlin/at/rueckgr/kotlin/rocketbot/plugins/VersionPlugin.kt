@@ -15,15 +15,16 @@ class VersionPlugin : AbstractPlugin() {
     override fun getCommands(): List<String> = listOf("version")
 
     override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
-        val archiveRevision = ArchiveService().getVersion()
+        val archiveVersion = ArchiveService().getVersion()
         val rocketchatVersion = RestApiClient(Bot.host).getInstanceVersion() ?: "unknown"
 
         val builder = StringBuilder()
 
         builder.append("*Rocket.Chat* version `$rocketchatVersion`\n")
+        builder.append("*MongoDB* version `${archiveVersion.mongoDbVersion}`\n")
         builder.append("*kotlin-rocket-bot* revision `${botRevision.revision}` ( _${botRevision.commitMessage}_ )\n")
         builder.append("*kotlin-rocket-lib* revision `${libraryRevision.revision}` ( _${libraryRevision.commitMessage}_ )\n")
-        builder.append("*rocketchat-archive* revision `${archiveRevision.revision}` ( _${archiveRevision.commitMessage}_ )")
+        builder.append("*rocketchat-archive* revision `${archiveVersion.version.revision}` ( _${archiveVersion.version.commitMessage}_ )")
 
         return listOf(OutgoingMessage(builder.toString()))
     }
@@ -34,7 +35,9 @@ class VersionPlugin : AbstractPlugin() {
     override fun getProblems(): List<String> {
         val archiveRevision = ArchiveService().getVersion()
 
-        return if (archiveRevision.revision == "unknown" || archiveRevision.commitMessage == "unknown") {
+        return if (archiveRevision.version.revision == "unknown" ||
+                archiveRevision.version.commitMessage == "unknown" ||
+                archiveRevision.mongoDbVersion == "unknown") {
             listOf("Unable to fetch version information from archive")
         }
         else {

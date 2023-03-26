@@ -10,6 +10,7 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
+import io.ktor.http.content.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
@@ -27,7 +28,7 @@ data class User(
 )
 
 @Serializable
-data class VersionDetails(val version: VersionInfo)
+data class VersionDetails(val version: VersionInfo, val mongoDbVersion: String)
 
 @Serializable
 data class ChannelInfo(
@@ -63,15 +64,14 @@ class ArchiveService : Logging {
         }
     }
 
-    fun getVersion(): VersionInfo {
+    fun getVersion(): VersionDetails {
         return runBlocking {
             try {
-                val versionDetails: VersionDetails = getClient().get("http://backend:8081/version").body()
-                versionDetails.version
+                getClient().get("http://backend:8081/version").body()
             }
             catch (e: Exception) {
                 logger().error("Exception occurred", e)
-                VersionInfo("unknown", "unknown")
+                VersionDetails(VersionInfo("unknown", "unknown"), "unknown")
             }
         }
     }
