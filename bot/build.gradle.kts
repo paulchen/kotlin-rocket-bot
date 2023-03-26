@@ -3,7 +3,7 @@ import java.io.ByteArrayOutputStream
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.6.4"
-val ktorVersion = "2.2.3"
+val ktorVersion = "2.2.4"
 val jacksonVersion = "2.14.2"
 val ktormVersion = "3.6.0"
 
@@ -26,7 +26,9 @@ tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("
 
 tasks.withType<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask> {
     rejectVersionIf {
-        candidate.version.toLowerCase().contains("alpha") || candidate.version.toLowerCase().contains("beta")
+        candidate.version.toLowerCase().contains("alpha") ||
+                candidate.version.toLowerCase().contains("beta") ||
+                candidate.version.toLowerCase().contains("rc")
     }
 }
 
@@ -65,11 +67,11 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("at.favre.lib:bcrypt:0.10.2")
 
-    implementation("org.postgresql:postgresql:42.5.4")
+    implementation("org.postgresql:postgresql:42.6.0")
     implementation("org.ktorm:ktorm-core:$ktormVersion")
     implementation("org.ktorm:ktorm-support-postgresql:$ktormVersion")
 
-    implementation("de.focus-shift:jollyday-jaxb:0.12.0")
+    implementation("de.focus-shift:jollyday-jaxb:0.13.0")
 
     // dependencies for generated OpenAPI client
     implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
@@ -79,7 +81,7 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.8.0")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.apache.groovy:groovy-all:4.0.9")
+    testImplementation("org.apache.groovy:groovy-all:4.0.10")
     testImplementation("org.spockframework:spock-core:2.4-M1-groovy-4.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.10.0")
