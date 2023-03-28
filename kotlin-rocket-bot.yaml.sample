@@ -38,6 +38,8 @@ plugins:
     dayEnd: 20:00
     dayStartWeekend: 12:00
     holidayCountry: at
+  seriousMode:
+    duration: 3600
 
 webservice:
   users:

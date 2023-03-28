@@ -22,7 +22,8 @@ data class PluginsConfiguration(
     val simpleReply: SimpleReplyPluginConfiguration?,
     val admin: AdminPluginConfiguration?,
     val soccer: SoccerPluginConfiguration?,
-    val tumbleweed: TumbleweedPluginConfiguration?
+    val tumbleweed: TumbleweedPluginConfiguration?,
+    val seriousMode: SeriousModePluginConfiguration?
 )
 
 data class SimpleReplyPluginConfiguration(
@@ -61,6 +62,10 @@ data class TumbleweedPluginConfiguration(
     val dayStartWeekend: LocalTime?,
     val dayEnd: LocalTime?,
     val holidayCountry: String?
+)
+
+data class SeriousModePluginConfiguration(
+    val duration: Long?
 )
 
 data class WebserviceConfiguration(

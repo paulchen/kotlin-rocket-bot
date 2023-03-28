@@ -71,7 +71,13 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
         val secondsFromLastExecution = (0..timeRange).random() + configuration.minimumInactivity
         logger().debug("Next execution {} seconds after last activity (range: {} to {} seconds)",
             secondsFromLastExecution, configuration.minimumInactivity, configuration.maximumInactivity)
-        val nextExecution = lastActivity.plusSeconds(secondsFromLastExecution)
+        val nextExecution = if(SeriousModeService().isInSeriousMode(roomId) &&
+                lastActivity.plusSeconds(secondsFromLastExecution).isBefore(LocalDateTime.now())) {
+            LocalDateTime.now().plusHours(1)
+        }
+        else {
+            lastActivity.plusSeconds(secondsFromLastExecution)
+        }
 
         val actualNextExecution = if (nextExecution.toLocalTime().isAfter(configuration.dayEnd)) {
             val day = nextExecution.toLocalDate().plusDays(1)
@@ -117,6 +123,17 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
     }
 
     private fun postTumbleweed(roomId: String) {
+        if (SeriousModeService().isInSeriousMode(roomId)) {
+            logger().debug("Not posting tumbleweed as $roomId currently is in serious mode")
+
+            synchronized(this) {
+                cancelExecution(roomId)
+                scheduleExecution(roomId)
+            }
+
+            return
+        }
+
         try {
             val configuration = validateConfiguration()
             if (configuration.tumbleweedUrls!!.isNotEmpty()) {

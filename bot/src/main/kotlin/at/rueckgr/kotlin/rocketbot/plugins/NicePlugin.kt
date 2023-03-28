@@ -31,4 +31,6 @@ class NicePlugin : AbstractPlugin(), Logging {
     override fun getHelp(command: String): List<String> = emptyList()
 
     override fun getProblems(): List<String> = emptyList()
+
+    override fun runInSeriousMode() = false
 }

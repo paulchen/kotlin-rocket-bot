@@ -45,4 +45,6 @@ class SimpleReplyPlugin : AbstractPlugin(), Logging {
     }
 
     override fun handleBotMessages() = true
+
+    override fun runInSeriousMode() = false
 }

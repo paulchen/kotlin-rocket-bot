@@ -9,10 +9,11 @@ import kotlinx.coroutines.runBlocking
 
 class MessageHandler : EventHandler, Logging {
     override fun handleRoomMessage(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
+        val seriousMode = SeriousModeService().isInSeriousMode(channel.id)
         val messageWithoutQuote = EventHandler.Message(removeQuote(message.message), message.botMessage)
         if (!messageWithoutQuote.message.startsWith("!")) {
             logger().debug("Message contains no command, applying general plugins")
-            return applyGeneralPlugins(channel, user, messageWithoutQuote)
+            return applyGeneralPlugins(channel, user, messageWithoutQuote, seriousMode)
         }
 
         val command = messageWithoutQuote.message.split(" ")[0].substring(1)
@@ -23,11 +24,19 @@ class MessageHandler : EventHandler, Logging {
             return commandPlugins
                 .filter { !message.botMessage || it.handleBotMessages() }
                 .filter { it.getChannelTypes().contains(channel.type) }
-                .flatMap { it.handle(channel, user, messageWithoutQuote) }
+                .flatMap {
+                    if(seriousMode && !it.runInSeriousMode()) {
+                        logger().info("Not applying plugin ${it.javaClass.name} as ${channel.id} is in serious mode")
+                        emptyList()
+                    }
+                    else {
+                        it.handle(channel, user, messageWithoutQuote)
+                    }
+                }
         }
 
         logger().debug("No handler for command {} found, applying general plugins", command)
-        return applyGeneralPlugins(channel, user, messageWithoutQuote)
+        return applyGeneralPlugins(channel, user, messageWithoutQuote, seriousMode)
     }
 
     override fun handleOwnMessage(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> = PluginProvider.getAllPlugins()
@@ -48,10 +57,18 @@ class MessageHandler : EventHandler, Logging {
         }
     }
 
-    private fun applyGeneralPlugins(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message) = PluginProvider.getGeneralPlugins()
+    private fun applyGeneralPlugins(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message, seriousMode: Boolean) = PluginProvider.getGeneralPlugins()
             .filter { !message.botMessage || it.handleBotMessages() }
             .filter { it.getChannelTypes().contains(channel.type) }
-            .flatMap { it.handle(channel, user, message) }
+            .flatMap {
+                if(seriousMode && !it.runInSeriousMode()) {
+                    logger().info("Not applying plugin ${it.javaClass.simpleName} as ${channel.id} is in serious mode")
+                    emptyList()
+                }
+                else {
+                    it.handle(channel, user, message)
+                }
+        }
 
     private fun removeQuote(message: String): String {
         return message.replace("""^\[[^]]*]\([^)]*\)""".toRegex(), "").trim()

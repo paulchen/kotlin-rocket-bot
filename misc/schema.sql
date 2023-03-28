@@ -34,3 +34,10 @@ CREATE TABLE fixture (
     PRIMARY KEY (id),
     FOREIGN KEY (venue_id) REFERENCES venue (id)
 );
+
+CREATE TABLE serious_mode (
+    channel_id VARCHAR(255) NOT NULL,
+    start_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    PRIMARY KEY (channel_id)
+);

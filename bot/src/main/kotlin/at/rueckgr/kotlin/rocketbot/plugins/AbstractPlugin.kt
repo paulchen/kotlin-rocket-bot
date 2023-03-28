@@ -34,4 +34,6 @@ abstract class AbstractPlugin {
     open fun handleBotMessages(): Boolean = false
 
     open fun getAdditionalStatus(): Map<String, String> = emptyMap()
+
+    open fun runInSeriousMode(): Boolean = true
 }
