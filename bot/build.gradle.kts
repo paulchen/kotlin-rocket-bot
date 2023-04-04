@@ -12,7 +12,6 @@ plugins {
     kotlin("jvm") version "1.8.10"
     kotlin("plugin.serialization") version "1.8.10"
     application
-    id("com.palantir.docker") version "0.34.0"
     groovy
     id("org.openapi.generator") version "6.4.0"
     id("com.github.ben-manes.versions") version "0.46.0"
@@ -125,12 +124,6 @@ distributions {
     }
 }
 
-docker {
-    name = "${project.parent!!.name}:latest"
-    files("build/distributions")
-    noCache(true)
-}
-
 tasks.create("createVersionFile") {
     doLast {
         val file = File("$projectDir/build/generated/resources/git-revision")
@@ -153,10 +146,6 @@ fun runGit(vararg args: String): String {
 
 tasks.processResources {
     dependsOn("createVersionFile")
-}
-
-tasks.dockerPrepare {
-    dependsOn(tasks.build)
 }
 
 openApiValidate {
