@@ -37,7 +37,7 @@ fi
 docker pull debian:bullseye-slim || exit 3
 docker pull eclipse-temurin:17-jdk || exit 3
 
-./gradlew distTar || exit 3
+./gradlew build || exit 3
 
 docker build --no-cache -t kotlin-rocket-bot:latest bot || exit 3
 
