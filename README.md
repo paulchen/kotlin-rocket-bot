@@ -11,6 +11,11 @@ to the local Maven repository by running
 
 `gradlew publishToMavenLocal`
 
+Alternatively, you can also use the version of `kotlin-rocket-lib` from Maven Central.
+In that case, identify the most recent version on
+[Maven Central](https://central.sonatype.com/artifact/at.rueckgr.kotlin.rocketbot/kotlin-rocket-lib)
+and adapt the dependency in the Gradle build file `bot/build.gradle.kts` accordingly.
+
 Then, build the local Docker image of `kotlin-rocket-bot` (`kotlin-rocket-bot:latest`) with:
 
 `gradlew docker`
