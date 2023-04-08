@@ -26,7 +26,8 @@ Run the Docker image with:
 
 `docker run -it -v /etc/kotlin-rocket-bot:/config kotlin-rocket-bot:latest`
 
-A systemd unit file for launching the bot could look like this:
+To create a systemd unit file for launching the bot, you can take use of the script `misc/start.sh`.
+Adapt it to your needs (e.g. modify paths) and create a systemd unit file like this one:
 
 ```[Unit]
 Description=kotlin-rocket-bot
@@ -40,17 +41,7 @@ TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker stop kotlin-rocket-bot
 ExecStartPre=-/usr/bin/docker rm kotlin-rocket-bot
 
-ExecStart=/usr/bin/docker run \
-    --name kotlin-rocket-bot \
-    -v /etc/kotlin-rocket-bot:/config \
-    -v /var/cache/kotlin-rocket-bot:/cache \
-    -e TZ=Europe/Vienna \
-    --net=rocketchat_default \
-    -p 127.0.0.1:8081:8082 \
-    --add-host=host.docker.internal:host-gateway \
-    --log-driver=journald \
-    --log-opt tag={{.ImageName}} \
-    kotlin-rocket-bot:latest
+ExecStart=/opt/kotlin-rocket-bot/misc/start.sh
 
 ExecStop=-/usr/bin/docker stop kotlin-rocket-bot
 ExecStop=-/usr/bin/docker rm kotlin-rocket-bot
@@ -70,7 +61,7 @@ chgrp 1024 /var/cache/kotlin-rocket-bot
 
 When correctly set up, the bot will place files there that may help for tracing down any problems.
 
-The above systemd unit will expose the container's port `8082` to `localhost:8081`.
+`misc/start.sh` will expose the container's port `8082` to `localhost:8081`.
 This port features a webservice intended to be called by the Icinga check script `misc/check_bot.sh`.
 This script expects the port of the webservice in the environment variable `WEBSERVICE_PORT`:
 
@@ -110,9 +101,8 @@ localhost:8081/message`
 ```
 
 The backend opens a port for a debugger to connect on port `5005`.
-This port is not exposed in the above configuration.
-To expose it to the host, add an additional `-p` argument to the call
-to `docker run` in the systemd unit file, e.g.
+By default, this port is not exposed by `misc/start.sh`.
+To expose it to the host, uncomment the following line in `misc/start.sh`:
 
 ```
 -p 127.0.0.1:5005:5005

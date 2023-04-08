@@ -17,11 +17,13 @@ class VersionPlugin : AbstractPlugin() {
     override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
         val archiveVersion = ArchiveService().getVersion()
         val rocketchatVersion = RestApiClient(Bot.host).getInstanceVersion() ?: "unknown"
+        val dockerVersion = System.getenv("DOCKER_VERSION") ?: "unknown"
 
         val builder = StringBuilder()
 
         builder.append("*Rocket.Chat* version `$rocketchatVersion`\n")
         builder.append("*MongoDB* version `${archiveVersion.mongoDbVersion}`\n")
+        builder.append("*Docker* version `$dockerVersion`\n")
         builder.append("*kotlin-rocket-bot* revision `${botRevision.revision}` ( _${botRevision.commitMessage}_ )\n")
         builder.append("*kotlin-rocket-lib* revision `${libraryRevision.revision}` ( _${libraryRevision.commitMessage}_ )\n")
         builder.append("*rocketchat-archive* revision `${archiveVersion.version.revision}` ( _${archiveVersion.version.commitMessage}_ )")
@@ -30,7 +32,7 @@ class VersionPlugin : AbstractPlugin() {
     }
 
     override fun getHelp(command: String): List<String> =
-        listOf("`!version` outputs the Git revision of kotlin-rocket-bot currently running")
+        listOf("`!version` outputs the version of kotlin-rocket-bot currently running, among several other relevant components")
 
     override fun getProblems(): List<String> {
         val archiveRevision = ArchiveService().getVersion()
