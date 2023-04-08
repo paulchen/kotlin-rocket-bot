@@ -17,7 +17,7 @@ class VersionPlugin : AbstractPlugin() {
     override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
         val archiveVersion = ArchiveService().getVersion()
         val rocketchatVersion = RestApiClient(Bot.host).getInstanceVersion() ?: "unknown"
-        val dockerVersion = System.getenv("DOCKER_VERSION") ?: "unknown"
+        val dockerVersion = System.getenv("DOCKER_VERSION")?.replace("Docker version ", "") ?: "unknown"
 
         val builder = StringBuilder()
 
