@@ -3,17 +3,18 @@ import java.io.ByteArrayOutputStream
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.6.4"
-val ktorVersion = "2.2.4"
-val jacksonVersion = "2.14.2"
+val ktorVersion = "2.3.0"
+val jacksonVersion = "2.15.0"
 val ktormVersion = "3.6.0"
+val okhttpVersion = "4.11.0"
 
 plugins {
     id("kotlin-rocket-bot.conventions")
-    kotlin("jvm") version "1.8.10"
-    kotlin("plugin.serialization") version "1.8.10"
+    kotlin("jvm") version "1.8.21"
+    kotlin("plugin.serialization") version "1.8.21"
     application
     groovy
-    id("org.openapi.generator") version "6.4.0"
+    id("org.openapi.generator") version "6.5.0"
     id("com.github.ben-manes.versions") version "0.46.0"
     id("jacoco")
     id("org.sonarqube") version "4.0.0.2929"
@@ -70,20 +71,20 @@ dependencies {
     implementation("org.ktorm:ktorm-core:$ktormVersion")
     implementation("org.ktorm:ktorm-support-postgresql:$ktormVersion")
 
-    implementation("de.focus-shift:jollyday-jaxb:0.13.0")
+    implementation("de.focus-shift:jollyday-jaxb:0.14.0")
 
     // dependencies for generated OpenAPI client
     implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
     implementation("com.squareup.moshi:moshi-adapters:1.14.0")
-    implementation("com.squareup.okhttp3:okhttp:4.10.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+    implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
+    implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.8.0")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.apache.groovy:groovy-all:4.0.10")
+    testImplementation("org.apache.groovy:groovy-all:4.0.11")
     testImplementation("org.spockframework:spock-core:2.4-M1-groovy-4.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
-    testImplementation("com.squareup.okhttp3:mockwebserver:4.10.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
+    testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
     testImplementation("org.apache.commons:commons-io:1.3.2")
     testImplementation("org.ktorm:ktorm-support-mysql:$ktormVersion")
     testImplementation("com.h2database:h2:2.1.214")
@@ -115,6 +116,12 @@ application {
         "--add-opens", "java.base/java.nio=ALL-UNNAMED",
         "-Dio.netty.tryReflectionSetAccessible=true",
         "-agentlib:jdwp=transport=dt_socket,server=y,address=*:5005,suspend=n",
+	"-Dcom.sun.management.jmxremote=true",
+	"-Dcom.sun.management.jmxremote.ssl=false",
+	"-Dcom.sun.management.jmxremote.authenticate=false",
+	"-Dcom.sun.management.jmxremote.port=9010",
+	"-Djava.rmi.server.hostname=localhost",
+	"-Dcom.sun.management.jmxremote.rmi.port=9011"
     )
 }
 
