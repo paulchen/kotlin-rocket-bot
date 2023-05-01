@@ -4,6 +4,7 @@ import at.rueckgr.kotlin.rocketbot.*
 import at.rueckgr.kotlin.rocketbot.exception.ConfigurationException
 import at.rueckgr.kotlin.rocketbot.util.*
 import de.focus_shift.HolidayManager
+import de.focus_shift.ManagerParameters
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -117,7 +118,7 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
         }
 
     private fun isHoliday(countryCode: String, day: LocalDate): Boolean {
-        val holiday = HolidayManager.getInstance().isHoliday(day, countryCode)
+        val holiday = HolidayManager.getInstance(ManagerParameters.create(countryCode)).isHoliday(day)
         logger().debug("Is {} a holiday in {}? {}", day, countryCode, holiday)
         return holiday
     }
