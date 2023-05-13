@@ -72,7 +72,6 @@ dependencies {
     implementation("org.ktorm:ktorm-support-postgresql:$ktormVersion")
 
     implementation("de.focus-shift:jollyday-jaxb:0.14.0")
-    implementation("com.sealwu:kscript-tools:1.0.22")
 
     // dependencies for generated OpenAPI client
     implementation("com.squareup.moshi:moshi-kotlin:1.14.0")

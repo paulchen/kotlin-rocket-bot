@@ -7,8 +7,6 @@ import at.rueckgr.kotlin.rocketbot.EventHandler
 import at.rueckgr.kotlin.rocketbot.util.LibraryVersion
 import at.rueckgr.kotlin.rocketbot.util.RestApiClient
 import at.rueckgr.kotlin.rocketbot.util.VersionHelper
-import evalBash
-import java.util.*
 
 class VersionPlugin : AbstractPlugin() {
     private val botRevision = VersionHelper.getVersion()
@@ -20,7 +18,7 @@ class VersionPlugin : AbstractPlugin() {
         val archiveVersion = ArchiveService().getVersion()
         val rocketchatVersion = RestApiClient(Bot.host).getInstanceVersion() ?: "unknown"
         val dockerVersion = System.getenv("DOCKER_VERSION")?.replace("Docker version ", "") ?: "unknown"
-        val kernelVersion = getKernelVersion()
+        val kernelVersion = System.getenv("LINUX_VERSION") ?: "unknown"
 
         val builder = StringBuilder()
 
@@ -33,13 +31,6 @@ class VersionPlugin : AbstractPlugin() {
         builder.append("*rocketchat-archive* revision `${archiveVersion.version.revision}` ( _${archiveVersion.version.commitMessage}_ )")
 
         return listOf(OutgoingMessage(builder.toString()))
-    }
-
-    private fun getKernelVersion(): String {
-        if (System.getProperty("os.name").lowercase().startsWith("windows")) {
-            return "unknown"
-        }
-        return "uname -a".evalBash(env = emptyMap()).getOrDefault("unknown")
     }
 
     override fun getHelp(command: String): List<String> =
