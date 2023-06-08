@@ -12,3 +12,15 @@ tasks.withType<JavaCompile> {
     sourceCompatibility = "17"
     targetCompatibility = "17"
 }
+
+tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates").configure {
+    gradleReleaseChannel = "current"
+}
+
+tasks.withType<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask> {
+    rejectVersionIf {
+        candidate.version.lowercase().contains("alpha") ||
+                candidate.version.lowercase().contains("beta") ||
+                candidate.version.lowercase().contains("rc")
+    }
+}
