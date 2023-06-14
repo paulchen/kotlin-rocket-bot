@@ -34,7 +34,7 @@ if [ "$LIB_VERSION" != "$LIB_DEPENDENCY_VERSION" ]; then
 	exit 4
 fi
 
-docker pull debian:bullseye-slim || exit 3
+docker pull debian:bookworm-slim || exit 3
 docker pull eclipse-temurin:17-jdk || exit 3
 
 ./gradlew clean build || exit 3
