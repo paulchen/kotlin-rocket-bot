@@ -2,8 +2,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
 val reflectionsVersion = "0.10.2"
-val coroutinesVersion = "1.7.1"
-val ktorVersion = "2.3.1"
+val coroutinesVersion = "1.7.2"
+val ktorVersion = "2.3.2"
 val jacksonVersion = "2.15.2"
 val ktormVersion = "3.6.0"
 val okhttpVersion = "4.11.0"
@@ -15,9 +15,9 @@ plugins {
     application
     groovy
     id("org.openapi.generator") version "6.6.0"
-    id("com.github.ben-manes.versions") version "0.46.0"
+    id("com.github.ben-manes.versions") version "0.47.0"
     id("jacoco")
-    id("org.sonarqube") version "4.2.0.3129"
+    id("org.sonarqube") version "4.2.1.3168"
 }
 
 tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates").configure {
@@ -81,7 +81,7 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.8.0")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.apache.groovy:groovy-all:4.0.12")
+    testImplementation("org.apache.groovy:groovy-all:4.0.13")
     testImplementation("org.spockframework:spock-core:2.4-M1-groovy-4.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0-M1")
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
