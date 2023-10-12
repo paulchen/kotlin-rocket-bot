@@ -3,21 +3,21 @@ import java.io.ByteArrayOutputStream
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.7.3"
-val ktorVersion = "2.3.3"
+val ktorVersion = "2.3.5"
 val jacksonVersion = "2.15.2"
 val ktormVersion = "3.6.0"
 val okhttpVersion = "4.11.0"
 
 plugins {
     id("kotlin-rocket-bot.conventions")
-    kotlin("jvm") version "1.9.0"
-    kotlin("plugin.serialization") version "1.9.0"
+    kotlin("jvm") version "1.9.10"
+    kotlin("plugin.serialization") version "1.9.10"
     application
     groovy
-    id("org.openapi.generator") version "6.6.0"
-    id("com.github.ben-manes.versions") version "0.47.0"
+    id("org.openapi.generator") version "7.0.1"
+    id("com.github.ben-manes.versions") version "0.49.0"
     id("jacoco")
-    id("org.sonarqube") version "4.3.0.3225"
+    id("org.sonarqube") version "4.4.1.3373"
 }
 
 tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates").configure {
@@ -71,7 +71,7 @@ dependencies {
     implementation("org.ktorm:ktorm-core:$ktormVersion")
     implementation("org.ktorm:ktorm-support-postgresql:$ktormVersion")
 
-    implementation("de.focus-shift:jollyday-jaxb:0.19.1")
+    implementation("de.focus-shift:jollyday-jaxb:0.21.0")
 
     // dependencies for generated OpenAPI client
     implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
@@ -79,15 +79,15 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.0")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.10")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.apache.groovy:groovy-all:4.0.13")
+    testImplementation("org.apache.groovy:groovy-all:4.0.15")
     testImplementation("org.spockframework:spock-core:2.4-M1-groovy-4.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
     testImplementation("org.apache.commons:commons-io:1.3.2")
     testImplementation("org.ktorm:ktorm-support-mysql:$ktormVersion")
-    testImplementation("com.h2database:h2:2.2.220")
+    testImplementation("com.h2database:h2:2.2.224")
     testImplementation("org.assertj:assertj-core:3.24.2")
 }
 

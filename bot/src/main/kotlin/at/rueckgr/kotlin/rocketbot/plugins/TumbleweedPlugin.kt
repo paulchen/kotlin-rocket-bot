@@ -3,8 +3,8 @@ package at.rueckgr.kotlin.rocketbot.plugins
 import at.rueckgr.kotlin.rocketbot.*
 import at.rueckgr.kotlin.rocketbot.exception.ConfigurationException
 import at.rueckgr.kotlin.rocketbot.util.*
-import de.focus_shift.HolidayManager
-import de.focus_shift.ManagerParameters
+import de.focus_shift.jollyday.core.HolidayManager
+import de.focus_shift.jollyday.core.ManagerParameters
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime

@@ -1,11 +1,11 @@
 plugins {
     id("kotlin-rocket-bot.conventions")
     antlr
-    id("com.github.ben-manes.versions") version "0.47.0"
+    id("com.github.ben-manes.versions") version "0.49.0"
 }
 
 dependencies {
-    antlr("org.antlr:antlr4:4.13.0")
+    antlr("org.antlr:antlr4:4.13.1")
 }
 
 tasks.withType<JavaCompile> {
