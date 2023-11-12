@@ -39,7 +39,7 @@ docker pull eclipse-temurin:17-jdk || exit 3
 
 ./gradlew clean build || exit 3
 
-docker build --no-cache -t kotlin-rocket-bot:latest bot || exit 3
+docker build --no-cache -t kotlin-rocket-bot:latest . || exit 3
 
 if [ "$1" != "--no-systemd" ]; then
 	sudo systemctl restart kotlin-rocket-bot || exit 3
