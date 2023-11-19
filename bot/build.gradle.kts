@@ -164,7 +164,7 @@ openApiGenerate {
     inputSpec.set("$projectDir/src/main/resources/openapi/api-football.yaml")
     validateSpec.set(true)
     logToStderr.set(true)
-    outputDir.set("${layout.buildDirectory}/generated/openapi")
+    outputDir.set("${layout.buildDirectory.get()}/generated/openapi")
     packageName.set("com.api_football")
     configOptions.put("dateLibrary", "java8")
     globalProperties.put("modelDocs", "false")
