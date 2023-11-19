@@ -3,19 +3,19 @@ import java.io.ByteArrayOutputStream
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.7.3"
-val ktorVersion = "2.3.5"
-val jacksonVersion = "2.15.2"
+val ktorVersion = "2.3.6"
+val jacksonVersion = "2.16.0"
 val ktormVersion = "3.6.0"
-val okhttpVersion = "4.11.0"
+val okhttpVersion = "4.12.0"
 
 plugins {
     id("kotlin-rocket-bot.conventions")
-    kotlin("jvm") version "1.9.10"
-    kotlin("plugin.serialization") version "1.9.10"
+    kotlin("jvm") version "1.9.20"
+    kotlin("plugin.serialization") version "1.9.20"
     application
     groovy
-    id("org.openapi.generator") version "7.0.1"
-    id("com.github.ben-manes.versions") version "0.49.0"
+    id("org.openapi.generator") version "7.1.0"
+    id("com.github.ben-manes.versions") version "0.50.0"
     id("jacoco")
     id("org.sonarqube") version "4.4.1.3373"
 }
@@ -62,7 +62,7 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
 
     implementation("org.apache.commons:commons-lang3:3.13.0")
-    implementation("org.apache.commons:commons-text:1.10.0")
+    implementation("org.apache.commons:commons-text:1.11.0")
     implementation("org.reflections:reflections:$reflectionsVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("at.favre.lib:bcrypt:0.10.2")
@@ -79,11 +79,11 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.10")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.20")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.apache.groovy:groovy-all:4.0.15")
     testImplementation("org.spockframework:spock-core:2.4-M1-groovy-4.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
     testImplementation("org.apache.commons:commons-io:1.3.2")
     testImplementation("org.ktorm:ktorm-support-mysql:$ktormVersion")
@@ -164,7 +164,7 @@ openApiGenerate {
     inputSpec.set("$projectDir/src/main/resources/openapi/api-football.yaml")
     validateSpec.set(true)
     logToStderr.set(true)
-    outputDir.set("$buildDir/generated/openapi")
+    outputDir.set("${layout.buildDirectory}/generated/openapi")
     packageName.set("com.api_football")
     configOptions.put("dateLibrary", "java8")
     globalProperties.put("modelDocs", "false")
