@@ -46,6 +46,8 @@ CREATE TABLE reminder (
     id SERIAL NOT NULL,
     notifyer VARCHAR(255) NOT NULL,
     notifyee VARCHAR(255) NOT NULL,
+    channel VARCHAR(255) NOT NULL,
+    subject VARCHAR(255) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL,
     next_notification TIMESTAMP WITH TIME ZONE NOT NULL,
     notify_interval INT,

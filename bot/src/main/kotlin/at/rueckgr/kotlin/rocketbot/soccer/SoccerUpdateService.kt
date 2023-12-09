@@ -6,10 +6,7 @@ import at.rueckgr.kotlin.rocketbot.database.Fixture
 import at.rueckgr.kotlin.rocketbot.database.FixtureState
 import at.rueckgr.kotlin.rocketbot.database.FixtureStatePeriod
 import at.rueckgr.kotlin.rocketbot.database.Fixtures
-import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
-import at.rueckgr.kotlin.rocketbot.util.Db
-import at.rueckgr.kotlin.rocketbot.util.Logging
-import at.rueckgr.kotlin.rocketbot.util.logger
+import at.rueckgr.kotlin.rocketbot.util.*
 import org.ktorm.dsl.*
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -168,15 +165,6 @@ class SoccerUpdateService : Logging {
         DataImportService.nextUpdateType = UpdateType.LIVE
         logger().debug("Scheduling next live update for {} (in {} seconds)", DataImportService.nextUpdate, seconds)
         executorService.schedule( { handleExceptions { runLiveUpdate() } }, seconds, TimeUnit.SECONDS)
-    }
-
-    private fun handleExceptions(function: () -> Unit) {
-        try {
-            function.invoke()
-        }
-        catch (e: Throwable) {
-            logger().error("Exception occurred: ", e)
-        }
     }
 
     private fun getNextDailyUpdate(): ZonedDateTime {

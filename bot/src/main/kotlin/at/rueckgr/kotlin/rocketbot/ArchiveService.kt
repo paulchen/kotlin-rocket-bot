@@ -22,6 +22,7 @@ data class UserDetails(val user: User)
 
 @Serializable
 data class User(
+    val id: String,
     val username: String,
     @Serializable(KZonedDateTimeSerializer::class)
     val timestamp: ZonedDateTime?

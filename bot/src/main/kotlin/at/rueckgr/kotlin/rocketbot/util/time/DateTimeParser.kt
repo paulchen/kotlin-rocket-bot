@@ -1,10 +1,61 @@
 package at.rueckgr.kotlin.rocketbot.util.time
 
+import at.rueckgr.kotlin.rocketbot.plugins.TimePlugin
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.ResolverStyle
+
+enum class TimeUnit(val plusFunction: (LocalDateTime, Long) -> LocalDateTime, val singular: String, val plural: String, val abbreviation: String) {
+    YEAR(LocalDateTime::plusYears, "year", "years", "y"),
+    MONTH(LocalDateTime::plusMonths, "month", "months", "mon"),
+    WEEK(LocalDateTime::plusWeeks, "week", "weeks", "w"),
+    DAY(LocalDateTime::plusDays, "day", "days", "d"),
+    HOUR(LocalDateTime::plusHours, "hour", "hours", "h"),
+    MINUTE(LocalDateTime::plusMinutes, "minute", "minutes", "min"),
+    SECOND(LocalDateTime::plusSeconds, "second", "seconds", "s")
+}
+
+enum class DateTimeFormat(
+    val regex: Regex,
+    val pattern: String,
+    val function: (DateTimeParser, String, String) -> LocalDateTime
+) {
+    DATE_EN("""^[0-9]{4}-[0-9]{2}-[0-9]{2}$""".toRegex(), "yyyy-MM-dd", DateTimeParser::parseDay),
+    DATE_DE("""^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4}$""".toRegex(), "d.M.yyyy", DateTimeParser::parseDay),
+    DATE_DE_WITHOUT_YEAR("""^[0-9]{1,2}\.[0-9]{1,2}\.$""".toRegex(), "d.M.yyyy", DateTimeParser::parseDayWithoutYear),
+
+    TIME_HHMM("""^[0-9]{2}:[0-9]{2}$""".toRegex(), "HH:mm", DateTimeParser::parseTime),
+    TIME_HHMMSS("""^[0-9]{2}:[0-9]{2}:[0-9]{2}$""".toRegex(), "HH:mm:ss", DateTimeParser::parseTime),
+
+    DATETIME_EN(
+        """^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$""".toRegex(),
+        "yyyy-MM-dd HH:mm",
+        DateTimeParser::parseDateTime
+    ),
+    DATETIME_EN_SECONDS(
+        """^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$""".toRegex(),
+        "yyyy-MM-dd HH:mm:ss",
+        DateTimeParser::parseDateTime
+    ),
+    DATETIME_DE(
+        """^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4} [0-9]{2}:[0-9]{2}$""".toRegex(),
+        "d.M.yyyy HH:mm",
+        DateTimeParser::parseDateTime
+    ),
+    DATETIME_DE_SECONDS(
+        """^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}$""".toRegex(),
+        "d.M.yyyy HH:mm:ss",
+        DateTimeParser::parseDateTime
+    ),
+    DATETIME_DE_WITHOUT_YEAR(
+        """^[0-9]{1,2}\.[0-9]{1,2}\. [0-9]{2}:[0-9]{2}$""".toRegex(),
+        "d.M.yyyy HH:mm",
+        DateTimeParser::parseDateTimeWithoutYear
+    ),
+}
+
 
 class DateTimeParser {
     fun parseDay(pattern: String, dateString: String): LocalDateTime {
@@ -51,4 +102,11 @@ class DateTimeParser {
     }
 
     private fun createFormatter(pattern: String) = DateTimeFormatter.ofPattern(pattern).withResolverStyle(ResolverStyle.LENIENT)
+
+    fun parse(timespecString: String): LocalDateTime? {
+        val format = DateTimeFormat.entries
+            .find { it.regex.matches(timespecString) }
+            ?: return null
+        return format.function.invoke(DateTimeParser(), format.pattern, timespecString)
+    }
 }

@@ -8,15 +8,6 @@ import kotlin.math.abs
 class DateTimeDifferenceCalculator {
     private val NOW_MARGIN = 5L
 
-    enum class TimeUnit(val plusFunction: (LocalDateTime, Long) -> LocalDateTime, val singular: String, val plural: String) {
-        YEAR(LocalDateTime::plusYears, "year", "years"),
-        MONTH(LocalDateTime::plusMonths, "month", "months"),
-        DAY(LocalDateTime::plusDays, "day", "days"),
-        HOUR(LocalDateTime::plusHours, "hour", "hours"),
-        MINUTE(LocalDateTime::plusMinutes, "minute", "minutes"),
-        SECOND(LocalDateTime::plusSeconds, "second", "seconds")
-    }
-
     fun formatTimeDifference(from: LocalDateTime, to: LocalDateTime, ignoredTimeUnits: List<TimeUnit> = emptyList()): String {
         if (abs(ChronoUnit.SECONDS.between(from, to)) < NOW_MARGIN) {
             return "now"
@@ -27,7 +18,7 @@ class DateTimeDifferenceCalculator {
             true -> Triple(to, from, "ago")
         }
 
-        val filteredTimeUnits = TimeUnit.values().filter { !ignoredTimeUnits.contains(it) }
+        val filteredTimeUnits = TimeUnit.entries.filter { !ignoredTimeUnits.contains(it) }
         val period = filteredTimeUnits
             .associateWith { 0 }
             .toMutableMap()
