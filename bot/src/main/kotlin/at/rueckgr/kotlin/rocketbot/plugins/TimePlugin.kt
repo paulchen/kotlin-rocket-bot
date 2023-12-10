@@ -25,16 +25,17 @@ class TimePlugin : AbstractPlugin(), Logging {
 
     override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
         val messageText = message.message.lowercase()
+        val now = LocalDateTime.now()
         if (messageText.contains(" ")) {
             val dateString = messageText.substring(messageText.indexOf(" ") + 1)
 
             try {
-                val date = DateTimeParser().parse(dateString)
+                val date = DateTimeParser().parse(dateString, now)
                 if (date == null) {
                     logger().error("Unable to parse date string $dateString")
                 }
                 else {
-                    return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date)))
+                    return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(now, date)))
                 }
             } catch (e: DateTimeParseException) {
                 logger().error(e.message, e)
@@ -42,7 +43,7 @@ class TimePlugin : AbstractPlugin(), Logging {
         } else {
             if (messageText == "!pizza") {
                 val difference = DateTimeDifferenceCalculator()
-                    .formatTimeDifference(LocalDateTime.now(), pizzaDate, listOf(TimeUnit.YEAR, TimeUnit.MONTH))
+                    .formatTimeDifference(now, pizzaDate, listOf(TimeUnit.YEAR, TimeUnit.MONTH))
                     .replace(" ago", "")
                 return listOf(OutgoingMessage("enri owes us pizza for $difference"))
             }
@@ -58,7 +59,7 @@ class TimePlugin : AbstractPlugin(), Logging {
                 "!em", "!wm" -> listOf(":soccer:", ConfigurationProvider.getSoccerConfiguration().username)
                 else -> listOf(null, null)
             }
-            return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date), emoji, username))
+            return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(now, date), emoji, username))
 //            return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date)))
         }
 

@@ -1,6 +1,5 @@
 package at.rueckgr.kotlin.rocketbot.util.time
 
-import at.rueckgr.kotlin.rocketbot.plugins.TimePlugin
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -20,7 +19,7 @@ enum class TimeUnit(val plusFunction: (LocalDateTime, Long) -> LocalDateTime, va
 enum class DateTimeFormat(
     val regex: Regex,
     val pattern: String,
-    val function: (DateTimeParser, String, String) -> LocalDateTime
+    val function: (DateTimeParser, String, String, LocalDateTime) -> LocalDateTime
 ) {
     DATE_EN("""^[0-9]{4}-[0-9]{2}-[0-9]{2}$""".toRegex(), "yyyy-MM-dd", DateTimeParser::parseDay),
     DATE_DE("""^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4}$""".toRegex(), "d.M.yyyy", DateTimeParser::parseDay),
@@ -58,14 +57,12 @@ enum class DateTimeFormat(
 
 
 class DateTimeParser {
-    fun parseDay(pattern: String, dateString: String): LocalDateTime {
+    fun parseDay(pattern: String, dateString: String, @Suppress("UNUSED_PARAMETER") referenceTime: LocalDateTime): LocalDateTime {
         val f = createFormatter(pattern)
         return LocalDateTime.of(LocalDate.parse(dateString, f), LocalTime.MIDNIGHT)
     }
 
-    fun parseDayWithoutYear(pattern: String, dateString: String) = parseDayWithoutYear(pattern, LocalDateTime.now(), dateString)
-
-    fun parseDayWithoutYear(pattern: String, referenceTime: LocalDateTime, dateString: String): LocalDateTime {
+    fun parseDayWithoutYear(pattern: String, dateString: String, referenceTime: LocalDateTime): LocalDateTime {
         val f = createFormatter(pattern)
         val localDateTime = LocalDateTime.of(LocalDate.parse(dateString + referenceTime.year, f), LocalTime.MIDNIGHT)
         if (referenceTime.isAfter(localDateTime)) {
@@ -74,9 +71,7 @@ class DateTimeParser {
         return localDateTime
     }
 
-    fun parseTime(pattern: String, dateString: String): LocalDateTime = parseTime(pattern, LocalDateTime.now(), dateString)
-
-    fun parseTime(pattern: String, referenceTime: LocalDateTime, dateString: String): LocalDateTime {
+    fun parseTime(pattern: String, dateString: String, referenceTime: LocalDateTime): LocalDateTime {
         val f = createFormatter(pattern)
         val localTime = LocalTime.parse(dateString, f)
         if (referenceTime.toLocalTime().isAfter(localTime)) {
@@ -85,14 +80,12 @@ class DateTimeParser {
         return LocalDateTime.of(referenceTime.toLocalDate(), localTime)
     }
 
-    fun parseDateTime(pattern: String, dateString: String): LocalDateTime {
+    fun parseDateTime(pattern: String, dateString: String, @Suppress("UNUSED_PARAMETER") referenceTime: LocalDateTime): LocalDateTime {
         val f = createFormatter(pattern)
         return LocalDateTime.parse(dateString, f)
     }
 
-    fun parseDateTimeWithoutYear(pattern: String, dateString: String) = parseDateTimeWithoutYear(pattern, LocalDateTime.now(), dateString)
-
-    fun parseDateTimeWithoutYear(pattern: String, referenceTime: LocalDateTime, dateString: String): LocalDateTime {
+    fun parseDateTimeWithoutYear(pattern: String, dateString: String, referenceTime: LocalDateTime): LocalDateTime {
         val f = createFormatter(pattern)
         val localDate = LocalDateTime.parse(dateString.replace(" ", referenceTime.year.toString() + " "), f)
         if (referenceTime.isAfter(localDate)) {
@@ -103,10 +96,10 @@ class DateTimeParser {
 
     private fun createFormatter(pattern: String) = DateTimeFormatter.ofPattern(pattern).withResolverStyle(ResolverStyle.LENIENT)
 
-    fun parse(timespecString: String): LocalDateTime? {
+    fun parse(timespecString: String, referenceTime: LocalDateTime): LocalDateTime? {
         val format = DateTimeFormat.entries
             .find { it.regex.matches(timespecString) }
             ?: return null
-        return format.function.invoke(DateTimeParser(), format.pattern, timespecString)
+        return format.function.invoke(DateTimeParser(), format.pattern, timespecString, referenceTime)
     }
 }

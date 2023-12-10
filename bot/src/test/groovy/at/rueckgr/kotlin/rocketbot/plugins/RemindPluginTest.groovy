@@ -2,7 +2,10 @@
 package at.rueckgr.kotlin.rocketbot.plugins
 
 import at.rueckgr.kotlin.rocketbot.EventHandler
+import at.rueckgr.kotlin.rocketbot.util.time.TimeUnit
 import spock.lang.Specification
+
+import java.time.LocalDateTime
 
 class RemindPluginTest extends Specification {
     def testSplitRemindMessageSuccess(message, username, subject, timespec) {
@@ -49,5 +52,50 @@ class RemindPluginTest extends Specification {
             "!remind x about in"       |_
             "!remind about x in 10min" |_
 
+    }
+
+    def testParseTimespecSuccess(input, referenceTime, nextNotification, notifyInterval, notifyUnit) {
+        given:
+            def plugin = new RemindPlugin()
+
+        when:
+            def timespec = plugin.parseTimespec(input, referenceTime)
+
+        then:
+            timespec.nextNotification == nextNotification
+            timespec.notifyInterval == notifyInterval
+            timespec.notifyUnit == notifyUnit
+
+        where:
+            input              | referenceTime                          | nextNotification                       | notifyInterval | notifyUnit
+            "in 10 min"        | LocalDateTime.of(2023, 12, 10, 17, 22) | LocalDateTime.of(2023, 12, 10, 17, 32) | null           | null
+            "in 10min"         | LocalDateTime.of(2023, 12, 10, 17, 22) | LocalDateTime.of(2023, 12, 10, 17, 32) | null           | null
+            "every 25 min"     | LocalDateTime.of(2023, 12, 7, 14, 47)  | LocalDateTime.of(2023, 12, 7, 15, 12)  | 25L            | TimeUnit.MINUTE
+            "every 25min"      | LocalDateTime.of(2023, 12, 7, 14, 47)  | LocalDateTime.of(2023, 12, 7, 15, 12)  | 25L            | TimeUnit.MINUTE
+            "every 25 minutes" | LocalDateTime.of(2023, 12, 7, 14, 47)  | LocalDateTime.of(2023, 12, 7, 15, 12)  | 25L            | TimeUnit.MINUTE
+            "at 12:26"         | LocalDateTime.of(2023, 12, 5, 17, 56)  | LocalDateTime.of(2023, 12, 6, 12, 26)  | null           | null
+    }
+
+    def testParseTimespecFailure(input) {
+        given:
+            def plugin = new RemindPlugin()
+
+        when:
+            def timespec = plugin.parseTimespec(input, LocalDateTime.now())
+
+        then:
+            timespec == null
+
+        where:
+            input           |_
+            "wtf"           |_
+            "in 10 wtf"     |_
+            "in xy"         |_
+            "in 0h"         |_
+            "every 10 foo"  |_
+            "every asdf"    |_
+            "at xy"         |_
+            "at 12345"      |_
+            "at 2023-12"    |_
     }
 }

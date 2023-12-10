@@ -2,14 +2,20 @@ package at.rueckgr.kotlin.rocketbot.plugins
 
 import at.rueckgr.kotlin.rocketbot.*
 import at.rueckgr.kotlin.rocketbot.database.Reminder
+import at.rueckgr.kotlin.rocketbot.database.Reminders
 import at.rueckgr.kotlin.rocketbot.database.reminders
 import at.rueckgr.kotlin.rocketbot.reminder.ReminderService
+import at.rueckgr.kotlin.rocketbot.reminder.calculateNextExecution
 import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import at.rueckgr.kotlin.rocketbot.util.Db
 import at.rueckgr.kotlin.rocketbot.util.Logging
+import at.rueckgr.kotlin.rocketbot.util.logger
 import at.rueckgr.kotlin.rocketbot.util.time.DateTimeParser
 import at.rueckgr.kotlin.rocketbot.util.time.TimeUnit
 import org.ktorm.dsl.eq
+import org.ktorm.dsl.from
+import org.ktorm.dsl.map
+import org.ktorm.dsl.select
 import org.ktorm.entity.add
 import org.ktorm.entity.find
 import org.ktorm.entity.removeIf
@@ -22,7 +28,6 @@ data class Timespec(val nextNotification: LocalDateTime, val notifyInterval: Lon
 
 class RemindException(message: String): Exception(message)
 
-// TODO add some logging
 class RemindPlugin : AbstractPlugin(), Logging {
     override fun getCommands(): List<String> = listOf("remind", "unremind")
 
@@ -52,14 +57,14 @@ class RemindPlugin : AbstractPlugin(), Logging {
             user.id
         }
         else {
-            val notifyee: UserDetails = ArchiveService().getUserDetails(targetUsername)
+            val notifyee: UserDetails = ArchiveService().getUserByUsername(targetUsername)
                 ?: throw RemindException("Unknown user {$targetUsername}")
             notifyee.user.id
         }
         if (notifyeeId != Bot.userId && !isAdmin(user)) {
             throw RemindException("Sorry, you are not allowed to do that.")
         }
-        val timespec = parseTimespec(timespecString)
+        val timespec = parseTimespec(timespecString, LocalDateTime.now())
             ?: throw RemindException("Invalid time/interval specification")
 
         val id = createReminder(channel.id, notifyeeId, subject, timespec)
@@ -80,6 +85,7 @@ class RemindPlugin : AbstractPlugin(), Logging {
             notifyInterval = timespec.notifyInterval
             notifyUnit = timespec.notifyUnit
         }
+        logger().info("Creating reminder {}", reminder)
         return Db().connection.reminders.add(reminder)
     }
 
@@ -102,24 +108,23 @@ class RemindPlugin : AbstractPlugin(), Logging {
         return MessageParts(username, subject, timespec)
     }
 
-    // TODO write unit tests
-    private fun parseTimespec(timespecString: String): Timespec? =
+    fun parseTimespec(timespecString: String, referenceTime: LocalDateTime): Timespec? =
         if (timespecString.startsWith("at")) {
-            parseAtTimespec(timespecString.substring(3))
+            parseAtTimespec(timespecString.substring(3), referenceTime)
         }
         else if (timespecString.startsWith("in")) {
-            parseInTimespec(timespecString.substring(3))
+            parseInTimespec(timespecString.substring(3), referenceTime)
         }
         else if (timespecString.startsWith("every")) {
-            parseEveryTimespec(timespecString.substring(6))
+            parseEveryTimespec(timespecString.substring(6), referenceTime)
         }
         else {
             null
         }
 
-    private fun parseAtTimespec(timespecString: String): Timespec? {
+    private fun parseAtTimespec(timespecString: String, referenceTime: LocalDateTime): Timespec? {
         try {
-            val date = DateTimeParser().parse(timespecString) ?: return null
+            val date = DateTimeParser().parse(timespecString, referenceTime) ?: return null
             return Timespec(date, null, null)
         }
         catch (e: DateTimeParseException) {
@@ -127,33 +132,28 @@ class RemindPlugin : AbstractPlugin(), Logging {
         }
     }
 
-    private fun parseInTimespec(timespecString: String): Timespec? {
-        val timespec = parseEveryTimespec(timespecString) ?: return null
+    private fun parseInTimespec(timespecString: String, referenceTime: LocalDateTime): Timespec? {
+        val timespec = parseEveryTimespec(timespecString, referenceTime) ?: return null
         return Timespec(timespec.nextNotification, null, null)
     }
 
-    private fun parseEveryTimespec(timespecString: String): Timespec? {
-        val regex = """([0-9]+)\s*([a-z])""".toRegex(RegexOption.IGNORE_CASE)
+    private fun parseEveryTimespec(timespecString: String, referenceTime: LocalDateTime): Timespec? {
+        val regex = """([0-9]+)\s*([a-z]+)""".toRegex(RegexOption.IGNORE_CASE)
         val matchResult = regex.matchEntire(timespecString) ?: return null
         val (countString, unitString) = matchResult.destructured
         val count = countString.toLong()
         if (count == 0L) {
             return null
         }
-        val unit = parseUnit(unitString)
-        val nextExecution = calculateNextExecution(count, unit)
+        val unit = parseUnit(unitString) ?: return null
+        val nextExecution = calculateNextExecution(count, unit, referenceTime)
 
         return Timespec(nextExecution, count, unit)
     }
 
-    private fun calculateNextExecution(count: Long, unit: TimeUnit) =
-        unit.plusFunction.invoke(LocalDateTime.now(), count)
-
     private fun parseUnit(unitString: String) =
         TimeUnit.entries
             .find { it.singular == unitString || it.plural == unitString || it.abbreviation == unitString }
-            ?: throw RemindException("Unknown time unit")
-
 
     private fun removeReminder(user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
         val parts = message.message.split(" ")
@@ -170,10 +170,25 @@ class RemindPlugin : AbstractPlugin(), Logging {
     }
 
     override fun getHelp(command: String) = when(command) {
-        "remind" -> listOf("TODO")
-        "unremind" -> listOf("TODO")
+        "remind" -> listOf(
+            "`!remind` adds a reminder. Format: `!remind {<nickname>|me} about <subject> <timespec>`\n" +
+            "`<timespec>` can be\n" +
+            "- an absolute date/time, e.g. `at 13:37`\n" +
+            "- a time period, e.g. `in 42 hours`\n" +
+            "- an interval, e.g. `every 30 seconds`\n"
+        )
+        "unremind" -> listOf("`!unremind` cancels a reminder that was created using `!remind`.")
         else -> emptyList()
     }
 
-    override fun getProblems(): List<String> = emptyList() // TODO
+    override fun getProblems(): List<String> = emptyList()
+
+    override fun getAdditionalStatus(): Map<String, String> {
+        val count = Db().connection
+            .from(Reminders)
+            .select()
+            .map { Reminders.createEntity(it) }
+            .count()
+        return mapOf("number of reminders" to count.toString())
+    }
 }
