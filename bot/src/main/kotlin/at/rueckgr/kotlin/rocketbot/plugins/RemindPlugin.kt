@@ -59,6 +59,9 @@ class RemindPlugin : AbstractPlugin(), Logging {
         else {
             val notifyee: UserDetails = ArchiveService().getUserByUsername(targetUsername)
                 ?: throw RemindException("Unknown user $targetUsername")
+            if (!notifyee.user.rooms.contains(channel.id)) {
+                throw RemindException("User $targetUsername is not in this room")
+            }
             notifyee.user.id
         }
         if (notifyeeId != user.id && !isAdmin(user)) {
