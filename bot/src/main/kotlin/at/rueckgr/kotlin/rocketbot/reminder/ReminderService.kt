@@ -61,7 +61,7 @@ class ReminderService : Logging {
         else {
             val next = calculateNextExecution(reminder.notifyInterval!!, reminder.notifyUnit!!, LocalDateTime.now())
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-            "; next notification at $next, use `!unremind ${reminder.id}` to cancel"
+            "; next notification after $next, use `!unremind ${reminder.id}` to cancel"
         }
         val message = "@$notifyee $notifyer told me to remind you about ${reminder.subject}${nextNotification}"
         Bot.webserviceMessageQueue.add(WebserviceMessage(reminder.channel, null, message))
