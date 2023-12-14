@@ -58,7 +58,7 @@ class RemindPlugin : AbstractPlugin(), Logging {
         }
         else {
             val notifyee: UserDetails = ArchiveService().getUserByUsername(targetUsername)
-                ?: throw RemindException("Unknown user {$targetUsername}")
+                ?: throw RemindException("Unknown user $targetUsername")
             notifyee.user.id
         }
         if (notifyeeId != Bot.userId && !isAdmin(user)) {
@@ -67,16 +67,16 @@ class RemindPlugin : AbstractPlugin(), Logging {
         val timespec = parseTimespec(timespecString, LocalDateTime.now())
             ?: throw RemindException("Invalid time/interval specification")
 
-        val id = createReminder(channel.id, notifyeeId, subject, timespec)
-        return listOf(OutgoingMessage("Will do! _(id: $id)_"))
+        val id = createReminder(channel.id, user.id, notifyeeId, subject, timespec)
+        return listOf(OutgoingMessage("@${user.username} Will do! Use `!unremind $id` to cancel."))
     }
 
     private fun isAdmin(user: EventHandler.User) =
         ConfigurationProvider.getConfiguration().plugins?.admin?.admins?.contains(user.id) ?: false
 
-    private fun createReminder(channelId: String, notifyeeId: String, reminderSubject: String, timespec: Timespec): Int {
+    private fun createReminder(channelId: String, notifyerId: String, notifyeeId: String, reminderSubject: String, timespec: Timespec): Long {
         val reminder = Reminder {
-            notifyer = Bot.userId!!
+            notifyer = notifyerId
             notifyee = notifyeeId
             channel = channelId
             subject = reminderSubject
@@ -86,7 +86,8 @@ class RemindPlugin : AbstractPlugin(), Logging {
             notifyUnit = timespec.notifyUnit
         }
         logger().info("Creating reminder {}", reminder)
-        return Db().connection.reminders.add(reminder)
+        Db().connection.reminders.add(reminder)
+        return reminder.id!!
     }
 
     fun splitRemindMessage(message: EventHandler.Message): MessageParts {

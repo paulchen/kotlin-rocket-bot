@@ -10,6 +10,7 @@ import at.rueckgr.kotlin.rocketbot.util.Db
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.handleExceptions
 import at.rueckgr.kotlin.rocketbot.util.logger
+import at.rueckgr.kotlin.rocketbot.util.time.DateTimeFormat
 import org.ktorm.database.Database
 import org.ktorm.dsl.*
 import org.ktorm.entity.removeIf
@@ -26,6 +27,7 @@ class ReminderService : Logging {
     }
 
     private fun executeReminder() {
+        logger().info("Checking for due reminders")
         try {
             val database = Db().connection
             database
@@ -50,7 +52,7 @@ class ReminderService : Logging {
             "You"
         }
         else {
-            ArchiveService().getUserById(reminder.notifyer)?.user?.username ?: return false
+            '@' + (ArchiveService().getUserById(reminder.notifyer)?.user?.username ?: return false)
         }
         val notifyee = ArchiveService().getUserById(reminder.notifyee)?.user?.username ?: return false
         val nextNotification = if(reminder.notifyUnit == null || reminder.notifyInterval == null) {
@@ -58,7 +60,7 @@ class ReminderService : Logging {
         }
         else {
             val next = calculateNextExecution(reminder.notifyInterval!!, reminder.notifyUnit!!, LocalDateTime.now())
-                .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
             "; next notification at $next, use `!unremind ${reminder.id}` to cancel"
         }
         val message = "@$notifyee $notifyer told me to remind you about ${reminder.subject}${nextNotification}"
@@ -69,6 +71,7 @@ class ReminderService : Logging {
     private fun updateOrRemove(database: Database, reminder: Reminder) {
         if (reminder.notifyUnit != null && reminder.notifyInterval != null) {
             val nextExecution = calculateNextExecution(reminder.notifyInterval!!, reminder.notifyUnit!!, LocalDateTime.now())
+            logger().info("Calculated next execution for reminder ${reminder.id} at $nextExecution")
             reminder.nextNotification = nextExecution
             reminder.flushChanges()
         }
