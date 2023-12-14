@@ -61,8 +61,11 @@ class RemindPlugin : AbstractPlugin(), Logging {
                 ?: throw RemindException("Unknown user $targetUsername")
             notifyee.user.id
         }
-        if (notifyeeId != Bot.userId && !isAdmin(user)) {
+        if (notifyeeId != user.id && !isAdmin(user)) {
             throw RemindException("Sorry, you are not allowed to do that.")
+        }
+        if (notifyeeId == Bot.userId) {
+            throw RemindException("Sorry, I won't remind myself about anything.")
         }
         val timespec = parseTimespec(timespecString, LocalDateTime.now())
             ?: throw RemindException("Invalid time/interval specification")
