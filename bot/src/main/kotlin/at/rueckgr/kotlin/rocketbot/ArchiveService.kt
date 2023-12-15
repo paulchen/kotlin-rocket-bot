@@ -24,7 +24,8 @@ data class User(
     val id: String,
     val username: String,
     @Serializable(KZonedDateTimeSerializer::class)
-    val timestamp: ZonedDateTime?
+    val timestamp: ZonedDateTime?,
+    val rooms: List<String>
 )
 
 @Serializable

@@ -58,25 +58,31 @@ class RemindPlugin : AbstractPlugin(), Logging {
         }
         else {
             val notifyee: UserDetails = ArchiveService().getUserByUsername(targetUsername)
-                ?: throw RemindException("Unknown user {$targetUsername}")
+                ?: throw RemindException("Unknown user $targetUsername")
+            if (!notifyee.user.rooms.contains(channel.id)) {
+                throw RemindException("User $targetUsername is not in this room")
+            }
             notifyee.user.id
         }
-        if (notifyeeId != Bot.userId && !isAdmin(user)) {
+        if (notifyeeId != user.id && !isAdmin(user)) {
             throw RemindException("Sorry, you are not allowed to do that.")
+        }
+        if (notifyeeId == Bot.userId) {
+            throw RemindException("Sorry, I won't remind myself about anything.")
         }
         val timespec = parseTimespec(timespecString, LocalDateTime.now())
             ?: throw RemindException("Invalid time/interval specification")
 
-        val id = createReminder(channel.id, notifyeeId, subject, timespec)
-        return listOf(OutgoingMessage("Will do! _(id: $id)_"))
+        val id = createReminder(channel.id, user.id, notifyeeId, subject, timespec)
+        return listOf(OutgoingMessage("@${user.username} Will do! Use `!unremind $id` to cancel."))
     }
 
     private fun isAdmin(user: EventHandler.User) =
         ConfigurationProvider.getConfiguration().plugins?.admin?.admins?.contains(user.id) ?: false
 
-    private fun createReminder(channelId: String, notifyeeId: String, reminderSubject: String, timespec: Timespec): Int {
+    private fun createReminder(channelId: String, notifyerId: String, notifyeeId: String, reminderSubject: String, timespec: Timespec): Long {
         val reminder = Reminder {
-            notifyer = Bot.userId!!
+            notifyer = notifyerId
             notifyee = notifyeeId
             channel = channelId
             subject = reminderSubject
@@ -86,7 +92,8 @@ class RemindPlugin : AbstractPlugin(), Logging {
             notifyUnit = timespec.notifyUnit
         }
         logger().info("Creating reminder {}", reminder)
-        return Db().connection.reminders.add(reminder)
+        Db().connection.reminders.add(reminder)
+        return reminder.id!!
     }
 
     fun splitRemindMessage(message: EventHandler.Message): MessageParts {

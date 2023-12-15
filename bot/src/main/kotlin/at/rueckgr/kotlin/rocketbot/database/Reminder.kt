@@ -35,5 +35,5 @@ object Reminders : Table<Reminder>("reminder") {
     var createdAt = datetime("created_at").bindTo { it.createdAt }
     var nextNotification = datetime("next_notification").bindTo { it.nextNotification }
     var notifyInterval = long("notify_interval").bindTo { it.notifyInterval }
-    var notifyUnit = enum<TimeUnit>("notifyUnit").bindTo { it.notifyUnit }
+    var notifyUnit = enum<TimeUnit>("notify_unit").bindTo { it.notifyUnit }
 }
