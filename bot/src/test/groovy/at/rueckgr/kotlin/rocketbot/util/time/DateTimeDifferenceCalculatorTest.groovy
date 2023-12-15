@@ -17,7 +17,7 @@ class DateTimeDifferenceCalculatorTest extends Specification {
 
         when:
             // TODO add test for third parameter of formatTimeDifference()
-            def result = d.formatTimeDifference(from, to, [])
+            def result = d.formatTimeDifference(from, to, [ TimeUnit.WEEK ] )
 
         then:
             result == expectedResult

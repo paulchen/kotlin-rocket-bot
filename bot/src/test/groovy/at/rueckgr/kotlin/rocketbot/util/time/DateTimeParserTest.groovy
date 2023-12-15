@@ -10,7 +10,7 @@ class DateTimeParserTest extends Specification {
             def p = new DateTimeParser()
 
         when:
-            def result = p.parseDay(pattern, dateString)
+            def result = p.parseDay(pattern, dateString, LocalDateTime.now())
 
         then:
             result == expectedResult
@@ -26,7 +26,7 @@ class DateTimeParserTest extends Specification {
             def p = new DateTimeParser()
 
         when:
-            def result = p.parseDayWithoutYear(pattern, referenceTime, dateString)
+            def result = p.parseDayWithoutYear(pattern, dateString, referenceTime)
 
         then:
             result == expectedResult
@@ -44,7 +44,7 @@ class DateTimeParserTest extends Specification {
             def p = new DateTimeParser()
 
         when:
-            def result = p.parseTime(pattern, referenceTime, dateString)
+            def result = p.parseTime(pattern, dateString, referenceTime)
 
         then:
             result == expectedResult
@@ -67,7 +67,7 @@ class DateTimeParserTest extends Specification {
             def p = new DateTimeParser()
 
         when:
-            def result = p.parseDateTime(pattern, dateString)
+            def result = p.parseDateTime(pattern, dateString, LocalDateTime.now())
 
         then:
             result == expectedResult
@@ -86,7 +86,7 @@ class DateTimeParserTest extends Specification {
             def p = new DateTimeParser()
 
         when:
-            def result = p.parseDateTimeWithoutYear(pattern, referenceTime, dateString)
+            def result = p.parseDateTimeWithoutYear(pattern, dateString, referenceTime)
 
         then:
             result == expectedResult
