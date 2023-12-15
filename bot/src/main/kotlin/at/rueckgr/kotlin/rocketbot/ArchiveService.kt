@@ -10,7 +10,6 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
-import io.ktor.http.content.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
@@ -22,6 +21,7 @@ data class UserDetails(val user: User)
 
 @Serializable
 data class User(
+    val id: String,
     val username: String,
     @Serializable(KZonedDateTimeSerializer::class)
     val timestamp: ZonedDateTime?
@@ -38,11 +38,20 @@ data class ChannelInfo(
 )
 
 class ArchiveService : Logging {
-    fun getUserDetails(username: String): UserDetails? {
+    fun getUserByUsername(username: String): UserDetails? {
         val encodedUsername = URLEncoder.encode(username, "utf-8")
+        return getUserDetails("http://backend:8081/user/$encodedUsername")
+    }
+
+    fun getUserById(userId: String): UserDetails? {
+        val encodedUserId = URLEncoder.encode(userId, "utf-8")
+        return getUserDetails("http://backend:8081/user/id/$encodedUserId")
+    }
+
+    private fun getUserDetails(url: String): UserDetails? {
         return runBlocking {
             try {
-                val response = getClient().get("http://backend:8081/user/$encodedUsername")
+                val response = getClient().get(url)
                 if (response.status.value > 299) {
                     logger().info("Status code received from backend: {}", response.status.value)
                     null

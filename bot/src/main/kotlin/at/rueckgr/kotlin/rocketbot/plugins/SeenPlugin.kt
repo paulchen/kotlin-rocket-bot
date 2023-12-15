@@ -21,7 +21,7 @@ class SeenPlugin : AbstractPlugin() {
             rawUsername
         }
 
-        val userDetails: UserDetails? = ArchiveService().getUserDetails(seenUsername)
+        val userDetails: UserDetails? = ArchiveService().getUserByUsername(seenUsername)
 
         val response = if (userDetails == null) {
             "Sorry, I don't know about *${formatUsername(seenUsername)}*."
