@@ -35,7 +35,7 @@ class TimePlugin : AbstractPlugin(), Logging {
                     logger().error("Unable to parse date string $dateString")
                 }
                 else {
-                    return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(now, date)))
+                    return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(now, date, listOf(TimeUnit.WEEK))))
                 }
             } catch (e: DateTimeParseException) {
                 logger().error(e.message, e)
@@ -59,7 +59,7 @@ class TimePlugin : AbstractPlugin(), Logging {
                 "!em", "!wm" -> listOf(":soccer:", ConfigurationProvider.getSoccerConfiguration().username)
                 else -> listOf(null, null)
             }
-            return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(now, date), emoji, username))
+            return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(now, date, listOf(TimeUnit.WEEK)), emoji, username))
 //            return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date)))
         }
 

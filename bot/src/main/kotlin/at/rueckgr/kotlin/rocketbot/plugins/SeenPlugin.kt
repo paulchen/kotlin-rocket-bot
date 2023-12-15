@@ -3,6 +3,7 @@ package at.rueckgr.kotlin.rocketbot.plugins
 import at.rueckgr.kotlin.rocketbot.*
 import at.rueckgr.kotlin.rocketbot.util.formatUsername
 import at.rueckgr.kotlin.rocketbot.util.time.DateTimeDifferenceCalculator
+import at.rueckgr.kotlin.rocketbot.util.time.TimeUnit
 import at.rueckgr.kotlin.rocketbot.util.toLocalDateTime
 import java.time.LocalDateTime
 
@@ -32,7 +33,7 @@ class SeenPlugin : AbstractPlugin() {
         else {
             val localDateTime = toLocalDateTime(userDetails.user.timestamp)
             val timestamp = TimestampFormatter().formatTimestamp(localDateTime)
-            val ago = DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), localDateTime)
+            val ago = DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), localDateTime, listOf(TimeUnit.WEEK))
             "*${formatUsername(userDetails.user.username)}* wrote their last message at $timestamp ($ago)."
         }
         return listOf(OutgoingMessage(response))
