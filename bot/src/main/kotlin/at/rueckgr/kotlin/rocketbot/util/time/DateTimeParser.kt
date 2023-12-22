@@ -25,32 +25,32 @@ enum class DateTimeFormat(
     DATE_DE("""^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4}$""".toRegex(), "d.M.yyyy", DateTimeParser::parseDay),
     DATE_DE_WITHOUT_YEAR("""^[0-9]{1,2}\.[0-9]{1,2}\.$""".toRegex(), "d.M.yyyy", DateTimeParser::parseDayWithoutYear),
 
-    TIME_HHMM("""^[0-9]{2}:[0-9]{2}$""".toRegex(), "HH:mm", DateTimeParser::parseTime),
-    TIME_HHMMSS("""^[0-9]{2}:[0-9]{2}:[0-9]{2}$""".toRegex(), "HH:mm:ss", DateTimeParser::parseTime),
+    TIME_HHMM("""^[0-9]{1,2}:[0-9]{2}$""".toRegex(), "H:mm", DateTimeParser::parseTime),
+    TIME_HHMMSS("""^[0-9]{1,2}:[0-9]{2}:[0-9]{2}$""".toRegex(), "H:mm:ss", DateTimeParser::parseTime),
 
     DATETIME_EN(
-        """^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$""".toRegex(),
-        "yyyy-MM-dd HH:mm",
+        """^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{1,2}:[0-9]{2}$""".toRegex(),
+        "yyyy-MM-dd H:mm",
         DateTimeParser::parseDateTime
     ),
     DATETIME_EN_SECONDS(
-        """^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$""".toRegex(),
-        "yyyy-MM-dd HH:mm:ss",
+        """^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{1,2}:[0-9]{2}:[0-9]{2}$""".toRegex(),
+        "yyyy-MM-dd H:mm:ss",
         DateTimeParser::parseDateTime
     ),
     DATETIME_DE(
-        """^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4} [0-9]{2}:[0-9]{2}$""".toRegex(),
-        "d.M.yyyy HH:mm",
+        """^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4} [0-9]{1,2}:[0-9]{2}$""".toRegex(),
+        "d.M.yyyy H:mm",
         DateTimeParser::parseDateTime
     ),
     DATETIME_DE_SECONDS(
-        """^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}$""".toRegex(),
-        "d.M.yyyy HH:mm:ss",
+        """^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4} [0-9]{1,2}:[0-9]{2}:[0-9]{2}$""".toRegex(),
+        "d.M.yyyy H:mm:ss",
         DateTimeParser::parseDateTime
     ),
     DATETIME_DE_WITHOUT_YEAR(
-        """^[0-9]{1,2}\.[0-9]{1,2}\. [0-9]{2}:[0-9]{2}$""".toRegex(),
-        "d.M.yyyy HH:mm",
+        """^[0-9]{1,2}\.[0-9]{1,2}\. [0-9]{1,2}:[0-9]{2}$""".toRegex(),
+        "d.M.yyyy H:mm",
         DateTimeParser::parseDateTimeWithoutYear
     ),
 }
