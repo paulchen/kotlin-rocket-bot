@@ -100,6 +100,6 @@ class DateTimeParser {
         val format = DateTimeFormat.entries
             .find { it.regex.matches(timespecString) }
             ?: return null
-        return format.function.invoke(DateTimeParser(), format.pattern, timespecString, referenceTime)
+        return format.function.invoke(this, format.pattern, timespecString, referenceTime)
     }
 }
