@@ -3,6 +3,7 @@ general:
   username: username
   password: password
   botId: paulchen/kotlin-rocket-bot
+  logRequests: false
   ignoredChannels:
     - general
 
