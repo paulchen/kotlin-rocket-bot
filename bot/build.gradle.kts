@@ -3,7 +3,7 @@ import java.io.ByteArrayOutputStream
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.7.3"
-val ktorVersion = "2.3.7"
+val ktorVersion = "2.3.8"
 val jacksonVersion = "2.16.1"
 val ktormVersion = "3.6.0"
 val okhttpVersion = "4.12.0"
@@ -74,8 +74,8 @@ dependencies {
     implementation("de.focus-shift:jollyday-jaxb:0.24.0")
 
     // dependencies for generated OpenAPI client
-    implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
-    implementation("com.squareup.moshi:moshi-adapters:1.15.0")
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
+    implementation("com.squareup.moshi:moshi-adapters:1.15.1")
     implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
 
@@ -83,12 +83,12 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.apache.groovy:groovy-all:4.0.18")
     testImplementation("org.spockframework:spock-core:2.4-M1-groovy-4.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
     testImplementation("org.apache.commons:commons-io:1.3.2")
     testImplementation("org.ktorm:ktorm-support-mysql:$ktormVersion")
     testImplementation("com.h2database:h2:2.2.224")
-    testImplementation("org.assertj:assertj-core:3.25.1")
+    testImplementation("org.assertj:assertj-core:3.25.3")
 }
 
 tasks.test {
