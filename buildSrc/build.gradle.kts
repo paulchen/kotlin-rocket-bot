@@ -9,6 +9,6 @@ repositories {
 }
 
 dependencies {
-    implementation("app.cash.licensee:licensee-gradle-plugin:1.6.0")
+    implementation("app.cash.licensee:licensee-gradle-plugin:1.9.1")
 }
 

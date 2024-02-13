@@ -1,3 +1,5 @@
+import app.cash.licensee.UnusedAction
+
 group = "at.rueckgr.kotlin.rocketbot"
 version = "1.0-SNAPSHOT"
 
@@ -11,6 +13,8 @@ plugins {
 }
 
 licensee {
+    unusedAction(UnusedAction.IGNORE)
+
     allow("MIT")
     allow("Apache-2.0")
 
