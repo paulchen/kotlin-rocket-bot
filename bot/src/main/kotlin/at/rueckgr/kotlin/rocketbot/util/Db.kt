@@ -9,7 +9,7 @@ class Db {
     init {
         val databaseConfiguration = ConfigurationProvider.getConfiguration().database
         connection = Database.connect(
-            url = "jdbc:postgresql://${databaseConfiguration!!.host}/${databaseConfiguration.database}",
+            url = databaseConfiguration!!.url!!,
             user = databaseConfiguration.username,
             password = databaseConfiguration.password,
             dialect = PostgreSqlDialect())

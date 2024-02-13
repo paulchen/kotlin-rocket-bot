@@ -48,7 +48,6 @@ webservice:
       password: bcrypt
 
 database:
-  host: host.docker.internal
-  database: kotlin-rocket-bot
+  url: jdbc:postgresql://host.docker.internal/kotlin-rocket-bot
   username: kotlin-rocket-bot
   password: TODO

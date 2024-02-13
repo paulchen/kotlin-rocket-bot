@@ -79,8 +79,7 @@ data class WebserviceUser(
 )
 
 data class DatabaseConfiguration(
-    val host: String?,
-    val database: String?,
+    val url: String?,
     val username: String?,
     val password: String?
 )
