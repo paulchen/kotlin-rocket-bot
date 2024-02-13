@@ -14,7 +14,7 @@ plugins {
     kotlin("plugin.serialization") version "1.9.22"
     application
     groovy
-    id("org.openapi.generator") version "7.2.0"
+    id("org.openapi.generator") version "7.3.0"
     id("com.github.ben-manes.versions") version "0.51.0"
     id("jacoco")
     id("org.sonarqube") version "4.4.1.3373"
@@ -71,7 +71,7 @@ dependencies {
     implementation("org.ktorm:ktorm-core:$ktormVersion")
     implementation("org.ktorm:ktorm-support-postgresql:$ktormVersion")
 
-    implementation("de.focus-shift:jollyday-jaxb:0.24.0")
+    implementation("de.focus-shift:jollyday-jaxb:0.25.0")
 
     // dependencies for generated OpenAPI client
     implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
