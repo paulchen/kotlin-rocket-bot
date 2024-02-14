@@ -43,7 +43,7 @@ class TimePlugin : AbstractPlugin(), Logging {
         } else {
             if (messageText == "!pizza") {
                 val difference = DateTimeDifferenceCalculator()
-                    .formatTimeDifference(now, pizzaDate, listOf(TimeUnit.YEAR, TimeUnit.MONTH))
+                    .formatTimeDifference(now, pizzaDate, listOf(TimeUnit.YEAR, TimeUnit.MONTH, TimeUnit.WEEK))
                     .replace(" ago", "")
                 return listOf(OutgoingMessage("enri owes us pizza for $difference"))
             }
