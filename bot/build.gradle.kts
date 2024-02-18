@@ -98,12 +98,12 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
+    kotlinOptions.jvmTarget = "21"
     dependsOn("openApiGenerate")
 }
 
 tasks.withType<GroovyCompile> {
-    targetCompatibility = "17"
+    targetCompatibility = "21"
 }
 
 tasks.named<GroovyCompile>("compileTestGroovy") {

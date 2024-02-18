@@ -8,7 +8,7 @@ if [ ! -d ../kotlin-rocket-lib/ ]; then
 	exit 1
 fi
 
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64/
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk/
 
 if [ ! -d "$JAVA_HOME" ]; then
 	echo "$JAVA_HOME not found"
