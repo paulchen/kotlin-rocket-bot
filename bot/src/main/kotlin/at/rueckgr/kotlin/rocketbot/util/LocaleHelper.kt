@@ -5,7 +5,7 @@ import java.util.*
 class LocaleHelper {
     private val countryNamesMap: Map<String, Locale> = Locale
         .getISOCountries()
-        .map { Locale("", it) }
+        .map { Locale.of("", it) }
         .associateBy { it.getDisplayCountry(Locale.ENGLISH) }
 
     fun getLocaleByCountryName(name: String) = countryNamesMap[name]
