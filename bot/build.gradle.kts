@@ -2,22 +2,22 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
 val reflectionsVersion = "0.10.2"
-val coroutinesVersion = "1.7.3"
-val ktorVersion = "2.3.8"
-val jacksonVersion = "2.16.1"
+val coroutinesVersion = "1.8.0"
+val ktorVersion = "2.3.9"
+val jacksonVersion = "2.17.0"
 val ktormVersion = "3.6.0"
 val okhttpVersion = "4.12.0"
 
 plugins {
     id("kotlin-rocket-bot.conventions")
-    kotlin("jvm") version "1.9.22"
-    kotlin("plugin.serialization") version "1.9.22"
+    kotlin("jvm") version "1.9.23"
+    kotlin("plugin.serialization") version "1.9.23"
     application
     groovy
-    id("org.openapi.generator") version "7.3.0"
+    id("org.openapi.generator") version "7.4.0"
     id("com.github.ben-manes.versions") version "0.51.0"
     id("jacoco")
-    id("org.sonarqube") version "4.4.1.3373"
+    id("org.sonarqube") version "5.0.0.4638"
 }
 
 tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates").configure {
@@ -67,12 +67,12 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("at.favre.lib:bcrypt:0.10.2")
 
-    implementation("org.postgresql:postgresql:42.7.1")
-    implementation("com.kohlschutter.junixsocket:junixsocket-core:2.8.3")
+    implementation("org.postgresql:postgresql:42.7.3")
+    implementation("com.kohlschutter.junixsocket:junixsocket-core:2.9.0")
     implementation("org.ktorm:ktorm-core:$ktormVersion")
     implementation("org.ktorm:ktorm-support-postgresql:$ktormVersion")
 
-    implementation("de.focus-shift:jollyday-jaxb:0.25.0")
+    implementation("de.focus-shift:jollyday-jaxb:0.27.0")
 
     // dependencies for generated OpenAPI client
     implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
@@ -80,10 +80,10 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.22")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.23")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.apache.groovy:groovy-all:4.0.18")
-    testImplementation("org.spockframework:spock-core:2.4-M1-groovy-4.0")
+    testImplementation("org.apache.groovy:groovy-all:4.0.20")
+    testImplementation("org.spockframework:spock-core:2.4-M4-groovy-4.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
     testImplementation("org.apache.commons:commons-io:1.3.2")
