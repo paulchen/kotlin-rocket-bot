@@ -15,25 +15,26 @@ class SloganPlugin : AbstractPlugin() {
     override fun getCommands() = listOf("slogan")
 
     override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
-        val name = stripCommand(message.message) ?: return emptyList()
-        val formattedName = formatUsername(name)
-
-        val response = runBlocking {
-            HttpClient(CIO).get {
-                url("http://www.sloganizer.net/outbound.php")
-            }.body<String>()
-        }
-
-        val responseWithoutHtml = StringEscapeUtils.unescapeHtml4(
-            response
-                .replace("""<[^>]*>""".toRegex(), "")
-        )
-
-        return listOf(OutgoingMessage(responseWithoutHtml.replace("Sloganizer", "*$formattedName*")))
+        return emptyList()
+//        val name = stripCommand(message.message) ?: return emptyList()
+//        val formattedName = formatUsername(name)
+//
+//        val response = runBlocking {
+//            HttpClient(CIO).get {
+//                url("http://www.sloganizer.net/outbound.php")
+//            }.body<String>()
+//        }
+//
+//        val responseWithoutHtml = StringEscapeUtils.unescapeHtml4(
+//            response
+//                .replace("""<[^>]*>""".toRegex(), "")
+//        )
+//
+//        return listOf(OutgoingMessage(responseWithoutHtml.replace("Sloganizer", "*$formattedName*")))
     }
 
-    override fun getHelp(command: String) = listOf(
-        "`!slogan <object>` prints a slogan for `<object>`"
+    override fun getHelp(command: String) = listOf<String>(
+//        "`!slogan <object>` prints a slogan for `<object>`"
     )
 
     override fun getProblems() = emptyList<String>()

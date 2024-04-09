@@ -9,7 +9,8 @@ import kotlinx.coroutines.runBlocking
 
 class MessageHandler : EventHandler, Logging {
     override fun handleRoomMessage(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
-        val seriousMode = SeriousModeService().isInSeriousMode(channel.id)
+        val seriousMode = false
+//        val seriousMode = SeriousModeService().isInSeriousMode(channel.id)
         val messageWithoutQuote = EventHandler.Message(removeQuotes(message.message), message.botMessage)
         if (!messageWithoutQuote.message.startsWith("!")) {
             logger().debug("Message contains no command, applying general plugins")

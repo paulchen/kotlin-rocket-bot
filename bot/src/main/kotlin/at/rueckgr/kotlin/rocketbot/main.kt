@@ -28,13 +28,13 @@ class Main: Logging {
 
         val general = config.general
         runBlocking {
-            launch {
-                withContext(Dispatchers.IO) {
-                    logExceptions {
-                        ConfigurationProvider.checkForConfigurationUpdates()
-                    }
-                }
-            }
+//            launch {
+//                withContext(Dispatchers.IO) {
+//                    logExceptions {
+//                        ConfigurationProvider.checkForConfigurationUpdates()
+//                    }
+//                }
+//            }
             launch {
                 logExceptions {
                     Bot(
