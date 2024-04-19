@@ -10,57 +10,57 @@ import org.ktorm.dsl.gt
 import org.ktorm.entity.*
 import java.time.LocalDateTime
 
-//val Database.seriousModes get() = this.sequenceOf(SeriousModes)
+val Database.seriousModes get() = this.sequenceOf(SeriousModes)
 
 class SeriousModeService {
-//    fun activateSeriousMode(channel: String): LocalDateTime {
-//        val duration = ConfigurationProvider.getConfiguration().plugins?.seriousMode?.duration ?: 3600L
-//        val newStartDate = LocalDateTime.now()
-//        val newEndDate = LocalDateTime.now().plusSeconds(duration)
-//
-//        val database = Db().connection
-//        val existingEntry = database.seriousModes.find { it.channelId eq channel }
-//        if (existingEntry != null) {
-//            if (existingEntry.endDate.isBefore(newStartDate)) {
-//                existingEntry.startDate = newStartDate
-//            }
-//            existingEntry.endDate = newEndDate
-//            existingEntry.flushChanges()
-//        }
-//        else {
-//            val newEntry = SeriousMode {
-//                channelId = channel
-//                startDate = newStartDate
-//                endDate = newEndDate
-//            }
-//            database.seriousModes.add(newEntry)
-//        }
-//
-//        return newEndDate
-//    }
-//
-//    fun deactivateSeriousMode(channel: String): Boolean {
-//        val database = Db().connection
-//        val existingEntry = database.seriousModes.find { it.channelId eq channel } ?: return false
-//        val newEndDate = LocalDateTime.now()
-//        if (existingEntry.endDate.isBefore(newEndDate)) {
-//            return false
-//        }
-//
-//        existingEntry.endDate = newEndDate
-//        existingEntry.flushChanges()
-//
-//        return true
-//    }
+    fun activateSeriousMode(channel: String): LocalDateTime {
+        val duration = ConfigurationProvider.getConfiguration().plugins?.seriousMode?.duration ?: 3600L
+        val newStartDate = LocalDateTime.now()
+        val newEndDate = LocalDateTime.now().plusSeconds(duration)
 
-//    fun isInSeriousMode(channel: String): Boolean {
-//        val database = Db().connection
-//        val existingEntry = database.seriousModes.find { it.channelId eq channel }
-//        return existingEntry != null && existingEntry.endDate.isAfter(LocalDateTime.now())
-//    }
+        val database = Db().connection
+        val existingEntry = database.seriousModes.find { it.channelId eq channel }
+        if (existingEntry != null) {
+            if (existingEntry.endDate.isBefore(newStartDate)) {
+                existingEntry.startDate = newStartDate
+            }
+            existingEntry.endDate = newEndDate
+            existingEntry.flushChanges()
+        }
+        else {
+            val newEntry = SeriousMode {
+                channelId = channel
+                startDate = newStartDate
+                endDate = newEndDate
+            }
+            database.seriousModes.add(newEntry)
+        }
 
-//    fun getSeriousModeData() = Db().connection
-//            .seriousModes
-//            .filter { it.endDate gt LocalDateTime.now() }
-//            .toList()
+        return newEndDate
+    }
+
+    fun deactivateSeriousMode(channel: String): Boolean {
+        val database = Db().connection
+        val existingEntry = database.seriousModes.find { it.channelId eq channel } ?: return false
+        val newEndDate = LocalDateTime.now()
+        if (existingEntry.endDate.isBefore(newEndDate)) {
+            return false
+        }
+
+        existingEntry.endDate = newEndDate
+        existingEntry.flushChanges()
+
+        return true
+    }
+
+    fun isInSeriousMode(channel: String): Boolean {
+        val database = Db().connection
+        val existingEntry = database.seriousModes.find { it.channelId eq channel }
+        return existingEntry != null && existingEntry.endDate.isAfter(LocalDateTime.now())
+    }
+
+    fun getSeriousModeData() = Db().connection
+            .seriousModes
+            .filter { it.endDate gt LocalDateTime.now() }
+            .toList()
 }

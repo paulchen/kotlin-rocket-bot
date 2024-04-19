@@ -7,31 +7,31 @@ import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
 
 class SeriousModePlugin : AbstractPlugin(), Logging {
-    override fun getCommands() = emptyList<String>() // listOf("srs", "unsrs")
+    override fun getCommands() = listOf("srs", "unsrs")
 
     override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
-//        when(message.message) {
-//            "!srs" -> activateSeriousMode(channel.id)
-//            "!unsrs" -> deactivateSeriousMode(channel.id)
-//        }
+        when(message.message) {
+            "!srs" -> activateSeriousMode(channel.id)
+            "!unsrs" -> deactivateSeriousMode(channel.id)
+        }
 
         return emptyList()
     }
 
-//    private fun activateSeriousMode(channel: String) {
-//        val endDate = SeriousModeService().activateSeriousMode(channel)
-//
-//        logger().debug("Serious mode for $channel active until $endDate")
-//    }
-//
-//    private fun deactivateSeriousMode(channel: String) {
-//        if (SeriousModeService().deactivateSeriousMode(channel)) {
-//            logger().debug("Serious mode for $channel deactivated")
-//        }
-//        else {
-//            logger().debug("Serious mode for $channel was not active")
-//        }
-//    }
+    private fun activateSeriousMode(channel: String) {
+        val endDate = SeriousModeService().activateSeriousMode(channel)
+
+        logger().debug("Serious mode for $channel active until $endDate")
+    }
+
+    private fun deactivateSeriousMode(channel: String) {
+        if (SeriousModeService().deactivateSeriousMode(channel)) {
+            logger().debug("Serious mode for $channel deactivated")
+        }
+        else {
+            logger().debug("Serious mode for $channel was not active")
+        }
+    }
 
     override fun getHelp(command: String) = listOf<String>(
 //        "`!srs` activates _serious mode_ for a certain period of time",
@@ -41,14 +41,14 @@ class SeriousModePlugin : AbstractPlugin(), Logging {
     override fun getChannelTypes() = listOf(EventHandler.ChannelType.CHANNEL)
 
     override fun getProblems() = emptyList<String>()
-//
-//    override fun getAdditionalStatus() = SeriousModeService()
-//        .getSeriousModeData()
-//        .flatMap {
-//            listOf(
-//                "startDate for ${it.channelId}" to it.startDate.toString(),
-//                "endDate for ${it.channelId}" to it.endDate.toString()
-//            )
-//        }
-//        .toMap()
+
+    override fun getAdditionalStatus() = SeriousModeService()
+        .getSeriousModeData()
+        .flatMap {
+            listOf(
+                "startDate for ${it.channelId}" to it.startDate.toString(),
+                "endDate for ${it.channelId}" to it.endDate.toString()
+            )
+        }
+        .toMap()
 }
