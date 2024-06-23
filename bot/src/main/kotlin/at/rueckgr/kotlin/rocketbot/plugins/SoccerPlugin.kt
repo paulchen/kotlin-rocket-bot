@@ -10,7 +10,7 @@ import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import java.time.LocalDateTime
 
 class SoccerPlugin : AbstractPlugin() {
-    override fun getCommands() = emptyList<String>()
+    override fun getCommands() = listOf("em")
 
     override fun init() {
         SoccerUpdateService().scheduleImmediateDailyUpdate()
@@ -44,7 +44,7 @@ class SoccerPlugin : AbstractPlugin() {
     }
 
     override fun getHelp(command: String) = listOf(
-        "`!wm` provides some information about past, current, and future matches within the FIFA World Cup 2022"
+        "`!em` provides some information about past, current, and future matches within the UEFA Euro 2024"
     )
 
     override fun getProblems(): List<String> {

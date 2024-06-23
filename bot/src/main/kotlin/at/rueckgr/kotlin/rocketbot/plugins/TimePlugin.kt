@@ -15,11 +15,11 @@ import java.time.format.DateTimeParseException
 
 class TimePlugin : AbstractPlugin(), Logging {
     private val pizzaDate = LocalDateTime.of(LocalDate.of(2016, 11, 19), LocalTime.of(11, 51, 29))
-    private val emDate = LocalDateTime.of(LocalDate.of(2024, 6, 14), LocalTime.of(12, 0, 0))
+//    private val emDate = LocalDateTime.of(LocalDate.of(2024, 6, 14), LocalTime.of(12, 0, 0))
     private val wmDate = LocalDateTime.of(LocalDate.of(2026, 6, 10), LocalTime.of(12, 0, 0))
 
     override fun getCommands(): List<String> {
-        return listOf("t", "em", "wm", "oldyear", "newyear", "pizza")
+        return listOf("t", "wm", "oldyear", "newyear", "pizza")
 //        return listOf("t", "oldyear", "newyear", "pizza")
     }
 
@@ -48,7 +48,7 @@ class TimePlugin : AbstractPlugin(), Logging {
                 return listOf(OutgoingMessage("enri owes us pizza for $difference"))
             }
             val date: LocalDateTime = when (messageText) {
-                "!em" -> emDate
+//                "!em" -> emDate
                 "!wm" -> wmDate
                 "!oldyear" -> getBeginOfCurrentYear()
                 "!newyear" -> getBeginOfCurrentYear().plusYears(1)
