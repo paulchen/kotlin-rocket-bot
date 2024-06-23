@@ -7,6 +7,7 @@ import at.rueckgr.kotlin.rocketbot.database.FixtureState
 import at.rueckgr.kotlin.rocketbot.database.FixtureStatePeriod
 import at.rueckgr.kotlin.rocketbot.database.Fixtures
 import at.rueckgr.kotlin.rocketbot.util.*
+import org.apache.commons.lang3.StringUtils
 import org.ktorm.dsl.*
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -90,7 +91,7 @@ class SoccerUpdateService : Logging {
         }
 
         notificationChannels.forEach { roomName ->
-            Bot.webserviceMessageQueue.add(WebserviceMessage(null, roomName, message, null, ":soccer:", username))
+            enqueueMessage(WebserviceMessage(null, roomName, message, null, ":soccer:", username))
         }
 
         DataImportService().setFixturesToAnnounced(filteredResults)
@@ -100,16 +101,25 @@ class SoccerUpdateService : Logging {
         liveUpdateResult.forEach {
             it.newEvents.forEach { event ->
                 notificationChannels.forEach { roomName ->
-                    Bot.webserviceMessageQueue.add(createMessage(it.fixture, roomName, event, username))
+                    enqueueMessage(createMessage(it.fixture, roomName, event, username))
                 }
             }
 
             if (it.stateChange != null) {
                 notificationChannels.forEach { roomName ->
-                    Bot.webserviceMessageQueue.add(createMessage(it.fixture, roomName, it.stateChange, username))
+                    enqueueMessage(createMessage(it.fixture, roomName, it.stateChange, username))
                 }
             }
         }
+    }
+
+    private fun enqueueMessage(webserviceMessage: WebserviceMessage) {
+        val (validationResult, validatedMessage) = MessageHelper.instance.validateMessage(webserviceMessage)
+        if (StringUtils.isNotEmpty(validationResult)) {
+            logger().error(validationResult)
+            return
+        }
+        Bot.webserviceMessageQueue.add(validatedMessage)
     }
 
     fun createMessage(fixture: Fixture, roomName: String, message: String, username: String?): WebserviceMessage {
