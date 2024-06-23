@@ -15,7 +15,7 @@ abstract class AbstractPlugin {
 
     abstract fun getHelp(command: String): List<String>
 
-    open fun getChannelTypes() = EventHandler.ChannelType.values().toList()
+    open fun getChannelTypes() = EventHandler.ChannelType.entries.toList()
 
     open fun init() { /* do nothing by default */ }
 

@@ -421,7 +421,7 @@ class DataImportService : Logging {
         val newFixtureState = FixtureState.getByCode(newState)
 
         return FixtureStateTransition
-            .values()
+            .entries
             .firstOrNull {
                 (it.oldState == oldFixtureState && it.newState == newFixtureState)
                         || (it.oldState == null && it.newState == newFixtureState)
@@ -433,7 +433,7 @@ class DataImportService : Logging {
         logger().debug("Processing event: {}", event)
 
         if (event.type == "Goal") {
-            val goalType = GoalType.values().toList().firstOrNull { it.apiName == event.detail }
+            val goalType = GoalType.entries.toList().firstOrNull { it.apiName == event.detail }
             val typeDescription = goalType?.displayName ?: event.detail
             val time = if (event.time?.elapsed != null && entity.status != FixtureState.PENALTY.code) {
                 " in Spielminute ${event.time.elapsed}"
