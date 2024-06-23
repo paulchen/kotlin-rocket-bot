@@ -9,6 +9,8 @@ object TeamMapper {
         "England" to ":england:",
         "USA" to ":us:",
         "Wales" to ":wales:",
+        "Scotland" to ":scotland:",
+        "Czech Republic" to ":cz:",
     )
 
     fun mapTeamName(teamName: String): FormattedTeamName {
