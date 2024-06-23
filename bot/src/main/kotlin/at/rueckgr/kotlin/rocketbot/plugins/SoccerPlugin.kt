@@ -38,8 +38,8 @@ class SoccerPlugin : AbstractPlugin() {
         val processedMatches = matches.joinToString("\n") { "- $it" }
         return when (matches.size) {
             0 -> ""
-            1 -> "*$singular:*\n$processedMatches"
-            else -> "*$plural:*\n$processedMatches"
+            1 -> "*$singular: *\n$processedMatches"
+            else -> "*$plural: *\n$processedMatches"
         }
     }
 
