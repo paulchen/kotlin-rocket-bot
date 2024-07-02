@@ -188,6 +188,11 @@ class DataImportService : Logging {
         val status = if (reportedStatus != FixtureState.MATCH_FINISHED_AFTER_PENALTY.code || fixtureResponse.events == null) {
             reportedStatus
         }
+        else if (fixtureResponse.events.size < entity.eventsProcessed) {
+            // sometimes at the end of the game after penalty shootout, the events for the penalty shootout are missing
+            // these events will be present during a later update
+            FixtureState.PENALTY.code
+        }
         else {
             // delay state change from PENALTY to MATCH_FINISHED_AFTER_PENALTY to the time when events for all penalty goals are present
             val (goalsPenaltyHome, goalsPenaltyAway) = calculatePenaltyScore(entity, fixtureResponse, entity.eventsProcessed)
