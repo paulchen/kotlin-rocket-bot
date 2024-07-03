@@ -44,6 +44,7 @@ class DataImportService : Logging {
         val result = FootballApiService
             .getAllFixtures()
             .response
+            .filter { isEnabledRound(it) }
             .map { importFixture(database, it); }
             .toList()
 
@@ -78,6 +79,13 @@ class DataImportService : Logging {
 
         return result
     }
+
+    private fun isEnabledRound(fixture: FixtureResponseResponseInner) =
+        fixture.league.round != null &&
+        ConfigurationProvider.getSoccerConfiguration()
+                .rounds
+                ?.any { it.toRegex().matches(fixture.league.round) }
+            ?: true
 
     fun importFixture(database: Database, fixtureId: Long): ImportFixtureResult {
         val fixture = FootballApiService.getFixture(fixtureId)
