@@ -14,10 +14,12 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
-class SoccerUpdateService : Logging {
+object SoccerUpdateService : Logging {
+    private var future: ScheduledFuture<*>? = null
     private val executorService = Executors.newScheduledThreadPool(1)
 
     fun scheduleImmediateDailyUpdate() {
@@ -155,7 +157,7 @@ class SoccerUpdateService : Logging {
         }
         catch (e: DbException) {
             logger().debug("Unable to access database, checking again in one minute")
-            executorService.schedule( { scheduleLiveOrDailyUpdate()}, 60, TimeUnit.SECONDS)
+            schedule({ scheduleLiveOrDailyUpdate() }, 60)
             return
         }
 
@@ -170,18 +172,27 @@ class SoccerUpdateService : Logging {
         }
     }
 
+    private fun schedule(function: () -> Unit, seconds: Long) {
+        synchronized(this) {
+            if (this.future != null) {
+                this.future!!.cancel(true)
+            }
+            this.future = executorService.schedule(function, seconds, TimeUnit.SECONDS)
+        }
+    }
+
     private fun scheduleDailyUpdate(seconds: Long) {
         DataImportService.nextUpdate = LocalDateTime.now().plusSeconds(seconds)
         DataImportService.nextUpdateType = UpdateType.DAILY
         logger().debug("Scheduling next daily update for {} (in {} seconds)", DataImportService.nextUpdate, seconds)
-        executorService.schedule( { handleExceptions { runDailyUpdate() } }, seconds, TimeUnit.SECONDS)
+        schedule({ handleExceptions { runDailyUpdate() } }, seconds)
     }
 
     private fun scheduleLiveUpdate(seconds: Long) {
         DataImportService.nextUpdate = LocalDateTime.now().plusSeconds(seconds)
         DataImportService.nextUpdateType = UpdateType.LIVE
         logger().debug("Scheduling next live update for {} (in {} seconds)", DataImportService.nextUpdate, seconds)
-        executorService.schedule( { handleExceptions { runLiveUpdate() } }, seconds, TimeUnit.SECONDS)
+        schedule({ handleExceptions { runLiveUpdate() } }, seconds)
     }
 
     private fun getNextDailyUpdate(): ZonedDateTime {

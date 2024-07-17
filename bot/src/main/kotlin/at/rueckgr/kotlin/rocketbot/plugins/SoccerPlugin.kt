@@ -13,7 +13,7 @@ class SoccerPlugin : AbstractPlugin() {
     override fun getCommands() = listOf("em")
 
     override fun init() {
-        SoccerUpdateService().scheduleImmediateDailyUpdate()
+        SoccerUpdateService.scheduleImmediateDailyUpdate()
     }
 
     override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
