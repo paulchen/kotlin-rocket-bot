@@ -150,7 +150,14 @@ class SoccerUpdateService : Logging {
 
     private fun scheduleLiveOrDailyUpdate() {
         val nextDailyUpdate = getNextDailyUpdate()
-        val nextLiveUpdate = getNextLiveUpdate()
+        val nextLiveUpdate = try {
+            getNextLiveUpdate()
+        }
+        catch (e: DbException) {
+            logger().debug("Unable to access database, checking again in one minute")
+            executorService.schedule( { scheduleLiveOrDailyUpdate()}, 60, TimeUnit.SECONDS)
+            return
+        }
 
         logger().debug("Next live update would be at {}", nextLiveUpdate)
         logger().debug("Next daily update would be at {}", nextDailyUpdate)

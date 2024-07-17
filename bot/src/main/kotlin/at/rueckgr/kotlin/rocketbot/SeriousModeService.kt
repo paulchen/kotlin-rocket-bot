@@ -2,8 +2,7 @@ package at.rueckgr.kotlin.rocketbot
 
 import at.rueckgr.kotlin.rocketbot.database.SeriousMode
 import at.rueckgr.kotlin.rocketbot.database.SeriousModes
-import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
-import at.rueckgr.kotlin.rocketbot.util.Db
+import at.rueckgr.kotlin.rocketbot.util.*
 import org.ktorm.database.Database
 import org.ktorm.dsl.eq
 import org.ktorm.dsl.gt
@@ -12,7 +11,7 @@ import java.time.LocalDateTime
 
 val Database.seriousModes get() = this.sequenceOf(SeriousModes)
 
-class SeriousModeService {
+class SeriousModeService : Logging {
     fun activateSeriousMode(channel: String): LocalDateTime {
         val duration = ConfigurationProvider.getConfiguration().plugins?.seriousMode?.duration ?: 3600L
         val newStartDate = LocalDateTime.now()
@@ -54,9 +53,15 @@ class SeriousModeService {
     }
 
     fun isInSeriousMode(channel: String): Boolean {
-        val database = Db().connection
-        val existingEntry = database.seriousModes.find { it.channelId eq channel }
-        return existingEntry != null && existingEntry.endDate.isAfter(LocalDateTime.now())
+        try {
+            val database = Db().connection
+            val existingEntry = database.seriousModes.find { it.channelId eq channel }
+            return existingEntry != null && existingEntry.endDate.isAfter(LocalDateTime.now())
+        }
+        catch (e: DbException) {
+            logger().error("Unable to connect to database, defaulting to serious mode")
+            return true
+        }
     }
 
     fun getSeriousModeData() = Db().connection
