@@ -104,7 +104,7 @@ object MatchTitleService {
         else if ((etHome > 0 || etAway!! > 0) && ftHome == 0 && ftAway == 0) {
             "$etHome$zwnbsp:$zwnbsp$etAway $extratime (0$zwnbsp:${zwnbsp}0)" + formatPenalty(pHome, pAway)
         }
-        else if (etHome > 0) {
+        else if (etHome > 0 || etAway!! > 0) {
             "$etHome$zwnbsp:$zwnbsp$etAway $extratime ($ftHome$zwnbsp:$zwnbsp$ftAway, $htHome$zwnbsp:$zwnbsp$htAway)" + formatPenalty(pHome, pAway)
         }
         else {

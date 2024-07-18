@@ -15,7 +15,7 @@ class WorldCup2022FinalTest : FixtureTest(
         467 to "Spielende nach Elfmeterschießen; Spielstand: 3\uFEFF:\uFEFF3 n.V. (2\uFEFF:\uFEFF2, 2\uFEFF:\uFEFF0), 4\uFEFF:\uFEFF2 i.E."
     ),
     expectedEvents = listOf(
-        165 to "Elfmetertreffer in Spielminute 22 für :flag_ar:\u00A0*Argentinien* durch Lionel Messi; Spielstand: 1\uFEFF:\uFEFF0",
+        164 to "Elfmetertreffer in Spielminute 22 für :flag_ar:\u00A0*Argentinien* durch Lionel Messi; Spielstand: 1\uFEFF:\uFEFF0",
         191 to "Tor in Spielminute 36 für :flag_ar:\u00A0*Argentinien* durch Ángel Di María; Spielstand: 2\uFEFF:\uFEFF0",
         323 to "Elfmetertreffer in Spielminute 79 für :flag_fr:\u00A0*Frankreich* durch Kylian Mbappé; Spielstand: 2\uFEFF:\uFEFF1 (2\uFEFF:\uFEFF0)",
         326 to "Tor in Spielminute 82 für :flag_fr:\u00A0*Frankreich* durch Kylian Mbappé; Spielstand: 2\uFEFF:\uFEFF2 (2\uFEFF:\uFEFF0)",

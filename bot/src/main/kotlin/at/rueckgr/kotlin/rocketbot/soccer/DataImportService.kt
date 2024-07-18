@@ -15,6 +15,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.Collections
 import kotlin.math.max
+import kotlin.reflect.KMutableProperty1
 
 val Database.fixtures get() = this.sequenceOf(Fixtures)
 val Database.venues get() = this.sequenceOf(Venues)
@@ -220,24 +221,18 @@ class DataImportService : Logging {
 
         val oldGoalData = createGoalData(entity)
 
-        entity.goalsHalftimeHome = fixtureResponse.score.halftime?.home
-        entity.goalsHalftimeAway = fixtureResponse.score.halftime?.away
-        if (status == FixtureState.SECOND_HALF.code || (status == FixtureState.BREAK_TIME.code && fixtureResponse.score.extratime?.home == null)) {
-            entity.goalsFulltimeHome = fixtureResponse.goals.home
-            entity.goalsFulltimeAway = fixtureResponse.goals.away
+        if (entity.elapsed != null) {
+            updateScore(Fixture::goalsHalftimeHome, Fixture::goalsHalftimeAway, entity, calculateScore(entity, fixtureResponse, 45))
+            if (entity.elapsed!! > 45 || status == FixtureState.SECOND_HALF.code) {
+                updateScore(Fixture::goalsFulltimeHome, Fixture::goalsFulltimeAway, entity, calculateScore(entity, fixtureResponse, 90))
+            }
+            if (entity.elapsed!! > 90 || status == FixtureState.EXTRA_TIME.code) {
+                updateScore(Fixture::goalsExtratimeHome, Fixture::goalsExtratimeAway, entity, calculateScore(entity, fixtureResponse, 120))
+            }
         }
-        else {
-            entity.goalsFulltimeHome = fixtureResponse.score.fulltime?.home
-            entity.goalsFulltimeAway = fixtureResponse.score.fulltime?.away
-        }
-        entity.goalsExtratimeHome = add(fixtureResponse.score.fulltime?.home, fixtureResponse.score.extratime?.home)
-        entity.goalsExtratimeAway = add(fixtureResponse.score.fulltime?.away, fixtureResponse.score.extratime?.away)
-        if (penaltyInProgress) {
-            updatePenaltyScore(entity, fixtureResponse, entity.eventsProcessed)
-        }
-        else {
-            entity.goalsPenaltyHome = fixtureResponse.score.penalty?.home
-            entity.goalsPenaltyAway = fixtureResponse.score.penalty?.away
+
+        if (penaltyInProgress || status == FixtureState.MATCH_FINISHED_AFTER_PENALTY.code) {
+            updateScore(Fixture::goalsPenaltyHome, Fixture::goalsPenaltyAway, entity, calculatePenaltyScore(entity, fixtureResponse, entity.eventsProcessed))
         }
 
         val newGoalData = createGoalData(entity)
@@ -338,6 +333,16 @@ class DataImportService : Logging {
         return ImportFixtureResult(entity, Collections.unmodifiableList(newEvents.map { it.message }), stateChange)
     }
 
+    private fun calculateScore(entity: Fixture, fixtureResponse: FixtureResponseResponseInner, toMinute: Int): Score {
+        val processedGoalEvents = fixtureResponse.events!!
+            .sortedWith(EventComparator(entity))
+            .filter { it.time != null }
+            .filter { it.time!!.elapsed!! <= toMinute }
+            .filter { it.type == "Goal" && it.detail != "Missed Penalty" && it.comments != "Penalty Shootout" }
+
+        return calculateScore(fixtureResponse, processedGoalEvents)
+    }
+
     private fun calculatePenaltyScore(entity: Fixture, fixtureResponse: FixtureResponseResponseInner, eventsProcessed: Int): Score {
         // always calculate the current score of penalty shootout based on the events that have already been processed
         val processedPenaltyEvents = fixtureResponse.events!!
@@ -345,19 +350,22 @@ class DataImportService : Logging {
             .subList(0, eventsProcessed)
             .filter { it.type == "Goal" && it.detail == "Penalty" && it.comments == "Penalty Shootout" }
 
+        return calculateScore(fixtureResponse, processedPenaltyEvents)
+    }
+
+    private fun calculateScore(fixtureResponse: FixtureResponseResponseInner, events: List<FixtureResponseResponseInnerEventsInner>): Score {
         val homeTeamId = fixtureResponse.teams.home!!.id
         val awayTeamId = fixtureResponse.teams.away!!.id
 
-        val goalsPenaltyHome = processedPenaltyEvents.count { it.team!!.id == homeTeamId }
-        val goalsPenaltyAway = processedPenaltyEvents.count { it.team!!.id == awayTeamId }
+        val goalsPenaltyHome = events.count { it.team!!.id == homeTeamId }
+        val goalsPenaltyAway = events.count { it.team!!.id == awayTeamId }
 
         return Score(goalsPenaltyHome, goalsPenaltyAway)
     }
 
-    private fun updatePenaltyScore(entity: Fixture, fixtureResponse: FixtureResponseResponseInner, eventsProcessed: Int) {
-        val (goalsPenaltyHome, goalsPenaltyAway) = calculatePenaltyScore(entity, fixtureResponse, eventsProcessed)
-        entity.goalsPenaltyHome = goalsPenaltyHome
-        entity.goalsPenaltyAway = goalsPenaltyAway
+    private fun updateScore(goalsHome: KMutableProperty1<Fixture, Int?>, goalsAway: KMutableProperty1<Fixture, Int?>, entity: Fixture, score: Score?) {
+        goalsHome.set(entity, score?.home)
+        goalsAway.set(entity, score?.away)
     }
 
     private fun createPenaltyEvents(fixtureResponse: FixtureResponseResponseInner, entity: Fixture): List<Event> {
@@ -371,7 +379,7 @@ class DataImportService : Logging {
                     if (entity.firstPenaltyTeam == null) {
                         entity.firstPenaltyTeam = it.team?.id
                     }
-                    updatePenaltyScore(entity, fixtureResponse, eventsProcessed)
+                    updateScore(Fixture::goalsPenaltyHome, Fixture::goalsPenaltyAway, entity, calculatePenaltyScore(entity, fixtureResponse, eventsProcessed))
                     processEvent(fixtureResponse, entity, it)
                 }
                 else {
@@ -384,13 +392,6 @@ class DataImportService : Logging {
     private fun extraTimeHalfTimeFix(fixtureResponse: FixtureResponseResponseInner): Boolean =
         (fixtureResponse.score.extratime?.home != null || fixtureResponse.score.extratime?.away != null) &&
                 fixtureResponse.fixture.status?.short?.value == FixtureState.HALF_TIME.code
-
-    private fun add(a: Int?, b: Int?): Int? {
-        if (a == null || b == null) {
-            return null
-        }
-        return a + b
-    }
 
     private fun areGoalsReset(oldGoalData: GoalData, newGoalData: GoalData): Boolean {
         return (oldGoalData.halftime.home > newGoalData.halftime.home) ||
