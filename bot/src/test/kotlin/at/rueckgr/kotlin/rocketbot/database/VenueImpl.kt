@@ -9,6 +9,8 @@ class VenueImpl(
     override var country: String?,
     override var capacity: Int?
 ): Venue {
+    override val changedProperties: Map<String, Any?>
+        get() = TODO("Not yet implemented")
     override val entityClass: KClass<Venue>
         get() = TODO("Not yet implemented")
     override val properties: Map<String, Any?>
