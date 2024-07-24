@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.8.1"
-val ktorVersion = "2.3.11"
+val ktorVersion = "2.3.12"
 val jacksonVersion = "2.17.1"
 val ktormVersion = "4.0.0"
 val okhttpVersion = "4.12.0"
@@ -53,7 +53,7 @@ dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-    implementation("at.rueckgr.kotlin.rocketbot:kotlin-rocket-lib:0.1.5-SNAPSHOT")
+    implementation("at.rueckgr.kotlin.rocketbot:kotlin-rocket-lib:0.1.6-SNAPSHOT")
 
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
@@ -73,7 +73,7 @@ dependencies {
     implementation("org.ktorm:ktorm-core:$ktormVersion")
     implementation("org.ktorm:ktorm-support-postgresql:$ktormVersion")
 
-    implementation("de.focus-shift:jollyday-jaxb:0.28.1")
+    implementation("de.focus-shift:jollyday-jaxb:0.29.0")
 
     // dependencies for generated OpenAPI client
     implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
@@ -81,7 +81,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.23")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:2.0.0")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.apache.groovy:groovy-all:4.0.21")
     testImplementation("org.spockframework:spock-core:2.4-M4-groovy-4.0")

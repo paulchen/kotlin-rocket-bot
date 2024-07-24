@@ -7,16 +7,19 @@ import at.rueckgr.kotlin.rocketbot.database.FixtureState
 import at.rueckgr.kotlin.rocketbot.database.FixtureStatePeriod
 import at.rueckgr.kotlin.rocketbot.database.Fixtures
 import at.rueckgr.kotlin.rocketbot.util.*
+import org.apache.commons.lang3.StringUtils
 import org.ktorm.dsl.*
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
-class SoccerUpdateService : Logging {
+object SoccerUpdateService : Logging {
+    private var future: ScheduledFuture<*>? = null
     private val executorService = Executors.newScheduledThreadPool(1)
 
     fun scheduleImmediateDailyUpdate() {
@@ -85,12 +88,12 @@ class SoccerUpdateService : Logging {
             .joinToString("\n") { "- $it" }
         val message = when (filteredResults
             .map { MatchTitleService.formatMatchTitle(it) }.size) {
-            1 -> ":mega: *Demnächst stattfindendes Spiel:*\n$matches"
-            else -> ":mega: *Demnächst stattfindende Spiele:*\n$matches"
+            1 -> ":mega: *Demnächst stattfindendes Spiel: *\n$matches"
+            else -> ":mega: *Demnächst stattfindende Spiele: *\n$matches"
         }
 
         notificationChannels.forEach { roomName ->
-            Bot.webserviceMessageQueue.add(WebserviceMessage(null, roomName, message, null, ":soccer:", username))
+            enqueueMessage(WebserviceMessage(null, roomName, message, null, ":soccer:", username))
         }
 
         DataImportService().setFixturesToAnnounced(filteredResults)
@@ -100,16 +103,25 @@ class SoccerUpdateService : Logging {
         liveUpdateResult.forEach {
             it.newEvents.forEach { event ->
                 notificationChannels.forEach { roomName ->
-                    Bot.webserviceMessageQueue.add(createMessage(it.fixture, roomName, event, username))
+                    enqueueMessage(createMessage(it.fixture, roomName, event, username))
                 }
             }
 
             if (it.stateChange != null) {
                 notificationChannels.forEach { roomName ->
-                    Bot.webserviceMessageQueue.add(createMessage(it.fixture, roomName, it.stateChange, username))
+                    enqueueMessage(createMessage(it.fixture, roomName, it.stateChange, username))
                 }
             }
         }
+    }
+
+    private fun enqueueMessage(webserviceMessage: WebserviceMessage) {
+        val (validationResult, validatedMessage) = MessageHelper.instance.validateMessage(webserviceMessage)
+        if (StringUtils.isNotEmpty(validationResult)) {
+            logger().error(validationResult)
+            return
+        }
+        Bot.webserviceMessageQueue.add(validatedMessage)
     }
 
     fun createMessage(fixture: Fixture, roomName: String, message: String, username: String?): WebserviceMessage {
@@ -140,7 +152,14 @@ class SoccerUpdateService : Logging {
 
     private fun scheduleLiveOrDailyUpdate() {
         val nextDailyUpdate = getNextDailyUpdate()
-        val nextLiveUpdate = getNextLiveUpdate()
+        val nextLiveUpdate = try {
+            getNextLiveUpdate()
+        }
+        catch (e: DbException) {
+            logger().debug("Unable to access database, checking again in one minute")
+            schedule({ scheduleLiveOrDailyUpdate() }, 60)
+            return
+        }
 
         logger().debug("Next live update would be at {}", nextLiveUpdate)
         logger().debug("Next daily update would be at {}", nextDailyUpdate)
@@ -153,18 +172,27 @@ class SoccerUpdateService : Logging {
         }
     }
 
+    private fun schedule(function: () -> Unit, seconds: Long) {
+        synchronized(this) {
+            if (this.future != null) {
+                this.future!!.cancel(true)
+            }
+            this.future = executorService.schedule(function, seconds, TimeUnit.SECONDS)
+        }
+    }
+
     private fun scheduleDailyUpdate(seconds: Long) {
         DataImportService.nextUpdate = LocalDateTime.now().plusSeconds(seconds)
         DataImportService.nextUpdateType = UpdateType.DAILY
         logger().debug("Scheduling next daily update for {} (in {} seconds)", DataImportService.nextUpdate, seconds)
-        executorService.schedule( { handleExceptions { runDailyUpdate() } }, seconds, TimeUnit.SECONDS)
+        schedule({ handleExceptions { runDailyUpdate() } }, seconds)
     }
 
     private fun scheduleLiveUpdate(seconds: Long) {
         DataImportService.nextUpdate = LocalDateTime.now().plusSeconds(seconds)
         DataImportService.nextUpdateType = UpdateType.LIVE
         logger().debug("Scheduling next live update for {} (in {} seconds)", DataImportService.nextUpdate, seconds)
-        executorService.schedule( { handleExceptions { runLiveUpdate() } }, seconds, TimeUnit.SECONDS)
+        schedule({ handleExceptions { runLiveUpdate() } }, seconds)
     }
 
     private fun getNextDailyUpdate(): ZonedDateTime {

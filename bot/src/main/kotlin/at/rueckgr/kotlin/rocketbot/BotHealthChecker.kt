@@ -1,6 +1,7 @@
 package at.rueckgr.kotlin.rocketbot
 
 import at.rueckgr.kotlin.rocketbot.handler.PluginProvider
+import at.rueckgr.kotlin.rocketbot.plugins.AbstractPlugin
 import at.rueckgr.kotlin.rocketbot.util.Db
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.logger
@@ -38,7 +39,16 @@ class BotHealthChecker : HealthChecker, Logging {
     override fun getAdditionalStatusInformation() = emptyMap<String, Map<String, String>>()
 //    override fun getAdditionalStatusInformation() = PluginProvider
 //            .getAllPlugins()
-//            .map { it.javaClass.simpleName to it.getAdditionalStatus() }
+//            .map { it.javaClass.simpleName to getAdditionalStatus(it) }
 //            .filter { it.second.isNotEmpty() }
 //            .toMap()
+
+//    private fun getAdditionalStatus(plugin: AbstractPlugin) =
+//        try {
+//            plugin.getAdditionalStatus()
+//        }
+//        catch (e: Throwable) {
+//            logger().error("Exception occurred while trying to obtain additional status for pluign {}", plugin.javaClass.simpleName, e)
+//            mapOf("error" to "Unable to obtain additional status: " + e.message)
+//        }
 }

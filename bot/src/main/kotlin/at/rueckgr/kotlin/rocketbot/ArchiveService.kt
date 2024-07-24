@@ -54,7 +54,7 @@ class ArchiveService : Logging {
             try {
                 val response = getClient().get(url)
                 if (response.status.value > 299) {
-                    logger().info("Status code received from backend: {}", response.status.value)
+                    logger().info("Status code received from archive backend: {}", response.status.value)
                     null
                 }
                 else {
@@ -92,7 +92,7 @@ class ArchiveService : Logging {
             try {
                 val response = getClient().get("http://backend:8081/channel/$encodedId")
                 if (response.status.value > 299) {
-                    logger().info("Status code received from backend: {}", response.status.value)
+                    logger().info("Status code received from archive backend: {}", response.status.value)
                     null
                 }
                 else {

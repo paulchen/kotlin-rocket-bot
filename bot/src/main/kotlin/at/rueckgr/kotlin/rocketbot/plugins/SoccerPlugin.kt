@@ -10,10 +10,10 @@ import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import java.time.LocalDateTime
 
 class SoccerPlugin : AbstractPlugin() {
-    override fun getCommands() = emptyList<String>()
+    override fun getCommands() = listOf("em")
 
     override fun init() {
-//        SoccerUpdateService().scheduleImmediateDailyUpdate()
+//        SoccerUpdateService.scheduleImmediateDailyUpdate()
     }
 
     override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
@@ -39,13 +39,13 @@ class SoccerPlugin : AbstractPlugin() {
 //        val processedMatches = matches.joinToString("\n") { "- $it" }
 //        return when (matches.size) {
 //            0 -> ""
-//            1 -> "*$singular:*\n$processedMatches"
-//            else -> "*$plural:*\n$processedMatches"
+//            1 -> "*$singular: *\n$processedMatches"
+//            else -> "*$plural: *\n$processedMatches"
 //        }
 //    }
 
     override fun getHelp(command: String) = listOf<String>(
-//        "`!wm` provides some information about past, current, and future matches within the FIFA World Cup 2022"
+//        "`!em` provides some information about past, current, and future matches within the UEFA Euro 2024"
     )
 
     override fun getProblems(): List<String> = emptyList() // {

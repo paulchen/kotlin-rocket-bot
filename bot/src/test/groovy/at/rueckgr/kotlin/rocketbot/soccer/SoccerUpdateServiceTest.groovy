@@ -6,7 +6,7 @@ import spock.lang.Specification
 class SoccerUpdateServiceTest extends Specification {
     def "createMessage"() {
         given:
-            def service = new SoccerUpdateService()
+            def service = SoccerUpdateService
             def fixture = FixtureFactory.createFixture("Al Bayt Stadium", "Al Khor", "Qatar", "Ecuador")
 
         when:

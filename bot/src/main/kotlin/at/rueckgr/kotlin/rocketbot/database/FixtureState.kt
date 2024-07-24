@@ -23,11 +23,11 @@ enum class FixtureState(val code: String, val period: FixtureStatePeriod) {
 
     companion object {
         fun getByPeriod(period: FixtureStatePeriod) = FixtureState
-            .values()
+            .entries
             .filter { it.period == period }
             .map { it.code }
 
-        fun getByCode(code: String): FixtureState? = values().firstOrNull { it.code == code }
+        fun getByCode(code: String): FixtureState? = entries.firstOrNull { it.code == code }
     }
 }
 

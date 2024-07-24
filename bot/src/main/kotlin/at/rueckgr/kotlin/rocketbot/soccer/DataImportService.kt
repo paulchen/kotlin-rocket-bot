@@ -44,6 +44,7 @@ class DataImportService : Logging {
         val result = FootballApiService
             .getAllFixtures()
             .response
+            .filter { isEnabledRound(it) }
             .map { importFixture(database, it); }
             .toList()
 
@@ -78,6 +79,13 @@ class DataImportService : Logging {
 
         return result
     }
+
+    private fun isEnabledRound(fixture: FixtureResponseResponseInner) =
+        fixture.league.round != null &&
+        ConfigurationProvider.getSoccerConfiguration()
+                .rounds
+                ?.any { it.toRegex().matches(fixture.league.round) }
+            ?: true
 
     fun importFixture(database: Database, fixtureId: Long): ImportFixtureResult {
         val fixture = FootballApiService.getFixture(fixtureId)
@@ -187,6 +195,11 @@ class DataImportService : Logging {
         val reportedStatus = fixtureResponse.fixture.status?.short?.value ?: "TBD"
         val status = if (reportedStatus != FixtureState.MATCH_FINISHED_AFTER_PENALTY.code || fixtureResponse.events == null) {
             reportedStatus
+        }
+        else if (fixtureResponse.events.size < entity.eventsProcessed) {
+            // sometimes at the end of the game after penalty shootout, the events for the penalty shootout are missing
+            // these events will be present during a later update
+            FixtureState.PENALTY.code
         }
         else {
             // delay state change from PENALTY to MATCH_FINISHED_AFTER_PENALTY to the time when events for all penalty goals are present
@@ -421,7 +434,7 @@ class DataImportService : Logging {
         val newFixtureState = FixtureState.getByCode(newState)
 
         return FixtureStateTransition
-            .values()
+            .entries
             .firstOrNull {
                 (it.oldState == oldFixtureState && it.newState == newFixtureState)
                         || (it.oldState == null && it.newState == newFixtureState)
@@ -433,7 +446,7 @@ class DataImportService : Logging {
         logger().debug("Processing event: {}", event)
 
         if (event.type == "Goal") {
-            val goalType = GoalType.values().toList().firstOrNull { it.apiName == event.detail }
+            val goalType = GoalType.entries.toList().firstOrNull { it.apiName == event.detail }
             val typeDescription = goalType?.displayName ?: event.detail
             val time = if (event.time?.elapsed != null && entity.status != FixtureState.PENALTY.code) {
                 " in Spielminute ${event.time.elapsed}"

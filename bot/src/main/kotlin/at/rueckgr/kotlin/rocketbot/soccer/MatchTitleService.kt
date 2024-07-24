@@ -49,7 +49,7 @@ object MatchTitleService {
     }
 
     private fun getDescription(state: FixtureState) = FixtureStateTransition
-            .values()
+            .entries
             .first { it.oldState == null && it.newState == state }
             .description ?: ""
 

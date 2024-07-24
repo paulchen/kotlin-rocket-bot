@@ -10,7 +10,7 @@ webservice_port = os.environ['WEBSERVICE_PORT']
 
 r = requests.get('http://localhost:' + webservice_port + '/status')
 if not r:
-    print('UNKNOWN: Status code %s received from frontend' % r.status_code)
+    print('UNKNOWN: Status code %s received from webservice' % r.status_code)
     sys.exit(3)
 
 j = r.json()
