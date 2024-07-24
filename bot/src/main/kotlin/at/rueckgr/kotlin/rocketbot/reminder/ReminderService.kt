@@ -64,7 +64,7 @@ class ReminderService : Logging {
             "; next notification after $next, use `!unremind ${reminder.id}` to cancel"
         }
         val message = "@$notifyee $notifyer told me to remind you about ${reminder.subject}${nextNotification}"
-        Bot.webserviceMessageQueue.add(WebserviceMessage(reminder.channel, null, message))
+//        Bot.webserviceMessageQueue.add(WebserviceMessage(reminder.channel, null, message))
         return true
     }
 
