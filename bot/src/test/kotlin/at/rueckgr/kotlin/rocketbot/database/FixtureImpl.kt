@@ -28,6 +28,8 @@ class FixtureImpl(
     override var pendingScoreChange: Boolean,
     override var firstPenaltyTeam: Long?
 ) : Fixture {
+    override val changedProperties: Map<String, Any?>
+        get() = TODO("Not yet implemented")
     override val entityClass: KClass<Fixture>
         get() = TODO("Not yet implemented")
     override val properties: Map<String, Any?>
