@@ -18,35 +18,36 @@ class BotHealthChecker : HealthChecker, Logging {
             problems.add(HealthProblem("database", "connection", e.message ?: "unable to connect to database"))
         }
 
-        PluginProvider
-            .getAllPlugins()
-            .flatMap {
-                try {
-                    it.getProblems()
-                }
-                catch (e: Throwable) {
-                    logger().error("Exception occurred when checking health status if plugin {}:", it.javaClass.simpleName, e)
-                    listOf("Unable to check health status of plugin: ${e.message}")
-                }
-                    .map { problem -> HealthProblem("plugins", it.javaClass.simpleName, problem) }
-            }
-            .forEach { problems.add(it) }
+//        PluginProvider
+//            .getAllPlugins()
+//            .flatMap {
+//                try {
+//                    it.getProblems()
+//                }
+//                catch (e: Throwable) {
+//                    logger().error("Exception occurred when checking health status if plugin {}:", it.javaClass.simpleName, e)
+//                    listOf("Unable to check health status of plugin: ${e.message}")
+//                }
+//                    .map { problem -> HealthProblem("plugins", it.javaClass.simpleName, problem) }
+//            }
+//            .forEach { problems.add(it) }
 
         return problems
     }
 
-    override fun getAdditionalStatusInformation() = PluginProvider
-            .getAllPlugins()
-            .map { it.javaClass.simpleName to getAdditionalStatus(it) }
-            .filter { it.second.isNotEmpty() }
-            .toMap()
-
-    private fun getAdditionalStatus(plugin: AbstractPlugin) =
-        try {
-            plugin.getAdditionalStatus()
-        }
-        catch (e: Throwable) {
-            logger().error("Exception occurred while trying to obtain additional status for pluign {}", plugin.javaClass.simpleName, e)
-            mapOf("error" to "Unable to obtain additional status: " + e.message)
-        }
+    override fun getAdditionalStatusInformation() = emptyMap<String, Map<String, String>>()
+//    override fun getAdditionalStatusInformation() = PluginProvider
+//            .getAllPlugins()
+//            .map { it.javaClass.simpleName to getAdditionalStatus(it) }
+//            .filter { it.second.isNotEmpty() }
+//            .toMap()
+//
+//    private fun getAdditionalStatus(plugin: AbstractPlugin) =
+//        try {
+//            plugin.getAdditionalStatus()
+//        }
+//        catch (e: Throwable) {
+//            logger().error("Exception occurred while trying to obtain additional status for pluign {}", plugin.javaClass.simpleName, e)
+//            mapOf("error" to "Unable to obtain additional status: " + e.message)
+//        }
 }
