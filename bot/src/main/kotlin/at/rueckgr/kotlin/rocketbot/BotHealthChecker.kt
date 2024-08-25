@@ -18,19 +18,19 @@ class BotHealthChecker : HealthChecker, Logging {
             problems.add(HealthProblem("database", "connection", e.message ?: "unable to connect to database"))
         }
 
-//        PluginProvider
-//            .getAllPlugins()
-//            .flatMap {
-//                try {
-//                    it.getProblems()
-//                }
-//                catch (e: Throwable) {
-//                    logger().error("Exception occurred when checking health status if plugin {}:", it.javaClass.simpleName, e)
-//                    listOf("Unable to check health status of plugin: ${e.message}")
-//                }
-//                    .map { problem -> HealthProblem("plugins", it.javaClass.simpleName, problem) }
-//            }
-//            .forEach { problems.add(it) }
+        PluginProvider
+            .getAllPlugins()
+            .flatMap {
+                try {
+                    it.getProblems()
+                }
+                catch (e: Throwable) {
+                    logger().error("Exception occurred when checking health status if plugin {}:", it.javaClass.simpleName, e)
+                    listOf("Unable to check health status of plugin: ${e.message}")
+                }
+                    .map { problem -> HealthProblem("plugins", it.javaClass.simpleName, problem) }
+            }
+            .forEach { problems.add(it) }
 
         return problems
     }

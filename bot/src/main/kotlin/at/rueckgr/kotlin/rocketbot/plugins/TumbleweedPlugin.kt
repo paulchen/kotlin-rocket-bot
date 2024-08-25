@@ -204,22 +204,23 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
 
     private fun fetchLastActivity(roomId: String) = ArchiveService().getChannelInfo(roomId)?.lastActivity
 
-    override fun getProblems(): List<String> {
-        val problems = mutableListOf<String>()
-        try {
-            validateConfiguration()
-        }
-        catch (e: ConfigurationException) {
-            problems.add(e.message ?: "Configuration error")
-        }
-
-        nextExecutions
-            .filter { it.value.isBefore(LocalDateTime.now()) }
-            .map { "Next execution for channel ${getChannelName(it.key)} is in the past: ${it.value}" }
-            .forEach { problems.add(it) }
-
-        return problems
-    }
+    override fun getProblems() = emptyList<String>()
+//    override fun getProblems(): List<String> {
+//        val problems = mutableListOf<String>()
+//        try {
+//            validateConfiguration()
+//        }
+//        catch (e: ConfigurationException) {
+//            problems.add(e.message ?: "Configuration error")
+//        }
+//
+//        nextExecutions
+//            .filter { it.value.isBefore(LocalDateTime.now()) }
+//            .map { "Next execution for channel ${getChannelName(it.key)} is in the past: ${it.value}" }
+//            .forEach { problems.add(it) }
+//
+//        return problems
+//    }
 
     override fun handleBotMessages() = true
 
