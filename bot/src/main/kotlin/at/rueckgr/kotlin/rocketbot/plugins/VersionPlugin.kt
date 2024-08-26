@@ -36,17 +36,16 @@ class VersionPlugin : AbstractPlugin() {
     override fun getHelp(command: String): List<String> =
         listOf("`!version` outputs the version of kotlin-rocket-bot currently running, among several other relevant components")
 
-    override fun getProblems() = emptyList<String>()
-//    override fun getProblems(): List<String> {
-//        val archiveRevision = ArchiveService().getVersion()
-//
-//        return if (archiveRevision.version.revision == "unknown" ||
-//                archiveRevision.version.commitMessage == "unknown" ||
-//                archiveRevision.mongoDbVersion == "unknown") {
-//            listOf("Unable to fetch version information from archive")
-//        }
-//        else {
-//            emptyList()
-//        }
-//    }
+    override fun getProblems(): List<String> {
+        val archiveRevision = ArchiveService().getVersion()
+
+        return if (archiveRevision.version.revision == "unknown" ||
+                archiveRevision.version.commitMessage == "unknown" ||
+                archiveRevision.mongoDbVersion == "unknown") {
+            listOf("Unable to fetch version information from archive")
+        }
+        else {
+            emptyList()
+        }
+    }
 }
