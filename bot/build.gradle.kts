@@ -7,15 +7,16 @@ val coroutinesVersion = "1.8.1"
 val ktorVersion = "2.3.12"
 val jacksonVersion = "2.17.2"
 val ktormVersion = "4.1.0"
+val kotlinVersion = "2.0.20"
 val okhttpVersion = "4.12.0"
 
 plugins {
     id("kotlin-rocket-bot.conventions")
-    kotlin("jvm") version "2.0.0"
-    kotlin("plugin.serialization") version "2.0.0"
+    kotlin("jvm") version "2.0.20"
+    kotlin("plugin.serialization") version "2.0.20"
     application
     groovy
-    id("org.openapi.generator") version "7.7.0"
+    id("org.openapi.generator") version "7.8.0"
     id("com.github.ben-manes.versions") version "0.51.0"
     id("jacoco")
     id("org.sonarqube") version "5.1.0.4882"
@@ -50,8 +51,8 @@ sourceSets {
 dependencies {
     implementation(project(":unicode"))
 
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
 
     implementation("at.rueckgr.kotlin.rocketbot:kotlin-rocket-lib:0.1.6-SNAPSHOT")
 
@@ -62,13 +63,13 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
 
-    implementation("org.apache.commons:commons-lang3:3.15.0")
+    implementation("org.apache.commons:commons-lang3:3.17.0")
     implementation("org.apache.commons:commons-text:1.12.0")
     implementation("org.reflections:reflections:$reflectionsVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("at.favre.lib:bcrypt:0.10.2")
 
-    implementation("org.postgresql:postgresql:42.7.3")
+    implementation("org.postgresql:postgresql:42.7.4")
     implementation("com.kohlschutter.junixsocket:junixsocket-core:2.10.0")
     implementation("org.ktorm:ktorm-core:$ktormVersion")
     implementation("org.ktorm:ktorm-support-postgresql:$ktormVersion")
@@ -81,15 +82,15 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:2.0.0")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:2.0.20")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.apache.groovy:groovy-all:4.0.22")
     testImplementation("org.spockframework:spock-core:2.4-M4-groovy-4.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.11.0-M2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.0")
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
     testImplementation("org.apache.commons:commons-io:1.3.2")
     testImplementation("org.ktorm:ktorm-support-mysql:$ktormVersion")
-    testImplementation("com.h2database:h2:2.3.230")
+    testImplementation("com.h2database:h2:2.3.232")
     testImplementation("org.assertj:assertj-core:3.26.3")
 }
 
