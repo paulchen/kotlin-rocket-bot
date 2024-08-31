@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    antlr("org.antlr:antlr4:4.13.1")
+    antlr("org.antlr:antlr4:4.13.2")
 }
 
 tasks.withType<JavaCompile> {
