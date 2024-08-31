@@ -52,7 +52,7 @@ class ArchiveService : Logging {
     private fun getUserDetails(url: String): UserDetails? {
         return runBlocking {
             try {
-                val response = getClient().get(url)
+                val response = getClient().use { it.get(url) }
                 if (response.status.value > 299) {
                     logger().info("Status code received from archive backend: {}", response.status.value)
                     null
@@ -77,7 +77,7 @@ class ArchiveService : Logging {
     fun getVersion(): VersionDetails {
         return runBlocking {
             try {
-                getClient().get("http://backend:8081/version").body()
+                getClient().use { it.get("http://backend:8081/version").body() }
             }
             catch (e: Exception) {
                 logger().error("Exception occurred", e)
@@ -90,7 +90,7 @@ class ArchiveService : Logging {
         val encodedId = URLEncoder.encode(channelId, "utf-8")
         return runBlocking {
             try {
-                val response = getClient().get("http://backend:8081/channel/$encodedId")
+                val response = getClient().use { it.get("http://backend:8081/channel/$encodedId") }
                 if (response.status.value > 299) {
                     logger().info("Status code received from archive backend: {}", response.status.value)
                     null
