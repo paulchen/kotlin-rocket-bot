@@ -98,7 +98,10 @@ class SoccerPlugin : AbstractPlugin() {
 
     private fun checkLastUpdate(): String? {
         val lastUpdate = DataImportService.lastUpdate
-        return if (lastUpdate == null) {
+        return if (ConfigurationProvider.getSoccerConfiguration().mode == SoccerPluginMode.DORMANT) {
+            null
+        }
+        else if (lastUpdate == null) {
             "Soccer data has never been updated"
         }
         else if (lastUpdate.isBefore(LocalDateTime.now().minusDays(1))) {
