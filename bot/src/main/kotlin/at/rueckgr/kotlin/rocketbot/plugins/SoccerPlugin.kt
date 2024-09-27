@@ -7,16 +7,35 @@ import at.rueckgr.kotlin.rocketbot.soccer.MatchInfoService
 import at.rueckgr.kotlin.rocketbot.soccer.SoccerProblemService
 import at.rueckgr.kotlin.rocketbot.soccer.SoccerUpdateService
 import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
+import at.rueckgr.kotlin.rocketbot.util.SoccerPluginMode
+import at.rueckgr.kotlin.rocketbot.util.time.DateTimeDifferenceCalculator
+import at.rueckgr.kotlin.rocketbot.util.time.TimeUnit
 import java.time.LocalDateTime
 
 class SoccerPlugin : AbstractPlugin() {
-    override fun getCommands() = listOf("em")
+    override fun getCommands() = listOf("em", "wm")
 
     override fun init() {
         SoccerUpdateService.scheduleImmediateDailyUpdate()
     }
 
     override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
+        val messageText = message.message.lowercase().trim()
+        val configuration = ConfigurationProvider.getSoccerConfiguration()
+        return when (messageText) {
+            "!em" -> when (configuration.mode) {
+                SoccerPluginMode.EUROPEAN_CHAMPIONSHIP -> createTournamentStatusMessage()
+                else -> createTimeMessage(configuration.nextEuropeanChampionship)
+            }
+            "!wm" -> when (configuration.mode) {
+                SoccerPluginMode.WORLD_CUP -> createTournamentStatusMessage()
+                else -> createTimeMessage(configuration.nextWorldCup)
+            }
+            else -> emptyList()
+        }
+    }
+
+    private fun createTournamentStatusMessage(): List<OutgoingMessage> {
         val configuration = ConfigurationProvider.getSoccerConfiguration()
         val matchesToShow = configuration.matchesToShow ?: 3
         val (pastMatches, liveMatches, futureMatches) = MatchInfoService().getMatchInfo(matchesToShow, configuration.leagueId!!, configuration.season!!)
@@ -34,6 +53,14 @@ class SoccerPlugin : AbstractPlugin() {
         return listOf(OutgoingMessage(result, ":soccer:", configuration.username))
     }
 
+    private fun createTimeMessage(date: LocalDateTime?): List<OutgoingMessage> {
+        if (date == null) {
+            return emptyList()
+        }
+        return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date, listOf(TimeUnit.WEEK)),
+            ":soccer:", ConfigurationProvider.getSoccerConfiguration().username))
+    }
+
     private fun processMatches(matches: List<String>, singular: String, plural: String): String {
         val processedMatches = matches.joinToString("\n") { "- $it" }
         return when (matches.size) {
@@ -43,9 +70,20 @@ class SoccerPlugin : AbstractPlugin() {
         }
     }
 
-    override fun getHelp(command: String) = listOf(
-        "`!em` provides some information about past, current, and future matches within the UEFA Euro 2024"
-    )
+    override fun getHelp(command: String): List<String> {
+        val mode = ConfigurationProvider.getSoccerConfiguration().mode
+        return when (command) {
+            "em" -> when (mode) {
+                SoccerPluginMode.EUROPEAN_CHAMPIONSHIP -> listOf("`!em` provides some information about past, current, and future matches within the current UEFA European Championship")
+                else -> listOf("`!em` tells the time period until the beginning of the next UEFA European Championship")
+            }
+            "wm" -> when (mode) {
+                SoccerPluginMode.WORLD_CUP -> listOf("`!wm` provides some information about past, current, and future matches within the current FIFA World Cup")
+                else -> listOf("`!wm` tells the time period until the beginning of the next FIFA World Cup")
+            }
+            else -> emptyList()
+        }
+    }
 
     override fun getProblems(): List<String> {
         val problems = mutableListOf<String>()

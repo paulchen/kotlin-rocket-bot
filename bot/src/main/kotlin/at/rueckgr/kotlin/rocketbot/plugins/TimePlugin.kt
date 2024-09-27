@@ -15,12 +15,9 @@ import java.time.format.DateTimeParseException
 
 class TimePlugin : AbstractPlugin(), Logging {
     private val pizzaDate = LocalDateTime.of(LocalDate.of(2016, 11, 19), LocalTime.of(11, 51, 29))
-//    private val emDate = LocalDateTime.of(LocalDate.of(2024, 6, 14), LocalTime.of(12, 0, 0))
-    private val wmDate = LocalDateTime.of(LocalDate.of(2026, 6, 10), LocalTime.of(12, 0, 0))
 
     override fun getCommands(): List<String> {
-        return listOf("t", "wm", "oldyear", "newyear", "pizza")
-//        return listOf("t", "oldyear", "newyear", "pizza")
+        return listOf("t", "oldyear", "newyear", "pizza")
     }
 
     override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
@@ -48,19 +45,12 @@ class TimePlugin : AbstractPlugin(), Logging {
                 return listOf(OutgoingMessage("enri owes us pizza for $difference"))
             }
             val date: LocalDateTime = when (messageText) {
-//                "!em" -> emDate
-                "!wm" -> wmDate
                 "!oldyear" -> getBeginOfCurrentYear()
                 "!newyear" -> getBeginOfCurrentYear().plusYears(1)
                 else -> return emptyList()
             }
 
-            val (emoji, username) = when (messageText) {
-                "!em", "!wm" -> listOf(":soccer:", ConfigurationProvider.getSoccerConfiguration().username)
-                else -> listOf(null, null)
-            }
-            return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(now, date, listOf(TimeUnit.WEEK)), emoji, username))
-//            return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date)))
+            return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date)))
         }
 
         return emptyList()
@@ -79,8 +69,6 @@ class TimePlugin : AbstractPlugin(), Logging {
             "`!t <time>` outputs the duration since/until <time>. If <time> is an incomplete specification (e.g. missing year), the next occurrence of the given time will be assumed.",
             "Supported formats for <time>: `YYYY-MM-DD`, `YYYY-MM-DD hh:mm`, `YYYY-MM-DD hh:mm:ss`, `DD.MM`, `DD.MM.YYYY`, `DD.MM. hh:mm`, `DD.MM.YYYY hh:mm`, `DD.MM. hh:mm:ss`, `DD.MM.YYY hh:mm:ss`, `hh:mm`, `hh:mm:ss`"
         )
-        "em" -> listOf("`!em` tells the time period until the beginning of the next UEFA European Championship")
-        "wm" -> listOf("`!wm` tells the time period until the beginning of the next FIFA World Cup")
         "oldyear" -> listOf("`!oldyear` tells the time period since the beginning of the current year")
         "newyear" -> listOf("`!newyear` tells the time period until the beginning of the next year")
         "pizza" -> listOf("`!pizza` tells you for how much time enri has already failed to pay a round of pizza")

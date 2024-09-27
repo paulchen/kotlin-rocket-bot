@@ -1,5 +1,6 @@
 package at.rueckgr.kotlin.rocketbot.util
 
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 data class UserConfiguration(
@@ -43,7 +44,14 @@ data class SimpleReply(
     val stopProcessing: Boolean
 )
 
+enum class SoccerPluginMode {
+    DORMANT, WORLD_CUP, EUROPEAN_CHAMPIONSHIP
+}
+
 data class SoccerPluginConfiguration(
+    val mode: SoccerPluginMode,
+    val nextWorldCup: LocalDateTime?,
+    val nextEuropeanChampionship: LocalDateTime?,
     val leagueId: Long?,
     val season: Int?,
     val rounds: List<String>?,

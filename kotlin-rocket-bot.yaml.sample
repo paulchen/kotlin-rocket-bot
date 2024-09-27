@@ -16,6 +16,9 @@ plugins:
         reply: _nice_
         probability: 50
   soccer:
+    mode: DORMANT
+    nextWorldCup: 2026-06-11T00:00:00
+    nextEuropeanChampionship: 2028-06-09T00:00:00
     leagueId: 4
     season: 2020
     rounds:

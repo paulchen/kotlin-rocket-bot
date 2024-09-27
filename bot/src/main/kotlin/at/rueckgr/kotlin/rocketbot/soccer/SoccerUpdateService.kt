@@ -27,6 +27,11 @@ object SoccerUpdateService : Logging {
     }
 
     private fun runDailyUpdate() {
+        if (ConfigurationProvider.getSoccerConfiguration().mode == SoccerPluginMode.DORMANT) {
+            scheduleLiveOrDailyUpdate()
+            return
+        }
+
         val updateResult = try {
             DataImportService().runDailyUpdate()
         }
