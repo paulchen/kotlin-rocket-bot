@@ -6,4 +6,7 @@ general:
 plugins:
   mutePlugins: []
   soccer:
+    mode: DORMANT
+    nextWorldCup: 2026-06-11T00:00:00
+    nextEuropeanChampionship: 2028-06-09T00:00:00
     apiKey: TODO
