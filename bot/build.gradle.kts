@@ -5,7 +5,7 @@ import java.io.ByteArrayOutputStream
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.9.0"
 val ktorVersion = "2.3.12"
-val jacksonVersion = "2.17.2"
+val jacksonVersion = "2.18.0"
 val ktormVersion = "4.1.1"
 val kotlinVersion = "2.0.20"
 val okhttpVersion = "4.12.0"
@@ -16,7 +16,7 @@ plugins {
     kotlin("plugin.serialization") version "2.0.20"
     application
     groovy
-    id("org.openapi.generator") version "7.8.0"
+    id("org.openapi.generator") version "7.9.0"
     id("com.github.ben-manes.versions") version "0.51.0"
     id("jacoco")
     id("org.sonarqube") version "5.1.0.4882"
