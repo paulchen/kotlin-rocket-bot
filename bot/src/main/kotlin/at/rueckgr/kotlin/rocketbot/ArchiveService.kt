@@ -23,9 +23,31 @@ data class UserDetails(val user: User)
 data class User(
     val id: String,
     val username: String,
-    @Serializable(KZonedDateTimeSerializer::class)
-    val timestamp: ZonedDateTime?,
+    val mostRecentMessage: Message?,
     val rooms: List<String>
+)
+
+@Serializable
+data class Message(
+    val id: String,
+    val rid: String,
+    val message: String,
+    @Serializable(KZonedDateTimeSerializer::class)
+    val timestamp: ZonedDateTime,
+    val username: String,
+    val attachments: List<Attachment>,
+    @Serializable(KZonedDateTimeSerializer::class)
+    val editedAt: ZonedDateTime?,
+    val editedBy: String?
+)
+
+@Serializable
+data class Attachment(
+    val type: String?,
+    val title: String?,
+    val titleLink: String?,
+    val description: String?,
+    val messageLink: String?
 )
 
 @Serializable

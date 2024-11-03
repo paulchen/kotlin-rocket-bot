@@ -27,11 +27,11 @@ class SeenPlugin : AbstractPlugin() {
         val response = if (userDetails == null) {
             "Sorry, I don't know about *${formatUsername(seenUsername)}*."
         }
-        else if (userDetails.user.timestamp == null) {
+        else if (userDetails.user.mostRecentMessage?.timestamp == null) {
             "*${formatUsername(userDetails.user.username)}* has never been active."
         }
         else {
-            val localDateTime = toLocalDateTime(userDetails.user.timestamp)
+            val localDateTime = toLocalDateTime(userDetails.user.mostRecentMessage.timestamp)
             val timestamp = TimestampFormatter().formatTimestamp(localDateTime)
             val ago = DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), localDateTime, listOf(TimeUnit.WEEK))
             "*${formatUsername(userDetails.user.username)}* wrote their last message at $timestamp ($ago)."
