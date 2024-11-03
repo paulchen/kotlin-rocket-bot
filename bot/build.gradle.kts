@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.9.0"
-val ktorVersion = "2.3.12"
+val ktorVersion = "3.0.1"
 val jacksonVersion = "2.18.1"
 val ktormVersion = "4.1.1"
 val kotlinVersion = "2.0.21"
