@@ -42,10 +42,14 @@ class SeenPlugin : AbstractPlugin() {
                 channelName = ArchiveService().getChannelInfo(channelId)!!.name
             }
 
-            val host = ConfigurationProvider.getConfiguration().general!!.host
+            val generalConfiguration = ConfigurationProvider.getConfiguration().general!!
+            val host = generalConfiguration.host
 
-            val messageLink = "https://$host/channel/${channelName}?msg=${userDetails.user.mostRecentMessage.id}"
-            "*${formatUsername(userDetails.user.username)}* wrote their [last message]($messageLink) at $timestamp ($ago)."
+            val messageId = userDetails.user.mostRecentMessage.id
+            val messageLink = "https://$host/channel/${channelName}?msg=$messageId"
+            val archiveLink = generalConfiguration.archiveLink?.let { "; [archive](${generalConfiguration.archiveLink}/$channelId/$messageId)" } ?: ""
+
+            "*${formatUsername(userDetails.user.username)}* wrote their [last message]($messageLink) at $timestamp ($ago)$archiveLink."
         }
         return listOf(OutgoingMessage(response))
     }

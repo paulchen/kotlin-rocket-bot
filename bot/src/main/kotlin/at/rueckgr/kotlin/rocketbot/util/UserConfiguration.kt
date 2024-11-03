@@ -16,7 +16,8 @@ data class GeneralConfiguration(
     val password: String?,
     val ignoredChannels: List<String>?,
     val botId: String?,
-    val logRequests: Boolean?
+    val logRequests: Boolean?,
+    val archiveLink: String?
 )
 
 data class PluginsConfiguration(

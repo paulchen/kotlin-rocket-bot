@@ -6,6 +6,7 @@ general:
   logRequests: false
   ignoredChannels:
     - general
+  archiveLink: https://archive.chat.rueckgr.at/
 
 plugins:
   mutePlugins:
