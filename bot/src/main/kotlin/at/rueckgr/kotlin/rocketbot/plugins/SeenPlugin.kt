@@ -1,6 +1,7 @@
 package at.rueckgr.kotlin.rocketbot.plugins
 
 import at.rueckgr.kotlin.rocketbot.*
+import at.rueckgr.kotlin.rocketbot.util.ConfigurationProvider
 import at.rueckgr.kotlin.rocketbot.util.formatUsername
 import at.rueckgr.kotlin.rocketbot.util.time.DateTimeDifferenceCalculator
 import at.rueckgr.kotlin.rocketbot.util.time.TimeUnit
@@ -41,7 +42,9 @@ class SeenPlugin : AbstractPlugin() {
                 channelName = ArchiveService().getChannelInfo(channelId)!!.name
             }
 
-            val messageLink = "/channel/${channelName}?msg=${userDetails.user.mostRecentMessage.id}"
+            val host = ConfigurationProvider.getConfiguration().general!!.host
+
+            val messageLink = "https://$host/channel/${channelName}?msg=${userDetails.user.mostRecentMessage.id}"
             "*${formatUsername(userDetails.user.username)}* wrote their [last message|$messageLink] at $timestamp ($ago)."
         }
         return listOf(OutgoingMessage(response))
