@@ -45,7 +45,7 @@ class SeenPlugin : AbstractPlugin() {
             val host = ConfigurationProvider.getConfiguration().general!!.host
 
             val messageLink = "https://$host/channel/${channelName}?msg=${userDetails.user.mostRecentMessage.id}"
-            "*${formatUsername(userDetails.user.username)}* wrote their [last message|$messageLink] at $timestamp ($ago)."
+            "*${formatUsername(userDetails.user.username)}* wrote their [last message]($messageLink) at $timestamp ($ago)."
         }
         return listOf(OutgoingMessage(response))
     }
