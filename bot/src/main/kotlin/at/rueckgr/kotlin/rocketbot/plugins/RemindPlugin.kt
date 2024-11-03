@@ -192,14 +192,27 @@ class RemindPlugin : AbstractPlugin(), Logging {
         else -> emptyList()
     }
 
-    override fun getProblems(): List<String> = emptyList()
+    override fun getProblems(): List<String> {
+        val problems = mutableListOf<String>()
+
+        val overdueRemindersCount = reminderService.getOverdueReminders().count()
+        if (overdueRemindersCount > 0) {
+            problems.add("$overdueRemindersCount overdue reminders")
+        }
+
+        return problems
+    }
 
     override fun getAdditionalStatus(): Map<String, String> {
-        val count = Db().connection
+        val totalRemindersCount = Db().connection
             .from(Reminders)
             .select()
             .map { Reminders.createEntity(it) }
             .count()
-        return mapOf("number of reminders" to count.toString())
+        val overdueRemindersCount = reminderService.getOverdueReminders().count()
+        return mapOf(
+            "number of reminders" to totalRemindersCount.toString(),
+            "overdue reminders" to overdueRemindersCount.toString()
+        )
     }
 }

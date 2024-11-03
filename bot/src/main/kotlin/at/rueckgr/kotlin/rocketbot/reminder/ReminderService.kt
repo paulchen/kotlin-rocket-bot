@@ -34,22 +34,26 @@ class ReminderService : Logging {
         logger().info("Checking for due reminders")
         try {
             val database = Db().connection
-            database
-                .from(Reminders)
-                .select()
-                .where { Reminders.nextNotification lte LocalDateTime.now() }
-                .map { Reminders.createEntity(it) }
-                .forEach {
-                    if (remind(it)) {
-                        updateOrRemove(database, it)
-                    }
+            val reminders = getDueReminders(database, LocalDateTime.now())
+            reminders.forEach {
+                if (remind(it)) {
+                    updateOrRemove(database, it)
                 }
+            }
         }
         catch (e: Throwable) {
             logger().error(e.message, e)
         }
         scheduleExecution()
     }
+
+    private fun getDueReminders(database: Database, dateTime: LocalDateTime) = database
+            .from(Reminders)
+            .select()
+            .where { Reminders.nextNotification lte dateTime }
+            .map { Reminders.createEntity(it) }
+
+    fun getOverdueReminders() = getDueReminders(Db().connection, LocalDateTime.now().minusMinutes(10))
 
     private fun remind(reminder: Reminder): Boolean {
         val notifyer = if(reminder.notifyer == reminder.notifyee) {
