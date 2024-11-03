@@ -1,5 +1,7 @@
 package at.rueckgr.kotlin.rocketbot.database
 
+import org.apache.commons.lang3.builder.HashCodeBuilder
+import org.apache.commons.lang3.builder.ToStringBuilder
 import java.time.LocalDateTime
 import kotlin.reflect.KClass
 
@@ -59,15 +61,11 @@ class FixtureImpl(
         TODO("Not yet implemented")
     }
 
-    override fun hashCode(): Int {
-        TODO("Not yet implemented")
-    }
+    override fun hashCode() = HashCodeBuilder.reflectionHashCode(this)
 
     override fun set(name: String, value: Any?) {
         TODO("Not yet implemented")
     }
 
-    override fun toString(): String {
-        TODO("Not yet implemented")
-    }
+    override fun toString(): String = ToStringBuilder.reflectionToString(this)
 }

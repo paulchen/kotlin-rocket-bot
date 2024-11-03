@@ -6,11 +6,10 @@ import spock.lang.Specification
 class SoccerUpdateServiceTest extends Specification {
     def "createMessage"() {
         given:
-            def service = SoccerUpdateService
             def fixture = FixtureFactory.createFixture("Al Bayt Stadium", "Al Khor", "Qatar", "Ecuador")
 
         when:
-            def result = service.createMessage(fixture, "roomName", "test message", "user")
+            def result = SoccerUpdateService.INSTANCE.createMessage(fixture, "roomName", "test message", "user")
 
         then:
             result.roomId == null
