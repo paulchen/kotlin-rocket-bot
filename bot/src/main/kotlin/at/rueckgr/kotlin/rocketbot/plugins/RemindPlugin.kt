@@ -29,10 +29,14 @@ data class Timespec(val nextNotification: LocalDateTime, val notifyInterval: Lon
 class RemindException(message: String): Exception(message)
 
 class RemindPlugin : AbstractPlugin(), Logging {
+    companion object {
+        private val reminderService = ReminderService()
+    }
+
     override fun getCommands(): List<String> = listOf("remind", "unremind")
 
     override fun init() {
-        ReminderService().scheduleExecution()
+        reminderService.scheduleExecution()
     }
 
     override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message) =

@@ -10,20 +10,24 @@ import at.rueckgr.kotlin.rocketbot.util.Db
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.handleExceptions
 import at.rueckgr.kotlin.rocketbot.util.logger
-import at.rueckgr.kotlin.rocketbot.util.time.DateTimeFormat
 import org.ktorm.database.Database
 import org.ktorm.dsl.*
 import org.ktorm.entity.removeIf
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
 class ReminderService : Logging {
     private val executorService = Executors.newScheduledThreadPool(1)
+    private var schedule: ScheduledFuture<*>? = null
 
     fun scheduleExecution() {
-        executorService.schedule( { handleExceptions { executeReminder() } }, 30, TimeUnit.SECONDS)
+        synchronized(this) {
+            schedule?.cancel(false)
+            schedule = executorService.schedule({ handleExceptions { executeReminder() } }, 30, TimeUnit.SECONDS)
+        }
     }
 
     private fun executeReminder() {
