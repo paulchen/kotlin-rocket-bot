@@ -34,7 +34,15 @@ class SeenPlugin : AbstractPlugin() {
             val localDateTime = toLocalDateTime(userDetails.user.mostRecentMessage.timestamp)
             val timestamp = TimestampFormatter().formatTimestamp(localDateTime)
             val ago = DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), localDateTime, listOf(TimeUnit.WEEK))
-            "*${formatUsername(userDetails.user.username)}* wrote their last message at $timestamp ($ago)."
+
+            val channelId = userDetails.user.mostRecentMessage.rid
+            var channelName = Bot.subscriptionService.getChannelNameById(channelId)
+            if (channelName == null) {
+                channelName = ArchiveService().getChannelInfo(channelId)!!.name
+            }
+
+            val messageLink = "/channel/${channelName}?msg=${userDetails.user.mostRecentMessage.id}"
+            "*${formatUsername(userDetails.user.username)}* wrote their [last message|$messageLink] at $timestamp ($ago)."
         }
         return listOf(OutgoingMessage(response))
     }

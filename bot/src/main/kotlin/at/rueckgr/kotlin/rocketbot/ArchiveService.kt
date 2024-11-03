@@ -56,6 +56,7 @@ data class VersionDetails(val version: VersionInfo, val mongoDbVersion: String)
 @Serializable
 data class ChannelInfo(
     val id: String,
+    val name: String,
     @Serializable(KZonedDateTimeSerializer::class)
     val lastActivity: ZonedDateTime?
 )
