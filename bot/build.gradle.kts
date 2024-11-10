@@ -54,7 +54,7 @@ dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
 
-    implementation("at.rueckgr.kotlin.rocketbot:kotlin-rocket-lib:0.1.6-SNAPSHOT")
+    implementation("at.rueckgr.kotlin.rocketbot:kotlin-rocket-lib:0.1.7-SNAPSHOT")
 
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
