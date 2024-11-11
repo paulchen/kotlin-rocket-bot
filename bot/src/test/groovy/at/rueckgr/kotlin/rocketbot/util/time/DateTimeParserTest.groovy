@@ -41,6 +41,7 @@ class DateTimeParserTest extends Specification {
             "1.2.2022 15:22:46"   | LocalDateTime.now()                   | LocalDateTime.of(2022, 2, 1, 15, 22, 46, 0)
             "1.2. 2:26"           | LocalDateTime.of(2022, 1, 27, 0, 16)  | LocalDateTime.of(2022, 2, 1, 2, 26, 0, 0)
             "1.2. 02:26"          | LocalDateTime.of(2022, 1, 27, 0, 16)  | LocalDateTime.of(2022, 2, 1, 2, 26, 0, 0)
+            "1.2. 15:22:46"       | LocalDateTime.of(2022, 1, 27, 0, 16)  | LocalDateTime.of(2022, 2, 1, 15, 22, 46, 0)
             "1.1. 2:26"           | LocalDateTime.of(2022, 1, 27, 0, 16)  | LocalDateTime.of(2023, 1, 1, 2, 26, 0, 0)
             "1.1. 02:26"          | LocalDateTime.of(2022, 1, 27, 0, 16)  | LocalDateTime.of(2023, 1, 1, 2, 26, 0, 0)
             "31.12. 2:26"         | LocalDateTime.of(2022, 1, 27, 0, 16)  | LocalDateTime.of(2022, 12, 31, 2, 26, 0, 0)

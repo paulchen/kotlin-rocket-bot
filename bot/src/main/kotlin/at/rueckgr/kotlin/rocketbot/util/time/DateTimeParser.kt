@@ -53,6 +53,11 @@ enum class DateTimeFormat(
         "d.M.yyyy H:mm",
         DateTimeParser::parseDateTimeWithoutYear
     ),
+    DATETIME_DE_WITHOUT_YEAR_SECONDS(
+        """^[0-9]{1,2}\.[0-9]{1,2}\. [0-9]{1,2}:[0-9]{2}:[0-9]{2}$""".toRegex(),
+        "d.M.yyyy H:mm:ss",
+        DateTimeParser::parseDateTimeWithoutYear
+    ),
 }
 
 

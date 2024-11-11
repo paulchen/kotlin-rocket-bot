@@ -67,7 +67,7 @@ class TimePlugin : AbstractPlugin(), Logging {
     override fun getHelp(command: String) = when (command) {
         "t" -> listOf(
             "`!t <time>` outputs the duration since/until <time>. If <time> is an incomplete specification (e.g. missing year), the next occurrence of the given time will be assumed.",
-            "Supported formats for <time>: `YYYY-MM-DD`, `YYYY-MM-DD hh:mm`, `YYYY-MM-DD hh:mm:ss`, `DD.MM`, `DD.MM.YYYY`, `DD.MM. hh:mm`, `DD.MM.YYYY hh:mm`, `DD.MM. hh:mm:ss`, `DD.MM.YYY hh:mm:ss`, `hh:mm`, `hh:mm:ss`"
+            "Supported formats for <time>: `YYYY-MM-DD`, `YYYY-MM-DD hh:mm`, `YYYY-MM-DD hh:mm:ss`, `DD.MM.`, `DD.MM.YYYY`, `DD.MM. hh:mm`, `DD.MM.YYYY hh:mm`, `DD.MM. hh:mm:ss`, `DD.MM.YYY hh:mm:ss`, `hh:mm`, `hh:mm:ss`"
         )
         "oldyear" -> listOf("`!oldyear` tells the time period since the beginning of the current year")
         "newyear" -> listOf("`!newyear` tells the time period until the beginning of the next year")
