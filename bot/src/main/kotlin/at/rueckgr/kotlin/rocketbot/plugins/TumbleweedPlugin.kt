@@ -5,10 +5,7 @@ import at.rueckgr.kotlin.rocketbot.exception.ConfigurationException
 import at.rueckgr.kotlin.rocketbot.util.*
 import de.focus_shift.jollyday.core.HolidayManager
 import de.focus_shift.jollyday.core.ManagerParameters
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZonedDateTime
+import java.time.*
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
@@ -178,16 +175,11 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
         synchronized(this) {
             getChannelIds(configuration.tumbleweedChannels)
                 ?.forEach {
-                    val lastActivity = try {
-                        fetchLastActivity(it)
-                    }
-                    catch (e: Exception) {
-                        logger().info("Error fetching last activity for channel {} from archive, assuming current timestamp", it, e)
-                        ZonedDateTime.now()
-                    }
-                    logger().debug("Fetched last activity in room {} from archive: {}", it, lastActivity)
-                    if (lastActivity != null) {
-                        lastActivities[it] = toLocalDateTime(lastActivity)
+                    val lastActivity = Bot.subscriptionService.getNewestTimestampSeen(it)
+                    val localDateTime = lastActivity?.let { toLocalDateTime(Instant.ofEpochMilli(lastActivity)) }
+                    logger().debug("Determined last activity in room {} to be: {}", it, localDateTime)
+                    if (localDateTime != null) {
+                        lastActivities[it] = localDateTime
                         scheduleExecution(it)
                     }
                 }
@@ -197,8 +189,6 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
     private fun getChannelIds(channelNames: List<String>?) = channelNames?.mapNotNull { Bot.subscriptionService.getChannelIdByName(it) }
 
     private fun getChannelName(channelId: String) = Bot.subscriptionService.getChannelNameById(channelId) ?: channelId
-
-    private fun fetchLastActivity(roomId: String) = ArchiveService().getChannelInfo(roomId)?.lastActivity
 
     override fun getProblems(): List<String> {
         val problems = mutableListOf<String>()
