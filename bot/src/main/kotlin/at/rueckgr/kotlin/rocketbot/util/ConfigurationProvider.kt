@@ -41,8 +41,7 @@ object ConfigurationProvider : Logging {
         val general = config.general
         if (StringUtils.isBlank(general?.host) ||
             StringUtils.isBlank(general?.username) ||
-            StringUtils.isBlank(general?.password) ||
-            StringUtils.isBlank(general?.botId)) {
+            StringUtils.isBlank(general?.password)) {
             throw ConfigurationException(3, "Configuration is incomplete")
         }
 

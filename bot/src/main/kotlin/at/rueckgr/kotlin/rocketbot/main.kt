@@ -38,7 +38,7 @@ class Main: Logging {
             launch {
                 logExceptions {
                     Bot(
-                        BotConfiguration(general!!.host!!, general.username!!, general.password!!, general.ignoredChannels!!, general.botId!!, 8082, general.logRequests ?: false),
+                        BotConfiguration(general!!.host!!, general.username!!, general.password!!, general.ignoredChannels!!, 8082, general.logRequests ?: false),
                         MessageHandler(),
                         UserValidator(),
                         BotHealthChecker()
