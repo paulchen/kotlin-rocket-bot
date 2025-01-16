@@ -2,8 +2,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val reflectionsVersion = "0.10.2"
-val coroutinesVersion = "1.9.0"
-val ktorVersion = "3.0.2"
+val coroutinesVersion = "1.10.1"
+val ktorVersion = "3.0.3"
 val jacksonVersion = "2.18.2"
 val ktormVersion = "4.1.1"
 val kotlinVersion = "2.1.0"
@@ -68,12 +68,12 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("at.favre.lib:bcrypt:0.10.2")
 
-    implementation("org.postgresql:postgresql:42.7.4")
+    implementation("org.postgresql:postgresql:42.7.5")
     implementation("com.kohlschutter.junixsocket:junixsocket-core:2.10.1")
     implementation("org.ktorm:ktorm-core:$ktormVersion")
     implementation("org.ktorm:ktorm-support-postgresql:$ktormVersion")
 
-    implementation("de.focus-shift:jollyday-jaxb:1.0.0")
+    implementation("de.focus-shift:jollyday-jaxb:1.4.0")
 
     // dependencies for generated OpenAPI client
     implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
@@ -84,13 +84,13 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.apache.groovy:groovy-all:4.0.24")
-    testImplementation("org.spockframework:spock-core:2.4-M4-groovy-4.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.11.3")
+    testImplementation("org.spockframework:spock-core:2.4-M5-groovy-4.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
     testImplementation("org.apache.commons:commons-io:1.3.2")
     testImplementation("org.ktorm:ktorm-support-mysql:$ktormVersion")
     testImplementation("com.h2database:h2:2.3.232")
-    testImplementation("org.assertj:assertj-core:3.26.3")
+    testImplementation("org.assertj:assertj-core:3.27.2")
 }
 
 tasks.test {
