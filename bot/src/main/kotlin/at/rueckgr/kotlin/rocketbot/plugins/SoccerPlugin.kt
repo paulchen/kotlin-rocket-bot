@@ -60,7 +60,7 @@ class SoccerPlugin : AbstractPlugin() {
         }
         val configuration = ConfigurationProvider.getSoccerConfiguration()
         return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date, listOf(TimeUnit.WEEK)),
-            configuration.username, configuration.username))
+            configuration.emoji, configuration.username))
     }
 
     private fun processMatches(matches: List<String>, singular: String, plural: String): String {
