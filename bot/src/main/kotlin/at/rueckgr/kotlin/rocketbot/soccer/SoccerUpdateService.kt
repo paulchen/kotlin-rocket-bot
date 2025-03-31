@@ -187,14 +187,14 @@ object SoccerUpdateService : Logging {
     }
 
     private fun scheduleDailyUpdate(seconds: Long) {
-        DataImportService.nextUpdate = LocalDateTime.now().plusSeconds(seconds)
+        DataImportService.nextUpdate = ZonedDateTime.now().plusSeconds(seconds)
         DataImportService.nextUpdateType = UpdateType.DAILY
         logger().debug("Scheduling next daily update for {} (in {} seconds)", DataImportService.nextUpdate, seconds)
         schedule({ handleExceptions { runDailyUpdate() } }, seconds)
     }
 
     private fun scheduleLiveUpdate(seconds: Long) {
-        DataImportService.nextUpdate = LocalDateTime.now().plusSeconds(seconds)
+        DataImportService.nextUpdate = ZonedDateTime.now().plusSeconds(seconds)
         DataImportService.nextUpdateType = UpdateType.LIVE
         logger().debug("Scheduling next live update for {} (in {} seconds)", DataImportService.nextUpdate, seconds)
         schedule({ handleExceptions { runLiveUpdate() } }, seconds)

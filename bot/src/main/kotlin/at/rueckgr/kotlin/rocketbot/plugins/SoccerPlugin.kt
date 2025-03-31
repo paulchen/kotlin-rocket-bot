@@ -11,6 +11,7 @@ import at.rueckgr.kotlin.rocketbot.util.SoccerPluginMode
 import at.rueckgr.kotlin.rocketbot.util.time.DateTimeDifferenceCalculator
 import at.rueckgr.kotlin.rocketbot.util.time.TimeUnit
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 class SoccerPlugin : AbstractPlugin() {
     override fun getCommands() = listOf("em", "wm")
@@ -104,7 +105,7 @@ class SoccerPlugin : AbstractPlugin() {
         else if (lastUpdate == null) {
             "Soccer data has never been updated"
         }
-        else if (lastUpdate.isBefore(LocalDateTime.now().minusDays(1))) {
+        else if (lastUpdate.isBefore(ZonedDateTime.now().minusDays(1))) {
             "Last soccer data update is more than one day ago"
         }
         else {
@@ -123,7 +124,7 @@ class SoccerPlugin : AbstractPlugin() {
         return if (nextUpdate == null) {
             "No update of soccer data scheduled"
         }
-        else if (nextUpdate.isBefore(LocalDateTime.now().minusMinutes(5))) {
+        else if (nextUpdate.isBefore(ZonedDateTime.now().minusMinutes(5))) {
             "Date of next soccer data update is in the past"
         }
         else {

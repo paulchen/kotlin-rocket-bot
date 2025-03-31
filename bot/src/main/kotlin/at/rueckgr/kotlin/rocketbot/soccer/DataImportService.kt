@@ -13,6 +13,7 @@ import org.ktorm.dsl.*
 import org.ktorm.entity.*
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.Collections
 import kotlin.math.max
 
@@ -28,9 +29,9 @@ enum class UpdateType {
 
 class DataImportService : Logging {
     companion object {
-        var lastUpdate: LocalDateTime? = null
+        var lastUpdate: ZonedDateTime? = null
         var lastUpdateFailed = false
-        var nextUpdate: LocalDateTime? = null
+        var nextUpdate: ZonedDateTime? = null
         var nextUpdateType: UpdateType = UpdateType.DAILY
     }
 
@@ -52,7 +53,7 @@ class DataImportService : Logging {
 
         processNewVenues(database, existingVenues)
 
-        lastUpdate = LocalDateTime.now()
+        lastUpdate = ZonedDateTime.now()
         lastUpdateFailed = false
 
         logger().info("Daily update complete")
@@ -72,7 +73,7 @@ class DataImportService : Logging {
             .map { importFixture(database, it.id) }
             .toList()
 
-        lastUpdate = LocalDateTime.now()
+        lastUpdate = ZonedDateTime.now()
         lastUpdateFailed = false
 
         logger().info("Live update complete")
