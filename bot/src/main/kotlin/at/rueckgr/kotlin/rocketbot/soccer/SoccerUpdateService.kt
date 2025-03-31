@@ -52,6 +52,7 @@ object SoccerUpdateService : Logging {
     private fun runLiveUpdate() {
         val soccerConfiguration = ConfigurationProvider.getSoccerConfiguration()
         val username = soccerConfiguration.username
+        val emoji = soccerConfiguration.emoji
         val notificationChannels = soccerConfiguration.notificationChannels
 
         var error = false
@@ -76,11 +77,11 @@ object SoccerUpdateService : Logging {
             return
         }
 
-        announceGames(notificationChannels, username)
-        sendNotifications(notificationChannels, username, liveUpdateResult)
+        announceGames(notificationChannels, emoji, username)
+        sendNotifications(notificationChannels, emoji, username, liveUpdateResult)
     }
 
-    private fun announceGames(notificationChannels: List<String>, username: String?) {
+    private fun announceGames(notificationChannels: List<String>, emoji: String?, username: String?) {
         val filteredResults = DataImportService()
             .findLiveFixtures()
             .filter { !it.announced }
@@ -98,23 +99,23 @@ object SoccerUpdateService : Logging {
         }
 
         notificationChannels.forEach { roomName ->
-            enqueueMessage(WebserviceMessage(null, roomName, message, null, ":soccer:", username))
+            enqueueMessage(WebserviceMessage(null, roomName, message, null, emoji, username))
         }
 
         DataImportService().setFixturesToAnnounced(filteredResults)
     }
 
-    private fun sendNotifications(notificationChannels: List<String>, username: String?, liveUpdateResult: List<ImportFixtureResult>) {
+    private fun sendNotifications(notificationChannels: List<String>, emoji: String?, username: String?, liveUpdateResult: List<ImportFixtureResult>) {
         liveUpdateResult.forEach {
             it.newEvents.forEach { event ->
                 notificationChannels.forEach { roomName ->
-                    enqueueMessage(createMessage(it.fixture, roomName, event, username))
+                    enqueueMessage(createMessage(it.fixture, roomName, event, emoji, username))
                 }
             }
 
             if (it.stateChange != null) {
                 notificationChannels.forEach { roomName ->
-                    enqueueMessage(createMessage(it.fixture, roomName, it.stateChange, username))
+                    enqueueMessage(createMessage(it.fixture, roomName, it.stateChange, emoji, username))
                 }
             }
         }
@@ -129,11 +130,11 @@ object SoccerUpdateService : Logging {
         Bot.webserviceMessageQueue.add(validatedMessage)
     }
 
-    fun createMessage(fixture: Fixture, roomName: String, message: String, username: String?): WebserviceMessage {
+    fun createMessage(fixture: Fixture, roomName: String, message: String, emoji: String?, username: String?): WebserviceMessage {
         val matchTitleShort = MatchTitleService.formatMatchTitleShort(fixture)
         val formattedMessage = ":mega: $matchTitleShort: $message"
 
-        return WebserviceMessage(null, roomName, formattedMessage, null, ":soccer:", username)
+        return WebserviceMessage(null, roomName, formattedMessage, null, emoji, username)
     }
 
     private fun hasLiveFixtures(updateResult: List<ImportFixtureResult>): Boolean {

@@ -60,6 +60,7 @@ data class SoccerPluginConfiguration(
     val apiKey: String?,
     val notificationChannels: List<String>?,
     val matchesToShow: Int?,
+    val emoji: String?,
     val username: String?
 )
 

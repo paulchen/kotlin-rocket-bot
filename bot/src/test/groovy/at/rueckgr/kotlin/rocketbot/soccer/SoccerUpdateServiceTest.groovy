@@ -9,7 +9,7 @@ class SoccerUpdateServiceTest extends Specification {
             def fixture = FixtureFactory.createFixture("Al Bayt Stadium", "Al Khor", "Qatar", "Ecuador")
 
         when:
-            def result = SoccerUpdateService.INSTANCE.createMessage(fixture, "roomName", "test message", "user")
+            def result = SoccerUpdateService.INSTANCE.createMessage(fixture, "roomName", "test message", ":soccer:", "user")
 
         then:
             result.roomId == null

@@ -42,7 +42,7 @@ class SoccerPlugin : AbstractPlugin() {
         val (pastMatches, liveMatches, futureMatches) = MatchInfoService().getMatchInfo(matchesToShow, configuration.leagueId!!, configuration.season!!)
 
         if (pastMatches.isEmpty() && liveMatches.isEmpty() && futureMatches.isEmpty()) {
-            return listOf(OutgoingMessage("Keine Spieldaten vorhanden.", ":soccer:", configuration.username))
+            return listOf(OutgoingMessage("Keine Spieldaten vorhanden.", configuration.emoji, configuration.username))
         }
         val parts = ArrayList<String>(3)
         parts.add(processMatches(pastMatches, "Vergangenes Spiel", "Vergangene Spiele"))
@@ -51,15 +51,16 @@ class SoccerPlugin : AbstractPlugin() {
 
         val result = parts.filter { it.isNotBlank() }.joinToString("\n\n")
 
-        return listOf(OutgoingMessage(result, ":soccer:", configuration.username))
+        return listOf(OutgoingMessage(result, configuration.emoji, configuration.username))
     }
 
     private fun createTimeMessage(date: LocalDateTime?): List<OutgoingMessage> {
         if (date == null) {
             return emptyList()
         }
+        val configuration = ConfigurationProvider.getSoccerConfiguration()
         return listOf(OutgoingMessage(DateTimeDifferenceCalculator().formatTimeDifference(LocalDateTime.now(), date, listOf(TimeUnit.WEEK)),
-            ":soccer:", ConfigurationProvider.getSoccerConfiguration().username))
+            configuration.username, configuration.username))
     }
 
     private fun processMatches(matches: List<String>, singular: String, plural: String): String {

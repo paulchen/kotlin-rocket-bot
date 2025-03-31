@@ -31,6 +31,7 @@ plugins:
     notificationChannels:
       - paulchens-bot
     matchesToShow: 3
+    emoji: :soccer:
     username: soccerbot
   tumbleweed:
     tumbleweedChannels:
