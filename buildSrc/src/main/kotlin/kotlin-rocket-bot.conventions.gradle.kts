@@ -18,6 +18,9 @@ licensee {
     allow("MIT")
     allow("Apache-2.0")
 
+    // not recognized as MIT
+    allowUrl("https://opensource.org/license/mit")
+
     allowUrl("http://www.gnu.org/licenses/lgpl-2.1.html")
 
     // Unicode, Inc. License Agreement for Data Files and Software (#Unicode)

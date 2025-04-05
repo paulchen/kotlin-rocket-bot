@@ -4,22 +4,22 @@ import java.nio.file.Files
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.10.1"
-val ktorVersion = "3.0.3"
-val jacksonVersion = "2.18.2"
+val ktorVersion = "3.1.2"
+val jacksonVersion = "2.18.3"
 val ktormVersion = "4.1.1"
-val kotlinVersion = "2.1.10"
+val kotlinVersion = "2.1.20"
 val okhttpVersion = "4.12.0"
 
 plugins {
     id("kotlin-rocket-bot.conventions")
-    kotlin("jvm") version "2.1.10"
-    kotlin("plugin.serialization") version "2.1.10"
+    kotlin("jvm") version "2.1.20"
+    kotlin("plugin.serialization") version "2.1.20"
     application
     groovy
-    id("org.openapi.generator") version "7.11.0"
+    id("org.openapi.generator") version "7.12.0"
     id("com.github.ben-manes.versions") version "0.52.0"
     id("jacoco")
-    id("org.sonarqube") version "6.0.1.5171"
+    id("org.sonarqube") version "6.1.0.5360"
 }
 
 tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates").configure {
@@ -74,7 +74,7 @@ dependencies {
     implementation("org.ktorm:ktorm-core:$ktormVersion")
     implementation("org.ktorm:ktorm-support-postgresql:$ktormVersion")
 
-    implementation("de.focus-shift:jollyday-jaxb:1.4.0")
+    implementation("de.focus-shift:jollyday-jaxb:1.5.0")
 
     // dependencies for generated OpenAPI client
     implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
@@ -84,14 +84,14 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.apache.groovy:groovy-all:4.0.25")
+    testImplementation("org.apache.groovy:groovy-all:4.0.26")
     testImplementation("org.spockframework:spock-core:2.4-M5-groovy-4.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.12.0-M1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.13.0-M2")
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
     testImplementation("org.apache.commons:commons-io:1.3.2")
     testImplementation("org.ktorm:ktorm-support-mysql:$ktormVersion")
     testImplementation("com.h2database:h2:2.3.232")
-    testImplementation("org.assertj:assertj-core:3.27.3")
+    testImplementation("org.assertj:assertj-core:4.0.0-M1")
 }
 
 tasks.test {
