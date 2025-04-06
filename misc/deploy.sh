@@ -15,6 +15,13 @@ if [ ! -d "$JAVA_HOME" ]; then
 	exit 2
 fi
 
+DEPLOY_HASH=`sha256sum misc/deploy.sh`
+git pull || exit 3
+if [ "$DEPLOY_HASH" != "`sha256sum misc/deploy.sh`" ]; then
+	misc/deploy.sh
+	exit $?
+fi
+
 cd ../kotlin-rocket-lib
 
 git pull || exit 3
@@ -24,8 +31,6 @@ LIB_VERSION=`grep ^version build.gradle.kts |sed -e 's/^[^"]*"//;s/"$//'`
 ./gradlew publishToMavenLocal || exit 3
 
 cd ../kotlin-rocket-bot
-
-git pull || exit 3
 
 LIB_DEPENDENCY_VERSION=`grep kotlin-rocket-lib bot/build.gradle.kts |sed -e 's/^.*://;s/".*$//'`
 
