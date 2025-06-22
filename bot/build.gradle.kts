@@ -4,22 +4,22 @@ import java.nio.file.Files
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.10.2"
-val ktorVersion = "3.1.2"
-val jacksonVersion = "2.19.0"
+val ktorVersion = "3.2.0"
+val jacksonVersion = "2.19.1"
 val ktormVersion = "4.1.1"
-val kotlinVersion = "2.1.20"
+val kotlinVersion = "2.1.21"
 val okhttpVersion = "4.12.0"
 
 plugins {
     id("kotlin-rocket-bot.conventions")
-    kotlin("jvm") version "2.1.20"
-    kotlin("plugin.serialization") version "2.1.20"
+    kotlin("jvm") version "2.1.21"
+    kotlin("plugin.serialization") version "2.1.21"
     application
     groovy
     id("org.openapi.generator") version "7.13.0"
     id("com.github.ben-manes.versions") version "0.52.0"
     id("jacoco")
-    id("org.sonarqube") version "6.1.0.5360"
+    id("org.sonarqube") version "6.2.0.5505"
 }
 
 tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates").configure {
@@ -69,12 +69,12 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("at.favre.lib:bcrypt:0.10.2")
 
-    implementation("org.postgresql:postgresql:42.7.5")
+    implementation("org.postgresql:postgresql:42.7.7")
     implementation("com.kohlschutter.junixsocket:junixsocket-core:2.10.1")
     implementation("org.ktorm:ktorm-core:$ktormVersion")
     implementation("org.ktorm:ktorm-support-postgresql:$ktormVersion")
 
-    implementation("de.focus-shift:jollyday-jaxb:1.5.2")
+    implementation("de.focus-shift:jollyday-jaxb:1.5.4")
 
     // dependencies for generated OpenAPI client
     implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
@@ -84,9 +84,9 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.apache.groovy:groovy-all:4.0.26")
+    testImplementation("org.apache.groovy:groovy-all:4.0.27")
     testImplementation("org.spockframework:spock-core:2.4-M6-groovy-4.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.13.0-M2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.13.1")
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
     testImplementation("org.apache.commons:commons-io:1.3.2")
     testImplementation("org.ktorm:ktorm-support-mysql:$ktormVersion")
