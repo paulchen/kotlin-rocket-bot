@@ -39,6 +39,7 @@ class SloganPlugin : AbstractPlugin(), Logging {
             logger().info("Request to sloganizer failed, status code {}; {} failed requests in total", response.status, failedRequests)
             return@runBlocking emptyList()
         }
+        failedRequests = 0
 
         val bodyWithoutHtml = StringEscapeUtils.unescapeHtml4(
             response.body<String>()
