@@ -8,6 +8,7 @@ import at.rueckgr.kotlin.rocketbot.util.logger
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.text.StringEscapeUtils
@@ -18,29 +19,33 @@ class SloganPlugin : AbstractPlugin(), Logging {
 
     override fun getCommands() = listOf("slogan")
 
-    override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> {
-        val name = stripCommand(message.message) ?: return emptyList()
+    override fun handle(channel: EventHandler.Channel, user: EventHandler.User, message: EventHandler.Message): List<OutgoingMessage> = runBlocking {
+        val name = stripCommand(message.message) ?: return@runBlocking emptyList()
         val formattedName = formatUsername(name)
 
-        val (status, body) = runBlocking {
-            val response = HttpClient(CIO).get {
+        val response = try {
+            HttpClient(CIO).get {
                 url("http://www.sloganizer.net/outbound.php")
             }
-            Pair(response.status, response.body<String>())
+        }
+        catch (e: HttpRequestTimeoutException) {
+            failedRequests++
+            logger().info("Request to sloganizer failed; {} failed requests in total", failedRequests, e)
+            return@runBlocking emptyList()
         }
 
-        if (status.value >= 400) {
+        if (response.status.value >= 400) {
             failedRequests++
-            logger().info("Request to sloganizer failed, status code {}; {} failed requests in total", status, failedRequests)
-            return emptyList()
+            logger().info("Request to sloganizer failed, status code {}; {} failed requests in total", response.status, failedRequests)
+            return@runBlocking emptyList()
         }
 
         val bodyWithoutHtml = StringEscapeUtils.unescapeHtml4(
-            body
+            response.body<String>()
                 .replace("""<[^>]*>""".toRegex(), "")
         )
 
-        return listOf(OutgoingMessage(bodyWithoutHtml.replace("Sloganizer", "*$formattedName*")))
+        listOf(OutgoingMessage(bodyWithoutHtml.replace("Sloganizer", "*$formattedName*")))
     }
 
     override fun getHelp(command: String) = listOf(
