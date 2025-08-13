@@ -16,7 +16,7 @@ class FixtureMockServer(private val directory: String) {
             mockWebServer.enqueue(
                 MockResponse()
                     .setHeader(HttpHeaders.ContentType, "application/json")
-                    .setBody(FileUtils.readFileToString(it))
+                    .setBody(FileUtils.readFileToString(it, "UTF-8"))
             )
         }
 

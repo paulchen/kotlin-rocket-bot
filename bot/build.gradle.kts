@@ -88,7 +88,7 @@ dependencies {
     testImplementation("org.spockframework:spock-core:2.4-M6-groovy-4.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.13.4")
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
-    testImplementation("org.apache.commons:commons-io:1.3.2")
+    testImplementation("commons-io:commons-io:2.20.0")
     testImplementation("org.ktorm:ktorm-support-mysql:$ktormVersion")
     testImplementation("com.h2database:h2:2.3.232")
     testImplementation("org.assertj:assertj-core:4.0.0-M1")
