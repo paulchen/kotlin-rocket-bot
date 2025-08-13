@@ -102,6 +102,7 @@ tasks.test {
 tasks.withType<KotlinCompile> {
     compilerOptions {
         jvmTarget = JvmTarget.JVM_21
+        freeCompilerArgs.set(listOf("-Xannotation-default-target=param-property"))
     }
     dependsOn("openApiGenerate")
 }
