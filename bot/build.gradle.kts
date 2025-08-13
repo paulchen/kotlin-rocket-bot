@@ -4,7 +4,7 @@ import java.nio.file.Files
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.10.2"
-val ktorVersion = "3.2.2"
+val ktorVersion = "3.2.3"
 val jacksonVersion = "2.19.2"
 val ktormVersion = "4.1.1"
 val kotlinVersion = "2.2.0"
