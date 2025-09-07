@@ -19,11 +19,12 @@ class VersionPlugin : AbstractPlugin() {
         val rocketchatVersion = RestApiClient(Bot.host).getInstanceVersion() ?: "unknown"
         val dockerVersion = System.getenv("DOCKER_VERSION")?.replace("Docker version ", "") ?: "unknown"
         val kernelVersion = System.getenv("LINUX_VERSION") ?: "unknown"
+        val mongoImageDigest = System.getenv("MONGO_IMAGE_DIGEST") ?: "unknown"
 
         val builder = StringBuilder()
 
         builder.append("*Rocket.Chat* version `$rocketchatVersion`\n")
-        builder.append("*MongoDB* version `${archiveVersion.mongoDbVersion}`\n")
+        builder.append("*MongoDB* version `${archiveVersion.mongoDbVersion}` (Docker image: `$mongoImageDigest`)\n")
         builder.append("*Docker* version `$dockerVersion`\n")
         builder.append("*Linux kernel* version `$kernelVersion`\n")
         builder.append("*kotlin-rocket-bot* revision `${botRevision.revision}` ( _${botRevision.commitMessage}_ )\n")
