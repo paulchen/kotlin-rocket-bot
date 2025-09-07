@@ -13,6 +13,7 @@ import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import java.net.URLEncoder
 import java.time.ZonedDateTime
 
@@ -93,7 +94,11 @@ class ArchiveService : Logging {
 
     private fun getClient() = HttpClient(CIO) {
         install(ContentNegotiation) {
-            json()
+            json(
+                Json {
+                    ignoreUnknownKeys = true
+                }
+            )
         }
     }
 
