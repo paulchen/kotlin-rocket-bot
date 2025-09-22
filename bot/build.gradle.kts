@@ -4,22 +4,22 @@ import java.nio.file.Files
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.10.2"
-val ktorVersion = "3.2.3"
-val jacksonVersion = "2.19.2"
+val ktorVersion = "3.3.0"
+val jacksonVersion = "2.20.0"
 val ktormVersion = "4.1.1"
-val kotlinVersion = "2.2.0"
+val kotlinVersion = "2.2.20"
 val okhttpVersion = "4.12.0"
 
 plugins {
     id("kotlin-rocket-bot.conventions")
-    kotlin("jvm") version "2.2.0"
-    kotlin("plugin.serialization") version "2.2.0"
+    kotlin("jvm") version "2.2.20"
+    kotlin("plugin.serialization") version "2.2.20"
     application
     groovy
-    id("org.openapi.generator") version "7.14.0"
+    id("org.openapi.generator") version "7.15.0"
     id("com.github.ben-manes.versions") version "0.52.0"
     id("jacoco")
-    id("org.sonarqube") version "6.2.0.5505"
+    id("org.sonarqube") version "6.3.1.5724"
 }
 
 tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates").configure {
@@ -69,12 +69,12 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("at.favre.lib:bcrypt:0.10.2")
 
-    implementation("org.postgresql:postgresql:42.7.7")
+    implementation("org.postgresql:postgresql:42.7.8")
     implementation("com.kohlschutter.junixsocket:junixsocket-core:2.10.1")
     implementation("org.ktorm:ktorm-core:$ktormVersion")
     implementation("org.ktorm:ktorm-support-postgresql:$ktormVersion")
 
-    implementation("de.focus-shift:jollyday-jaxb:1.5.6")
+    implementation("de.focus-shift:jollyday-jaxb:1.6.0")
 
     // dependencies for generated OpenAPI client
     implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
@@ -84,7 +84,7 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.apache.groovy:groovy-all:4.0.28")
+    testImplementation("org.apache.groovy:groovy-all:5.0.1")
     testImplementation("org.spockframework:spock-core:2.4-M6-groovy-4.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.13.4")
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
