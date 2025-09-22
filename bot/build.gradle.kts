@@ -84,7 +84,7 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.apache.groovy:groovy-all:5.0.1")
+    testImplementation("org.apache.groovy:groovy-all:4.0.28")
     testImplementation("org.spockframework:spock-core:2.4-M6-groovy-4.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.13.4")
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
