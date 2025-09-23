@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /app/bot-latest
+cd /app/kotlin-rocket-bot
 
 trap 'killall -SIGTERM java' SIGTERM
 

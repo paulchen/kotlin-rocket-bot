@@ -1,3 +1,16 @@
+FROM eclipse-temurin:21-jdk AS jdk
+
+COPY . /opt/kotlin-rocket-bot
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git && \
+    cd /opt && \
+    git clone https://github.com/paulchen/kotlin-rocket-lib.git && \
+    cd kotlin-rocket-lib && \
+    mkdir kotlin-rocket-lib && \
+    ./gradlew publishToMavenLocal && \
+    cd ../kotlin-rocket-bot && \
+    ./gradlew installDist
+
 FROM debian:trixie-slim
 RUN apt-get update && \
     apt-get -y dist-upgrade && \
@@ -8,10 +21,10 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 ENV JAVA_HOME=/opt/java/openjdk
-COPY --from=eclipse-temurin:21-jdk $JAVA_HOME $JAVA_HOME
+COPY --from=eclipse-temurin:21-jre $JAVA_HOME $JAVA_HOME
 
 RUN mkdir /app
-ADD bot/build/distributions/bot-latest.tar /app
+COPY --from=jdk /opt/kotlin-rocket-bot/bot/build/install/bot/ /app/kotlin-rocket-bot/
 COPY misc/check_bot.py misc/docker-entrypoint.sh /opt
 
 RUN addgroup --gid 32001 mygroup && \
