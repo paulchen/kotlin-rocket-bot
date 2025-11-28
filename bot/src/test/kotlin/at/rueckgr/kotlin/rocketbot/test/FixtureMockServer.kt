@@ -27,5 +27,6 @@ class FixtureMockServer(private val directory: String) {
 
     fun shutdown() = mockWebServer.shutdown()
 
-    fun hasMoreResponses() = mockWebServer.dispatcher.peek().getBody() != null
+    // I know this is ugly, but given the MockResponseBody interface, I'm unable to think of a better way to do this
+    fun hasMoreResponses() = (mockWebServer.delegate.dispatcher.peek().body?.contentLength ?: 0L) > 0L
 }
