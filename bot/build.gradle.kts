@@ -4,22 +4,22 @@ import java.nio.file.Files
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.10.2"
-val ktorVersion = "3.3.1"
-val jacksonVersion = "2.20.0"
+val ktorVersion = "3.3.3"
+val jacksonVersion = "2.20.1"
 val ktormVersion = "4.1.1"
-val kotlinVersion = "2.2.20"
+val kotlinVersion = "2.2.21"
 val okhttpVersion = "4.12.0"
 
 plugins {
     id("kotlin-rocket-bot.conventions")
-    kotlin("jvm") version "2.2.20"
-    kotlin("plugin.serialization") version "2.2.20"
+    kotlin("jvm") version "2.2.21"
+    kotlin("plugin.serialization") version "2.2.21"
     application
     groovy
-    id("org.openapi.generator") version "7.15.0"
+    id("org.openapi.generator") version "7.17.0"
     id("com.github.ben-manes.versions") version "0.53.0"
     id("jacoco")
-    id("org.sonarqube") version "6.3.1.5724"
+    id("org.sonarqube") version "7.1.0.6387"
 }
 
 tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates").configure {
@@ -63,7 +63,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
 
-    implementation("org.apache.commons:commons-lang3:3.19.0")
+    implementation("org.apache.commons:commons-lang3:3.20.0")
     implementation("org.apache.commons:commons-text:1.14.0")
     implementation("org.reflections:reflections:$reflectionsVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
@@ -74,7 +74,7 @@ dependencies {
     implementation("org.ktorm:ktorm-core:$ktormVersion")
     implementation("org.ktorm:ktorm-support-postgresql:$ktormVersion")
 
-    implementation("de.focus-shift:jollyday-jaxb:1.7.0")
+    implementation("de.focus-shift:jollyday-jaxb:1.8.0")
 
     // dependencies for generated OpenAPI client
     implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
@@ -83,12 +83,11 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.apache.groovy:groovy-all:4.0.28")
-    testImplementation("org.spockframework:spock-core:2.4-M6-groovy-4.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:6.0.0")
+    testImplementation("org.apache.groovy:groovy-all:5.0.2")
+    testImplementation("org.spockframework:spock-core:2.4-M7-groovy-5.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.1.0-M1")
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
-    testImplementation("commons-io:commons-io:2.20.0")
+    testImplementation("commons-io:commons-io:2.21.0")
     testImplementation("org.ktorm:ktorm-support-mysql:$ktormVersion")
     testImplementation("com.h2database:h2:2.4.240")
     testImplementation("org.assertj:assertj-core:4.0.0-M1")
