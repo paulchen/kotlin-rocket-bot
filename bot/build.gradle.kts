@@ -100,14 +100,14 @@ tasks.test {
 
 tasks.withType<KotlinCompile> {
     compilerOptions {
-        jvmTarget = JvmTarget.JVM_21
+        jvmTarget = JvmTarget.JVM_25
         freeCompilerArgs.set(listOf("-Xannotation-default-target=param-property"))
     }
     dependsOn("openApiGenerate")
 }
 
 tasks.withType<GroovyCompile> {
-    targetCompatibility = "21"
+    targetCompatibility = "25"
 }
 
 tasks.named<GroovyCompile>("compileTestGroovy") {

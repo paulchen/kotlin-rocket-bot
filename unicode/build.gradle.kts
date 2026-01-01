@@ -9,8 +9,8 @@ dependencies {
 }
 
 tasks.withType<JavaCompile> {
-    sourceCompatibility = "21"
-    targetCompatibility = "21"
+    sourceCompatibility = "25"
+    targetCompatibility = "25"
 }
 
 tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates").configure {

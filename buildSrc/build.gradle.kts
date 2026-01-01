@@ -1,5 +1,6 @@
 plugins {
     `kotlin-dsl`
+    kotlin("jvm") version "2.3.0"
     id("groovy-gradle-plugin")
 }
 

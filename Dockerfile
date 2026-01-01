@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jdk AS jdk
+FROM eclipse-temurin:25-jdk AS jdk
 
 COPY . /opt/kotlin-rocket-bot
 RUN apt-get update && \
@@ -21,7 +21,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 ENV JAVA_HOME=/opt/java/openjdk
-COPY --from=eclipse-temurin:21-jre $JAVA_HOME $JAVA_HOME
+COPY --from=eclipse-temurin:25-jre $JAVA_HOME $JAVA_HOME
 
 RUN mkdir /app
 COPY --from=jdk /opt/kotlin-rocket-bot/bot/build/install/bot/ /app/kotlin-rocket-bot/

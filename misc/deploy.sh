@@ -16,8 +16,8 @@ if [ "$DEPLOY_HASH" != "`sha256sum misc/deploy.sh`" ]; then
 fi
 
 docker pull debian:trixie-slim || exit 3
-docker pull eclipse-temurin:21-jdk || exit 3
-docker pull eclipse-temurin:21-jre || exit 3
+docker pull eclipse-temurin:25-jdk || exit 3
+docker pull eclipse-temurin:25-jre || exit 3
 
 docker build --no-cache -t kotlin-rocket-bot:latest . || exit 3
 
