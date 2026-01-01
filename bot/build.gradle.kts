@@ -7,19 +7,19 @@ val coroutinesVersion = "1.10.2"
 val ktorVersion = "3.3.3"
 val jacksonVersion = "2.20.1"
 val ktormVersion = "4.1.1"
-val kotlinVersion = "2.2.21"
+val kotlinVersion = "2.3.0"
 val okhttpVersion = "5.3.2"
 
 plugins {
     id("kotlin-rocket-bot.conventions")
-    kotlin("jvm") version "2.2.21"
-    kotlin("plugin.serialization") version "2.2.21"
+    kotlin("jvm") version "2.3.0"
+    kotlin("plugin.serialization") version "2.3.0"
     application
     groovy
-    id("org.openapi.generator") version "7.17.0"
+    id("org.openapi.generator") version "7.18.0"
     id("com.github.ben-manes.versions") version "0.53.0"
     id("jacoco")
-    id("org.sonarqube") version "7.1.0.6387"
+    id("org.sonarqube") version "7.2.2.6593"
 }
 
 tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates").configure {
@@ -64,7 +64,7 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
 
     implementation("org.apache.commons:commons-lang3:3.20.0")
-    implementation("org.apache.commons:commons-text:1.14.0")
+    implementation("org.apache.commons:commons-text:1.15.0")
     implementation("org.reflections:reflections:$reflectionsVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("at.favre.lib:bcrypt:0.10.2")
@@ -83,8 +83,8 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
-    testImplementation("org.apache.groovy:groovy-all:5.0.2")
-    testImplementation("org.spockframework:spock-core:2.4-M7-groovy-5.0")
+    testImplementation("org.apache.groovy:groovy-all:5.0.3")
+    testImplementation("org.spockframework:spock-core:2.4-groovy-5.0")
     testImplementation("org.junit.jupiter:junit-jupiter:6.1.0-M1")
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
     testImplementation("commons-io:commons-io:2.21.0")
