@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit
 class ReminderService : Logging {
     private val executorService = Executors.newScheduledThreadPool(1)
     private var schedule: ScheduledFuture<*>? = null
+    private var nextSchedulerExecution: LocalDateTime? = null
 
     fun scheduleExecution() {
         val nextReminder = try {
@@ -33,6 +34,7 @@ class ReminderService : Logging {
             LocalDateTime.now().plusSeconds(30)
         }
         if (nextReminder == null) {
+            nextSchedulerExecution = null
             return
         }
         val seconds = if (nextReminder.isBefore(LocalDateTime.now())) {
@@ -46,6 +48,7 @@ class ReminderService : Logging {
         synchronized(this) {
             schedule?.cancel(false)
             schedule = executorService.schedule({ handleExceptions { executeReminder() } }, seconds, TimeUnit.SECONDS)
+            nextSchedulerExecution = nextReminder
         }
     }
 
@@ -80,8 +83,9 @@ class ReminderService : Logging {
             .map { it[Reminders.nextNotification] }
             .firstOrNull()
 
-
     fun getOverdueReminders() = getDueReminders(Db().connection, LocalDateTime.now().minusMinutes(10))
+
+    fun getNextSchedulerExecution() = nextSchedulerExecution
 
     private fun remind(reminder: Reminder): Boolean {
         val notifyer = if(reminder.notifyer == reminder.notifyee) {

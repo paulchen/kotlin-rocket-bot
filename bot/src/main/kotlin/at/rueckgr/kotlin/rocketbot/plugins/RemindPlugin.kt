@@ -214,7 +214,8 @@ class RemindPlugin : AbstractPlugin(), Logging {
         val overdueRemindersCount = reminderService.getOverdueReminders().count()
         return mapOf(
             "number of reminders" to totalRemindersCount.toString(),
-            "overdue reminders" to overdueRemindersCount.toString()
+            "overdue reminders" to overdueRemindersCount.toString(),
+            "next reminder execution" to (reminderService.getNextSchedulerExecution()?.toString() ?: "not scheduled")
         )
     }
 }
