@@ -4,8 +4,8 @@ import java.nio.file.Files
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.10.2"
-val ktorVersion = "3.3.3"
-val jacksonVersion = "2.20.1"
+val ktorVersion = "3.4.0"
+val jacksonVersion = "2.21.0"
 val ktormVersion = "4.1.1"
 val kotlinVersion = "2.3.0"
 val okhttpVersion = "5.3.2"
@@ -16,7 +16,7 @@ plugins {
     kotlin("plugin.serialization") version "2.3.0"
     application
     groovy
-    id("org.openapi.generator") version "7.18.0"
+    id("org.openapi.generator") version "7.19.0"
     id("com.github.ben-manes.versions") version "0.53.0"
     id("jacoco")
     id("org.sonarqube") version "7.2.2.6593"
@@ -30,7 +30,8 @@ tasks.withType<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
     rejectVersionIf {
         candidate.version.lowercase().contains("alpha") ||
                 candidate.version.lowercase().contains("beta") ||
-                candidate.version.lowercase().contains("rc")
+                candidate.version.lowercase().contains("rc") ||
+                candidate.version.lowercase().contains("-m")
     }
 }
 
@@ -69,12 +70,12 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("at.favre.lib:bcrypt:0.10.2")
 
-    implementation("org.postgresql:postgresql:42.7.8")
+    implementation("org.postgresql:postgresql:42.7.9")
     implementation("com.kohlschutter.junixsocket:junixsocket-core:2.10.1")
     implementation("org.ktorm:ktorm-core:$ktormVersion")
     implementation("org.ktorm:ktorm-support-postgresql:$ktormVersion")
 
-    implementation("de.focus-shift:jollyday-jaxb:1.8.0")
+    implementation("de.focus-shift:jollyday-jaxb:1.8.1")
 
     // dependencies for generated OpenAPI client
     implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
@@ -83,14 +84,14 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
-    testImplementation("org.apache.groovy:groovy-all:5.0.3")
+    testImplementation("org.apache.groovy:groovy-all:5.0.4")
     testImplementation("org.spockframework:spock-core:2.4-groovy-5.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:6.1.0-M1")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.0.2")
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
     testImplementation("commons-io:commons-io:2.21.0")
     testImplementation("org.ktorm:ktorm-support-mysql:$ktormVersion")
     testImplementation("com.h2database:h2:2.4.240")
-    testImplementation("org.assertj:assertj-core:4.0.0-M1")
+    testImplementation("org.assertj:assertj-core:3.27.7")
 }
 
 tasks.test {
