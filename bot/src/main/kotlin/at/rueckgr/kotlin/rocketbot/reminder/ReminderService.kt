@@ -30,9 +30,12 @@ class ReminderService : Logging {
         }
         catch (e: Exception) {
             logger().error(e)
-            null
+            LocalDateTime.now().plusSeconds(30)
         }
-        val seconds = if (nextReminder == null || nextReminder.isBefore(LocalDateTime.now())) {
+        if (nextReminder == null) {
+            return
+        }
+        val seconds = if (nextReminder.isBefore(LocalDateTime.now())) {
             30
         }
         else {
