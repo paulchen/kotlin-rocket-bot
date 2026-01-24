@@ -78,6 +78,7 @@ class RemindPlugin : AbstractPlugin(), Logging {
             ?: throw RemindException("Invalid time/interval specification")
 
         val id = createReminder(channel.id, user.id, notifyeeId, subject, timespec)
+        reminderService.scheduleExecution()
         return listOf(OutgoingMessage("@${user.username} Will do! Use `!unremind $id` to cancel."))
     }
 
