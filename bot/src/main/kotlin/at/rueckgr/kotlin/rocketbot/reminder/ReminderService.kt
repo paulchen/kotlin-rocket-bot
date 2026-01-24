@@ -61,6 +61,7 @@ class ReminderService : Logging {
         catch (e: Throwable) {
             logger().error(e.message, e)
         }
+        scheduleExecution()
     }
 
     private fun getDueReminders(database: Database, dateTime: LocalDateTime) = database
