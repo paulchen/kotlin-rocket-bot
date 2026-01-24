@@ -178,6 +178,7 @@ class RemindPlugin : AbstractPlugin(), Logging {
             throw RemindException("Sorry, you are not allowed to do that")
         }
         Db().connection.reminders.removeIf { it.id eq reminderId }
+        reminderService.scheduleExecution()
         return listOf(OutgoingMessage("Reminder $reminderId removed"))
     }
 
