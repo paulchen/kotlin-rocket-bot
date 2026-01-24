@@ -10,7 +10,6 @@ import at.rueckgr.kotlin.rocketbot.util.Db
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.handleExceptions
 import at.rueckgr.kotlin.rocketbot.util.logger
-import com.sun.org.apache.xalan.internal.lib.ExsltDatetime.dateTime
 import org.ktorm.database.Database
 import org.ktorm.dsl.*
 import org.ktorm.entity.removeIf
@@ -37,7 +36,7 @@ class ReminderService : Logging {
             30
         }
         else {
-            Duration.between(LocalDateTime.now(), nextReminder).seconds
+            Duration.between(LocalDateTime.now(), nextReminder).seconds + 1
         }
         logger().info("Scheduling next reminder execution for {} (in {} seconds)", nextReminder, seconds)
 
