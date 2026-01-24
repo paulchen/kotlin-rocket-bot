@@ -10,9 +10,11 @@ import at.rueckgr.kotlin.rocketbot.util.Db
 import at.rueckgr.kotlin.rocketbot.util.Logging
 import at.rueckgr.kotlin.rocketbot.util.handleExceptions
 import at.rueckgr.kotlin.rocketbot.util.logger
+import com.sun.org.apache.xalan.internal.lib.ExsltDatetime.dateTime
 import org.ktorm.database.Database
 import org.ktorm.dsl.*
 import org.ktorm.entity.removeIf
+import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.Executors
@@ -24,9 +26,24 @@ class ReminderService : Logging {
     private var schedule: ScheduledFuture<*>? = null
 
     fun scheduleExecution() {
+        val nextReminder = try {
+            getNextReminder(Db().connection)
+        }
+        catch (e: Exception) {
+            logger().error(e)
+            null
+        }
+        val seconds = if (nextReminder == null || nextReminder.isBefore(LocalDateTime.now())) {
+            30
+        }
+        else {
+            Duration.between(LocalDateTime.now(), nextReminder).seconds
+        }
+        logger().info("Scheduling next reminder execution for {} (in {} seconds)", nextReminder, seconds)
+
         synchronized(this) {
             schedule?.cancel(false)
-            schedule = executorService.schedule({ handleExceptions { executeReminder() } }, 30, TimeUnit.SECONDS)
+            schedule = executorService.schedule({ handleExceptions { executeReminder() } }, seconds, TimeUnit.SECONDS)
         }
     }
 
@@ -44,7 +61,6 @@ class ReminderService : Logging {
         catch (e: Throwable) {
             logger().error(e.message, e)
         }
-        scheduleExecution()
     }
 
     private fun getDueReminders(database: Database, dateTime: LocalDateTime) = database
@@ -52,6 +68,15 @@ class ReminderService : Logging {
             .select()
             .where { Reminders.nextNotification lte dateTime }
             .map { Reminders.createEntity(it) }
+
+    private fun getNextReminder(database: Database): LocalDateTime? = database
+            .from(Reminders)
+            .select(Reminders.nextNotification)
+            .orderBy(Reminders.nextNotification.asc())
+            .limit(1)
+            .map { it[Reminders.nextNotification] }
+            .firstOrNull()
+
 
     fun getOverdueReminders() = getDueReminders(Db().connection, LocalDateTime.now().minusMinutes(10))
 
