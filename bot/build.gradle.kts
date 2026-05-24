@@ -4,9 +4,9 @@ import java.nio.file.Files
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.11.0"
-val ktorVersion = "3.4.3"
+val ktorVersion = "3.5.0"
 val jacksonVersion = "2.21.3"
-val ktormVersion = "4.1.1"
+val ktormVersion = "4.2.0"
 val kotlinVersion = "2.3.21"
 val okhttpVersion = "5.3.2"
 
@@ -75,7 +75,7 @@ dependencies {
     implementation("org.ktorm:ktorm-core:$ktormVersion")
     implementation("org.ktorm:ktorm-support-postgresql:$ktormVersion")
 
-    implementation("de.focus-shift:jollyday-jaxb:2.9.0")
+    implementation("de.focus-shift:jollyday-jaxb:2.10.1")
 
     // dependencies for generated OpenAPI client
     implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
@@ -86,7 +86,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
     testImplementation("org.apache.groovy:groovy-all:5.0.6")
     testImplementation("org.spockframework:spock-core:2.4-groovy-5.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:6.0.3")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.1.0")
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
     testImplementation("commons-io:commons-io:2.22.0")
     testImplementation("org.ktorm:ktorm-support-mysql:$ktormVersion")
