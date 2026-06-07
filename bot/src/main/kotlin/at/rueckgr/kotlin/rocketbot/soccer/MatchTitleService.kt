@@ -11,7 +11,7 @@ object MatchTitleService {
         val teamHome = formatTeamWithFlag(fixture.teamHome)
         val teamAway = formatTeamWithFlag(fixture.teamAway)
 
-        return "$teamHome\u00a0-\u00a0$teamAway"
+        return "$teamHome\u00a0- $teamAway"
     }
 
     fun formatTeamWithFlag(teamName: String): String {
