@@ -158,7 +158,7 @@ class RemindPlugin : AbstractPlugin(), Logging {
             return null
         }
         val unit = parseUnit(unitString) ?: return null
-        val nextExecution = calculateNextExecution(count, unit, referenceTime)
+        val nextExecution = calculateNextExecution(count, unit, referenceTime, referenceTime)
 
         return Timespec(nextExecution, count, unit)
     }

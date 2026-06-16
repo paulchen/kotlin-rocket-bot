@@ -7,9 +7,9 @@ RUN apt-get update && \
     git clone https://github.com/paulchen/kotlin-rocket-lib.git && \
     cd kotlin-rocket-lib && \
     mkdir kotlin-rocket-lib && \
-    ./gradlew publishToMavenLocal && \
+    ./gradlew check publishToMavenLocal && \
     cd ../kotlin-rocket-bot && \
-    ./gradlew installDist
+    ./gradlew build installDist
 
 FROM debian:trixie-slim
 RUN apt-get update && \

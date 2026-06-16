@@ -79,9 +79,10 @@ class RemindPluginTest extends Specification {
     def testParseTimespecFailure(input) {
         given:
             def plugin = new RemindPlugin()
+            def now = LocalDateTime.now()
 
         when:
-            def timespec = plugin.parseTimespec(input, LocalDateTime.now())
+            def timespec = plugin.parseTimespec(input, now)
 
         then:
             timespec == null

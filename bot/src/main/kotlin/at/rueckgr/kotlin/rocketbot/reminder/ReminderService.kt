@@ -99,7 +99,7 @@ class ReminderService : Logging {
             ""
         }
         else {
-            val next = calculateNextExecution(reminder.notifyInterval!!, reminder.notifyUnit!!, reminder.nextNotification)
+            val next = calculateNextExecution(reminder.notifyInterval!!, reminder.notifyUnit!!, reminder.nextNotification, LocalDateTime.now())
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
             "; next notification after $next, use `!unremind ${reminder.id}` to cancel"
         }
@@ -110,7 +110,7 @@ class ReminderService : Logging {
 
     private fun updateOrRemove(database: Database, reminder: Reminder) {
         if (reminder.notifyUnit != null && reminder.notifyInterval != null) {
-            val nextExecution = calculateNextExecution(reminder.notifyInterval!!, reminder.notifyUnit!!, reminder.nextNotification)
+            val nextExecution = calculateNextExecution(reminder.notifyInterval!!, reminder.notifyUnit!!, reminder.nextNotification, LocalDateTime.now())
             logger().info("Calculated next execution for reminder ${reminder.id} at $nextExecution")
             reminder.nextNotification = nextExecution
             reminder.flushChanges()
