@@ -13,6 +13,7 @@ object TeamMapper {
         "Czech Republic" to ":cz:",
         "Ivory Coast" to ":ci:",
         "Cape Verde Islands" to ":cv:",
+        "Congo DR" to ":cd:",
     )
 
     private val names = mapOf(
@@ -20,6 +21,7 @@ object TeamMapper {
         "Czech Republic" to "Tschechien",
         "Ivory Coast" to "Elfenbeinküste",
         "Cape Verde Islands" to "Kap Verde",
+        "Congo DR" to "Dr. Kongo",
     )
 
     fun mapTeamName(teamName: String): FormattedTeamName {
