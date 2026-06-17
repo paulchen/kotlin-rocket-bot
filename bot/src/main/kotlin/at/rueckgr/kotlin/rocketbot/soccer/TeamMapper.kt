@@ -13,7 +13,7 @@ object TeamMapper {
         "Czech Republic" to ":cz:",
         "Ivory Coast" to ":ci:",
         "Cape Verde Islands" to ":cv:",
-        "Congo DR" to ":cd:",
+        "Congo DR" to ":flag_cd:",
     )
 
     private val names = mapOf(
