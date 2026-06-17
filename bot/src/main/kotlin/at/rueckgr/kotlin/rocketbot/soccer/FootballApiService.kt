@@ -67,34 +67,33 @@ class JsonDumpInterceptor : Interceptor, Logging {
         val request = chain.request()
         val response = chain.proceed(request)
 
-        if (response.body != null) {
-            val query = request.url.pathSegments.joinToString("_")
-            val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"))
-            val filename = when (val id = request.url.queryParameter("id")) {
-                null -> "/cache/soccer/$query-$timestamp.json"
-                else -> "/cache/soccer/$query-$id-$timestamp.json"
-            }
-
-            logger().debug("Dumping REST response to file: {}", filename)
-
-            try {
-                File("/cache/soccer/").mkdir()
-
-                val source = response.body!!.source()
-                source.request(Long.MAX_VALUE)
-                val buffer = source.buffer
-
-
-                FileWriter(filename).use { it.write(buffer.clone().readString(StandardCharsets.UTF_8)) }
-
-                SoccerProblemService.problems.remove(SoccerProblem.CACHE_NOT_WRITABLE)
-            }
-            catch (e: IOException) {
-                val message = "Unable to write HTTP response body to file $filename - ${e.message}"
-                logger().error(message)
-                SoccerProblemService.problems[SoccerProblem.CACHE_NOT_WRITABLE] = message
-            }
+        val query = request.url.pathSegments.joinToString("_")
+        val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"))
+        val filename = when (val id = request.url.queryParameter("id")) {
+            null -> "/cache/soccer/$query-$timestamp.json"
+            else -> "/cache/soccer/$query-$id-$timestamp.json"
         }
+
+        logger().debug("Dumping REST response to file: {}", filename)
+
+        try {
+            File("/cache/soccer/").mkdir()
+
+            val source = response.body.source()
+            source.request(Long.MAX_VALUE)
+            val buffer = source.buffer
+
+
+            FileWriter(filename).use { it.write(buffer.clone().readString(StandardCharsets.UTF_8)) }
+
+            SoccerProblemService.problems.remove(SoccerProblem.CACHE_NOT_WRITABLE)
+        }
+        catch (e: IOException) {
+            val message = "Unable to write HTTP response body to file $filename - ${e.message}"
+            logger().error(message)
+            SoccerProblemService.problems[SoccerProblem.CACHE_NOT_WRITABLE] = message
+        }
+
         return response
     }
 
