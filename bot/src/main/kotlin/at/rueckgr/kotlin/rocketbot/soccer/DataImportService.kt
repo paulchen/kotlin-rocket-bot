@@ -513,6 +513,10 @@ class DataImportService : Logging {
     private fun getVenue(database: Database, fixtureResponse: FixtureResponseResponseInner): Venue? {
         val venue = fixtureResponse.fixture.venue ?: return null
 
+        if (venue.name == null || venue.city == null) {
+            return null
+        }
+
         val entity = if (venue.id == null) {
             database.venues.find { (it.name eq venue.name!!) and (it.city eq venue.city!!) } ?: return createNewVenue(database, venue)
         }
