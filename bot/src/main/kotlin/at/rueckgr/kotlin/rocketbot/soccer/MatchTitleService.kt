@@ -24,7 +24,7 @@ object MatchTitleService {
 
     fun formatMatchTitle(fixture: Fixture): String {
         val time = formatTime(fixture.date)
-        val venue = formatVenue(fixture.venue!!)
+        val venue = formatVenue(fixture.venue)
         val score = formatMatchScore(fixture)
         val matchTitleShort = formatMatchTitleShort(fixture)
 
@@ -41,10 +41,10 @@ object MatchTitleService {
         }
 
         return if (score == null) {
-            "$time: $matchTitleShort ($venue)"
+            "$time: $matchTitleShort$venue"
         }
         else {
-            "$time: $matchTitleShort ($venue): $state$elapsed$score"
+            "$time: $matchTitleShort$venue: $state$elapsed$score"
         }
     }
 
@@ -57,14 +57,19 @@ object MatchTitleService {
         return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH$zwnbsp:${zwnbsp}mm"))
     }
 
-    private fun formatVenue(venue: Venue): String {
-        val builder = StringBuilder("${venue.name}, ${venue.city}")
+    private fun formatVenue(venue: Venue?): String {
+        if (venue == null) {
+            return ""
+        }
+
+        val builder = StringBuilder(" (${venue.name}, ${venue.city}")
         if (venue.country != null) {
             builder.append(", ${venue.country}")
         }
         if (venue.capacity != null) {
             builder.append(", max. ${venue.capacity} Zuschauer:innen")
         }
+        builder.append(")")
         return builder.toString()
     }
 
