@@ -194,26 +194,26 @@ class DataImportService : Logging {
         entity.teamAway = fixtureResponse.teams.away?.name ?: "unbekannt"
 
         val reportedStatus = fixtureResponse.fixture.status?.short?.value ?: "TBD"
-        val status = if (reportedStatus != FixtureState.MATCH_FINISHED_AFTER_PENALTY.code || fixtureResponse.events == null) {
-            reportedStatus
+        val (status, penaltyEventsMissing) = if (reportedStatus != FixtureState.MATCH_FINISHED_AFTER_PENALTY.code || fixtureResponse.events == null) {
+            Pair(reportedStatus, false)
         }
         else if (fixtureResponse.events.size < entity.eventsProcessed) {
             // sometimes at the end of the game after penalty shootout, the events for the penalty shootout are missing
             // these events will be present during a later update
-            FixtureState.PENALTY.code
+            Pair(FixtureState.PENALTY.code, true)
         }
         else {
             // delay state change from PENALTY to MATCH_FINISHED_AFTER_PENALTY to the time when events for all penalty goals are present
             val (goalsPenaltyHome, goalsPenaltyAway) = calculatePenaltyScore(entity, fixtureResponse, entity.eventsProcessed)
             if (goalsPenaltyHome == fixtureResponse.score.penalty?.home && goalsPenaltyAway == fixtureResponse.score.penalty.away) {
-                reportedStatus
+                Pair(reportedStatus, false)
             }
             else if (FixtureState.getByCode(entity.status)?.period == FixtureStatePeriod.PAST) {
                 // but don't revert to PENALTY if we have already reached an end state
-                reportedStatus
+                Pair(reportedStatus, false)
             }
             else {
-                FixtureState.PENALTY.code
+                Pair(FixtureState.PENALTY.code, false)
             }
         }
         val oldStatus = entity.status
@@ -234,7 +234,9 @@ class DataImportService : Logging {
         entity.goalsExtratimeHome = add(fixtureResponse.score.fulltime?.home, fixtureResponse.score.extratime?.home)
         entity.goalsExtratimeAway = add(fixtureResponse.score.fulltime?.away, fixtureResponse.score.extratime?.away)
         if (penaltyInProgress) {
-            updatePenaltyScore(entity, fixtureResponse, entity.eventsProcessed)
+            if (!penaltyEventsMissing) {
+                updatePenaltyScore(entity, fixtureResponse, entity.eventsProcessed)
+            }
         }
         else {
             entity.goalsPenaltyHome = fixtureResponse.score.penalty?.home
