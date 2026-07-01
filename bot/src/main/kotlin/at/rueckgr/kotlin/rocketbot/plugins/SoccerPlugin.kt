@@ -134,7 +134,7 @@ class SoccerPlugin : AbstractPlugin() {
     }
 
     override fun getAdditionalStatus(): Map<String, String> {
-        val liveFixtures = DataImportService().getLiveFixtures()
+        val liveFixtures = DataImportService().findLiveFixtures()
         val liveMatches = when (liveFixtures.size) {
             0 -> "0"
             else -> {

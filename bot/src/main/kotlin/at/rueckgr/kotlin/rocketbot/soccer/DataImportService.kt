@@ -96,14 +96,17 @@ class DataImportService : Logging {
         return importFixture(database, fixture.response[0])
     }
 
-    fun getLiveFixtures() = findLiveFixtures(Db().connection)
-
     private fun findExistingVenues(database: Database): List<Long> = database.venues.map { it.id }.toList()
 
     fun findLiveFixtures() = findLiveFixtures(Db().connection)
 
     private fun findLiveFixtures(database: Database): List<Fixture> {
-        val liveStates = FixtureState.getByPeriod(FixtureStatePeriod.LIVE)
+        // POSTPONED is a "future" state so it is not listed as "live match"
+        // in the output to "!em" and "!wm" by the SoccerPlugin.
+        // However, we need to force live updates for the state nevertheless.
+        // Otherwise, live updates for POSTPONED fixtures would stop one hour after
+        // its planned start time.
+        val liveStates = FixtureState.getByPeriod(FixtureStatePeriod.LIVE) + FixtureState.POSTPONED.code
         val oneHourAgo = LocalDateTime.now().minusHours(1)
         val inOneHour = LocalDateTime.now().plusHours(1)
 
@@ -263,14 +266,17 @@ class DataImportService : Logging {
         logger().debug("New value of pendingScoreChange: {}", entity.pendingScoreChange)
 
         val stateChange = if (status != entity.status) {
+            val oldPeriod = FixtureState.getByCode(oldStatus)?.period
+            val newPeriod = FixtureState.getByCode(status)?.period
+
             if (entity.endDate == null
-                    && FixtureState.getByCode(entity.status)?.period != FixtureStatePeriod.PAST
-                    && FixtureState.getByCode(status)?.period == FixtureStatePeriod.PAST) {
+                    && oldPeriod != FixtureStatePeriod.PAST
+                    && newPeriod == FixtureStatePeriod.PAST) {
                 entity.endDate = LocalDateTime.now()
             }
-            // don't revert the state to a start state and don't move away from and end state
-            if (FixtureState.getByCode(oldStatus)?.period != FixtureStatePeriod.PAST &&
-                    FixtureState.getByCode(status)?.period != FixtureStatePeriod.FUTURE) {
+            // don't revert the state to a start state and don't move away from an end state
+            if ((oldPeriod != FixtureStatePeriod.PAST && newPeriod != FixtureStatePeriod.FUTURE)
+                    || oldPeriod == FixtureStatePeriod.FUTURE) {
                 // ensure that MatchTitleService.formatMatchScore has the current fixture state
                 entity.status = status
                 processStateChange(oldStatus, status, entity)
