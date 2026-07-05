@@ -543,7 +543,12 @@ class DataImportService : Logging {
     }
 
     private fun createNewVenue(database: Database, venue: FixtureResponseResponseInnerFixtureVenue): Venue {
-        val venueId = venue.id ?: createArtificialVenueId(database)
+        val venueId = if(venue.id == null || venue.id == 0L) {
+            createArtificialVenueId(database)
+        }
+        else {
+            venue.id
+        }
         val entity = Venue {
             id = venueId
             name = venue.name
