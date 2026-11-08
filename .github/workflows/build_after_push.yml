@@ -1,0 +1,42 @@
+name: Build and Dependency Submission
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout bot
+        uses: actions/checkout@v6
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - name: Checkout kotlin-rocket-lib
+        uses: actions/checkout@v6
+        with:
+          repository: paulchen/kotlin-rocket-lib
+          path: .ci/kotlin-rocket-lib
+
+      - name: Publish kotlin-rocket-lib to Maven Local
+        working-directory: .ci/kotlin-rocket-lib
+        run: ./gradlew --no-daemon publishToMavenLocal
+
+      - name: Build and test bot
+        run: ./gradlew --no-daemon build
+
+      - name: Generate and submit dependency graph
+        uses: gradle/actions/dependency-submission@v6
+        with:
+          dependency-graph: generate-and-submit
+          cache-provider: basic
