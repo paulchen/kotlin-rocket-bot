@@ -3,6 +3,7 @@ package at.rueckgr.kotlin.rocketbot.util.time
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.Year
 import java.time.format.DateTimeFormatter
 import java.time.format.ResolverStyle
 
@@ -69,6 +70,11 @@ class DateTimeParser {
 
     fun parseDayWithoutYear(pattern: String, dateString: String, referenceTime: LocalDateTime): LocalDateTime {
         val f = createFormatter(pattern)
+        if (isLeapDay(dateString)) {
+            return nextLeapDay(referenceTime) { year ->
+                LocalDate.parse(dateString + year, f).atStartOfDay()
+            }
+        }
         val localDateTime = LocalDateTime.of(LocalDate.parse(dateString + referenceTime.year, f), LocalTime.MIDNIGHT)
         if (referenceTime.isAfter(localDateTime)) {
             return localDateTime.plusYears(1)
@@ -92,11 +98,34 @@ class DateTimeParser {
 
     fun parseDateTimeWithoutYear(pattern: String, dateString: String, referenceTime: LocalDateTime): LocalDateTime {
         val f = createFormatter(pattern)
+        if (isLeapDay(dateString)) {
+            return nextLeapDay(referenceTime) { year ->
+                LocalDateTime.parse(dateString.replace(" ", "$year "), f)
+            }
+        }
         val localDate = LocalDateTime.parse(dateString.replace(" ", referenceTime.year.toString() + " "), f)
         if (referenceTime.isAfter(localDate)) {
             return localDate.plusYears(1)
         }
         return localDate
+    }
+
+    private fun isLeapDay(dateString: String): Boolean {
+        val parts = dateString.substringBefore(' ').split('.')
+        return parts[0].toInt() == 29 && parts[1].toInt() == 2
+    }
+
+    private fun nextLeapDay(referenceTime: LocalDateTime, parseForYear: (Int) -> LocalDateTime): LocalDateTime {
+        var year = referenceTime.year
+        while (true) {
+            if (Year.isLeap(year.toLong())) {
+                val candidate = parseForYear(year)
+                if (!referenceTime.isAfter(candidate)) {
+                    return candidate
+                }
+            }
+            year++
+        }
     }
 
     private fun createFormatter(pattern: String) = DateTimeFormatter.ofPattern(pattern).withResolverStyle(ResolverStyle.LENIENT)

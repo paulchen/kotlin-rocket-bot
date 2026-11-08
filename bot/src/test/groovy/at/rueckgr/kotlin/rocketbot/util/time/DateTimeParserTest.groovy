@@ -48,4 +48,43 @@ class DateTimeParserTest extends Specification {
             "31.12. 02:26"        | LocalDateTime.of(2022, 1, 27, 0, 16)  | LocalDateTime.of(2022, 12, 31, 2, 26, 0, 0)
             "31.12. 26:26"        | LocalDateTime.of(2022, 1, 27, 0, 16)  | LocalDateTime.of(2023, 1, 1, 2, 26, 0, 0)
     }
+    def "parse next February 29 without a year"() {
+        expect:
+            new DateTimeParser().parse(dateString, referenceTime) == expectedResult
+
+        where:
+            dateString          | referenceTime                             | expectedResult
+            "29.2."             | LocalDateTime.of(2027, 1, 1, 0, 0)        | LocalDateTime.of(2028, 2, 29, 0, 0)
+            "29.02."            | LocalDateTime.of(2027, 3, 1, 0, 0)        | LocalDateTime.of(2028, 2, 29, 0, 0)
+            "29.2."             | LocalDateTime.of(2028, 2, 28, 12, 0)      | LocalDateTime.of(2028, 2, 29, 0, 0)
+            "29.2."             | LocalDateTime.of(2028, 2, 29, 0, 0)       | LocalDateTime.of(2028, 2, 29, 0, 0)
+            "29.2."             | LocalDateTime.of(2028, 2, 29, 0, 1)       | LocalDateTime.of(2032, 2, 29, 0, 0)
+            "29.2."             | LocalDateTime.of(2028, 3, 1, 0, 0)        | LocalDateTime.of(2032, 2, 29, 0, 0)
+            "29.2."             | LocalDateTime.of(2097, 1, 1, 0, 0)        | LocalDateTime.of(2104, 2, 29, 0, 0)
+            "29.2."             | LocalDateTime.of(2099, 1, 1, 0, 0)        | LocalDateTime.of(2104, 2, 29, 0, 0)
+            "29.2. 15:22"       | LocalDateTime.of(2027, 1, 1, 0, 0)        | LocalDateTime.of(2028, 2, 29, 15, 22)
+            "29.02. 05:22:46"   | LocalDateTime.of(2027, 3, 1, 0, 0)        | LocalDateTime.of(2028, 2, 29, 5, 22, 46)
+            "29.2. 15:22"       | LocalDateTime.of(2028, 2, 29, 15, 21)     | LocalDateTime.of(2028, 2, 29, 15, 22)
+            "29.2. 15:22"       | LocalDateTime.of(2028, 2, 29, 15, 22)     | LocalDateTime.of(2028, 2, 29, 15, 22)
+            "29.2. 15:22"       | LocalDateTime.of(2028, 2, 29, 15, 23)     | LocalDateTime.of(2032, 2, 29, 15, 22)
+            "29.2. 15:22:46"    | LocalDateTime.of(2028, 2, 29, 15, 22, 46) | LocalDateTime.of(2028, 2, 29, 15, 22, 46)
+            "29.2. 15:22:46"    | LocalDateTime.of(2028, 2, 29, 15, 22, 47) | LocalDateTime.of(2032, 2, 29, 15, 22, 46)
+            "29.2. 15:22"       | LocalDateTime.of(2099, 1, 1, 0, 0)        | LocalDateTime.of(2104, 2, 29, 15, 22)
+            "29.2. 26:00"       | LocalDateTime.of(2027, 1, 1, 0, 0)        | LocalDateTime.of(2028, 3, 1, 2, 0)
+    }
+
+    def "preserve lenient parsing of other dates"() {
+        expect:
+            new DateTimeParser().parse(dateString, LocalDateTime.of(2026, 11, 8, 12, 0)) == expectedResult
+
+        where:
+            dateString           | expectedResult
+            "32.12."             | LocalDateTime.of(2027, 1, 1, 0, 0)
+            "32.12.2026"         | LocalDateTime.of(2027, 1, 1, 0, 0)
+            "32.12. 15:22"       | LocalDateTime.of(2027, 1, 1, 15, 22)
+            "31.4."              | LocalDateTime.of(2027, 5, 1, 0, 0)
+            "29.2.2027"          | LocalDateTime.of(2027, 3, 1, 0, 0)
+            "29.2.2027 15:22:46" | LocalDateTime.of(2027, 3, 1, 15, 22, 46)
+    }
+
 }
