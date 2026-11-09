@@ -1,4 +1,5 @@
 FROM eclipse-temurin:25-jdk AS jdk
+ARG LIBRARY_GIT_REVISION=master
 
 COPY . /opt/kotlin-rocket-bot
 RUN apt-get update && \
@@ -6,6 +7,7 @@ RUN apt-get update && \
     cd /opt && \
     git clone https://github.com/paulchen/kotlin-rocket-lib.git && \
     cd kotlin-rocket-lib && \
+    git checkout --detach "$LIBRARY_GIT_REVISION" && \
     mkdir kotlin-rocket-lib && \
     ./gradlew check publishToMavenLocal && \
     cd ../kotlin-rocket-bot && \
