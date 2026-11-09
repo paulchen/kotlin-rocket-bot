@@ -28,6 +28,34 @@ jobs:
           repository: paulchen/kotlin-rocket-lib
           path: .ci/kotlin-rocket-lib
 
+      - name: Verify kotlin-rocket-lib version
+        run: |
+          python3 - <<'PYTHON'
+          import re
+          from pathlib import Path
+
+          def extract_version(path, pattern):
+              matches = re.findall(pattern, Path(path).read_text(), re.MULTILINE)
+              if len(matches) != 1:
+                  raise SystemExit(f"::error::Expected exactly one version in {path}, found {len(matches)}")
+              return matches[0]
+
+          expected = extract_version(
+              "bot/build.gradle.kts",
+              r'^\s*implementation\("at\.rueckgr\.kotlin\.rocketbot:kotlin-rocket-lib:([^"\s]+)"\)\s*$',
+          )
+          actual = extract_version(
+              ".ci/kotlin-rocket-lib/build.gradle.kts",
+              r'^version\s*=\s*"([^"\s]+)"\s*$',
+          )
+          if actual != expected:
+              raise SystemExit(
+                  f"::error::kotlin-rocket-lib version mismatch: bot requires {expected}, "
+                  f"but checked-out library declares {actual}"
+              )
+          print(f"kotlin-rocket-lib version matches: {actual}")
+          PYTHON
+
       - name: Publish kotlin-rocket-lib to Maven Local
         working-directory: .ci/kotlin-rocket-lib
         run: ./gradlew --no-daemon publishToMavenLocal
