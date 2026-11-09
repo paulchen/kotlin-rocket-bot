@@ -4,11 +4,11 @@ import java.nio.file.Files
 
 val reflectionsVersion = "0.10.2"
 val coroutinesVersion = "1.11.0"
-val ktorVersion = "3.6.0"
-val jacksonVersion = "2.22.3"
+val ktorVersion = "3.6.1"
+val jacksonVersion = "2.23.0"
 val ktormVersion = "4.2.1"
 val kotlinVersion = "2.4.21"
-val okhttpVersion = "5.5.0"
+val okhttpVersion = "5.5.1"
 
 plugins {
     id("kotlin-rocket-bot.conventions")
@@ -16,7 +16,7 @@ plugins {
     kotlin("plugin.serialization") version "2.4.21"
     application
     groovy
-    id("org.openapi.generator") version "7.26.0"
+    id("org.openapi.generator") version "7.27.0"
     id("com.github.ben-manes.versions") version "0.54.0"
     id("jacoco")
     id("org.sonarqube") version "7.5.0.8588"
@@ -75,7 +75,7 @@ dependencies {
     implementation("org.ktorm:ktorm-core:$ktormVersion")
     implementation("org.ktorm:ktorm-support-postgresql:$ktormVersion")
 
-    implementation("de.focus-shift:jollyday-jaxb:2.21.0")
+    implementation("de.focus-shift:jollyday-jaxb:2.24.0")
 
     // dependencies for generated OpenAPI client
     implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
