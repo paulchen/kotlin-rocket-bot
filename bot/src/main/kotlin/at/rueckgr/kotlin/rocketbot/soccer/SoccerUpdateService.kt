@@ -1,7 +1,7 @@
 package at.rueckgr.kotlin.rocketbot.soccer
 
 import at.rueckgr.kotlin.rocketbot.Bot
-import at.rueckgr.kotlin.rocketbot.WebserviceMessage
+import at.rueckgr.kotlin.rocketbot.MessageQueueItem
 import at.rueckgr.kotlin.rocketbot.database.Fixture
 import at.rueckgr.kotlin.rocketbot.database.FixtureState
 import at.rueckgr.kotlin.rocketbot.database.FixtureStatePeriod
@@ -99,7 +99,7 @@ object SoccerUpdateService : Logging {
         }
 
         notificationChannels.forEach { roomName ->
-            enqueueMessage(WebserviceMessage(null, roomName, message, null, emoji, username))
+            enqueueMessage(MessageQueueItem(null, roomName, message, null, emoji, username))
         }
 
         DataImportService().setFixturesToAnnounced(filteredResults)
@@ -121,20 +121,20 @@ object SoccerUpdateService : Logging {
         }
     }
 
-    private fun enqueueMessage(webserviceMessage: WebserviceMessage) {
-        val (validationResult, validatedMessage) = MessageHelper.instance.validateMessage(webserviceMessage)
+    private fun enqueueMessage(message: MessageQueueItem) {
+        val (validationResult, validatedMessage) = MessageHelper.instance.validateMessage(message)
         if (StringUtils.isNotEmpty(validationResult)) {
             logger().error(validationResult)
             return
         }
-        Bot.webserviceMessageQueue.add(validatedMessage)
+        Bot.outgoingMessageQueue.add(validatedMessage)
     }
 
-    fun createMessage(fixture: Fixture, roomName: String, message: String, emoji: String?, username: String?): WebserviceMessage {
+    fun createMessage(fixture: Fixture, roomName: String, message: String, emoji: String?, username: String?): MessageQueueItem {
         val matchTitleShort = MatchTitleService.formatMatchTitleShort(fixture)
         val formattedMessage = ":mega: $matchTitleShort: $message"
 
-        return WebserviceMessage(null, roomName, formattedMessage, null, emoji, username)
+        return MessageQueueItem(null, roomName, formattedMessage, null, emoji, username)
     }
 
     private fun hasLiveFixtures(updateResult: List<ImportFixtureResult>): Boolean {
@@ -161,7 +161,7 @@ object SoccerUpdateService : Logging {
         val nextLiveUpdate = try {
             getNextLiveUpdate()
         }
-        catch (e: DbException) {
+        catch (_: DbException) {
             logger().debug("Unable to access database, checking again in one minute")
             schedule({ scheduleLiveOrDailyUpdate() }, 60)
             return

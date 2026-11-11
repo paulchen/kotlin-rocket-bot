@@ -2,7 +2,7 @@ package at.rueckgr.kotlin.rocketbot.reminder
 
 import at.rueckgr.kotlin.rocketbot.ArchiveService
 import at.rueckgr.kotlin.rocketbot.Bot
-import at.rueckgr.kotlin.rocketbot.WebserviceMessage
+import at.rueckgr.kotlin.rocketbot.MessageQueueItem
 import at.rueckgr.kotlin.rocketbot.database.Reminder
 import at.rueckgr.kotlin.rocketbot.database.Reminders
 import at.rueckgr.kotlin.rocketbot.database.reminders
@@ -104,7 +104,7 @@ class ReminderService : Logging {
             "; next notification after $next, use `!unremind ${reminder.id}` to cancel"
         }
         val message = "@$notifyee $notifyer told me to remind you about ${reminder.subject}${nextNotification}"
-        Bot.webserviceMessageQueue.add(WebserviceMessage(reminder.channel, null, message))
+        Bot.outgoingMessageQueue.add(MessageQueueItem(reminder.channel, null, message))
         return true
     }
 

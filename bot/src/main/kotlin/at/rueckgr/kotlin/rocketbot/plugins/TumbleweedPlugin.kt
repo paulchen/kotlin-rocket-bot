@@ -60,7 +60,7 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
         val configuration = try {
             validateConfiguration()
         }
-        catch (e: ConfigurationException) {
+        catch (_: ConfigurationException) {
             return null
         }
 
@@ -141,12 +141,12 @@ class TumbleweedPlugin : AbstractPlugin(), Logging {
 
                 logger().debug("Posting tumbleweed {} to channel {}", url, roomId)
 
-                Bot.webserviceMessageQueue.add(WebserviceMessage(roomId, null, url))
+                Bot.outgoingMessageQueue.add(MessageQueueItem(roomId, null, url))
 
                 // the method handleOwnMessage() will be called where the next execution will be scheduled
             }
         }
-        catch (e: ConfigurationException) {
+        catch (_: ConfigurationException) {
             /* don't post tumbleweed */
         }
     }
